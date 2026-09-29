@@ -1,0 +1,604 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>GOLD — The Eternal Metal</title>
+<style>
+@font-face{font-family:Cinzel;font-weight:600;src:url(fonts/Cinzel-600.ttf)}
+@font-face{font-family:Cinzel;font-weight:900;src:url(fonts/Cinzel-900.ttf)}
+@font-face{font-family:Bebas;src:url(fonts/BebasNeue.ttf)}
+@font-face{font-family:Mont;font-weight:600;src:url(fonts/Montserrat-600.ttf)}
+@font-face{font-family:Mont;font-weight:800;src:url(fonts/Montserrat-800.ttf)}
+html,body{margin:0;background:#000}
+canvas{display:block;width:360px;height:640px}
+</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<script>
+const W = 1080, H = 1920, CX = W / 2;
+const BPM = 128, BEAT = 60 / BPM, BAR = BEAT * 4, DUR = 60;
+const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+const tc = document.createElement('canvas'); tc.width = W; tc.height = 700;
+const tx = tc.getContext('2d');
+
+// ------------------------------------------------------------ utils
+function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const R = mulberry(1979);
+const clamp = (x, a=0, b=1) => Math.max(a, Math.min(b, x));
+const eo = x => 1 - Math.pow(1 - clamp(x), 3);
+const eback = x => { x = clamp(x); const c = 1.9; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+const lerp = (a, b, x) => a + (b - a) * x;
+
+function metal(y0, y1, x0 = 0, x1 = 0) {
+  const g = ctx.createLinearGradient(x0, y0, x1, y1);
+  g.addColorStop(0, '#8a5a12'); g.addColorStop(0.22, '#f7d98a'); g.addColorStop(0.42, '#fff6cf');
+  g.addColorStop(0.55, '#e0ac3c'); g.addColorStop(0.78, '#a86d16'); g.addColorStop(1, '#f2cf73');
+  return g;
+}
+function metalOn(c, y0, y1) {
+  const g = c.createLinearGradient(0, y0, 0, y1);
+  g.addColorStop(0, '#9a6614'); g.addColorStop(0.3, '#f9de92'); g.addColorStop(0.48, '#fff7d6');
+  g.addColorStop(0.62, '#dca437'); g.addColorStop(1, '#8a5a12');
+  return g;
+}
+
+// Gold text with metallic gradient, moving shine band and glow.
+function gtext(str, x, y, size, opts = {}) {
+  const { font = 'Cinzel', weight = 900, alpha = 1, track = 0, shine = -1, glow = 30, align = 'center', solid = null, scale = 1 } = opts;
+  if (alpha <= 0) return;
+  const lines = String(str).split('\n');
+  const lh = size * (opts.lh || 1.05);
+  lines.forEach((ln, i) => {
+    tx.setTransform(1, 0, 0, 1, 0, 0);
+    tx.clearRect(0, 0, W, tc.height);
+    tx.font = `${weight} ${size}px ${font}`;
+    tx.letterSpacing = track + 'px';
+    tx.textAlign = align; tx.textBaseline = 'middle';
+    const my = tc.height / 2;
+    tx.fillStyle = solid || metalOn(tx, my - size * 0.5, my + size * 0.5);
+    tx.fillText(ln, align === 'center' ? CX : x, my);
+    if (shine >= 0 && !solid) {
+      tx.globalCompositeOperation = 'source-atop';
+      const sx = lerp(-300, W + 300, shine);
+      const g = tx.createLinearGradient(sx - 160, 0, sx + 160, 0);
+      g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(0.5, 'rgba(255,255,240,0.95)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+      tx.fillStyle = g; tx.fillRect(0, 0, W, tc.height);
+      tx.globalCompositeOperation = 'source-over';
+    }
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.shadowColor = 'rgba(255,180,50,0.55)'; ctx.shadowBlur = glow;
+    const yy = y + (i - (lines.length - 1) / 2) * lh;
+    ctx.translate(align === 'center' ? CX : 0, yy);
+    ctx.scale(scale, scale);
+    ctx.drawImage(tc, align === 'center' ? -CX : 0, -my);
+    ctx.restore();
+  });
+}
+function ptext(str, y, size, alpha = 1, opts = {}) {
+  const { color = '#f6ead0', weight = 600, font = 'Mont', track = 2, lh = 1.3 } = opts;
+  if (alpha <= 0) return;
+  ctx.save();
+  ctx.globalAlpha = alpha; ctx.fillStyle = color;
+  ctx.font = `${weight} ${size}px ${font}`; ctx.letterSpacing = track + 'px';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.shadowColor = 'rgba(0,0,0,0.9)'; ctx.shadowBlur = 18;
+  String(str).split('\n').forEach((l, i, a) => ctx.fillText(l, CX, y + (i - (a.length - 1) / 2) * size * lh));
+  ctx.restore();
+}
+
+// ------------------------------------------------------------ background systems
+const P = [];
+for (let i = 0; i < 320; i++) P.push({ x: R() * W, y: R() * H, z: 0.2 + R() * 1.3, s: R() * 6.28, r: R() });
+function intensity(t) {
+  if (t < 4 * BAR) return 0.15;
+  if (t < 12 * BAR) return 0.3;
+  if (t < 20 * BAR) return 0.55;
+  if (t < 26 * BAR) return lerp(0.6, 1, (t - 20 * BAR) / (6 * BAR));
+  if (t < 30 * BAR) return 1.1;
+  return 0.6;
+}
+// integrated travel so particle speed can change smoothly
+const TRAV = []; { let s = 0; for (let f = 0; f <= DUR * 30 + 2; f++) { TRAV.push(s); s += intensity(f / 30) / 30; } }
+
+function background(t) {
+  const I = intensity(t);
+  ctx.fillStyle = '#050403'; ctx.fillRect(0, 0, W, H);
+  // warm core
+  const pulse = beatPulse(t);
+  const g = ctx.createRadialGradient(CX, H * 0.43, 0, CX, H * 0.43, H * 0.75);
+  g.addColorStop(0, `rgba(120,78,18,${0.35 + 0.25 * I + 0.15 * pulse})`);
+  g.addColorStop(0.45, 'rgba(40,24,6,0.35)');
+  g.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  // god rays
+  ctx.save();
+  ctx.translate(CX, H * 0.43);
+  ctx.rotate(t * 0.05 * (0.5 + I));
+  ctx.globalCompositeOperation = 'lighter';
+  for (let i = 0; i < 14; i++) {
+    ctx.rotate(Math.PI * 2 / 14);
+    const a = 0.025 + 0.03 * I + 0.02 * Math.sin(t * 1.3 + i);
+    const rg = ctx.createLinearGradient(0, 0, 0, -H);
+    rg.addColorStop(0, `rgba(255,200,90,${a})`); rg.addColorStop(1, 'rgba(255,200,90,0)');
+    ctx.fillStyle = rg;
+    ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-70, -H); ctx.lineTo(70, -H); ctx.closePath(); ctx.fill();
+  }
+  ctx.restore();
+  // gold dust
+  const tr = TRAV[Math.min(TRAV.length - 1, Math.round(t * 30))];
+  ctx.save(); ctx.globalCompositeOperation = 'lighter';
+  for (const p of P) {
+    const y = ((p.y - tr * 260 * p.z) % H + H) % H;
+    const x = p.x + Math.sin(tr * 1.5 + p.s) * 30 * p.z;
+    const tw = 0.5 + 0.5 * Math.sin(t * 4 + p.s * 3);
+    const r = p.z * 2.6;
+    ctx.fillStyle = `rgba(255,${190 + p.r * 50 | 0},${90 + p.r * 60 | 0},${0.25 + 0.55 * tw})`;
+    if (I > 0.6 && p.r > 0.7) { // streaks when fast
+      ctx.fillRect(x - r * 0.4, y, r * 0.8, r * 6 * I);
+    } else { ctx.beginPath(); ctx.arc(x, y, r, 0, 6.283); ctx.fill(); }
+  }
+  ctx.restore();
+}
+function beatPulse(t) {
+  if (t < 4 * BAR) return 0;
+  const ph = (t % BEAT) / BEAT;
+  const every = t < 12 * BAR ? (Math.floor(t / BEAT) % 2 === 0 ? 1 : 0) : 1;
+  if (t >= 25 * BAR && t < 26 * BAR) return 0;
+  return Math.exp(-ph * 7) * every;
+}
+
+// film grain
+const GR = [];
+for (let k = 0; k < 6; k++) {
+  const c = document.createElement('canvas'); c.width = 360; c.height = 640;
+  const x = c.getContext('2d'), im = x.createImageData(360, 640), rr = mulberry(99 + k);
+  for (let i = 0; i < im.data.length; i += 4) { const v = rr() * 255; im.data[i] = im.data[i + 1] = im.data[i + 2] = v; im.data[i + 3] = 255; }
+  x.putImageData(im, 0, 0); GR.push(c);
+}
+function finish(t, frame) {
+  // vignette
+  const v = ctx.createRadialGradient(CX, H / 2, H * 0.25, CX, H / 2, H * 0.72);
+  v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,0.85)');
+  ctx.fillStyle = v; ctx.fillRect(0, 0, W, H);
+  // grain
+  ctx.save(); ctx.globalAlpha = 0.07; ctx.globalCompositeOperation = 'overlay';
+  ctx.imageSmoothingEnabled = false;
+  ctx.drawImage(GR[frame % GR.length], 0, 0, W, H);
+  ctx.restore();
+  // thin gold frame
+  ctx.save(); ctx.strokeStyle = 'rgba(214,170,80,0.35)'; ctx.lineWidth = 2;
+  ctx.strokeRect(36, 36, W - 72, H - 72);
+  ctx.restore();
+}
+
+// ------------------------------------------------------------ icon painters (centered at 0,0, ~R 300)
+function gstroke(w = 10, blur = 25) { ctx.strokeStyle = metal(-320, 320, -200, 200); ctx.lineWidth = w; ctx.lineJoin = 'round'; ctx.lineCap = 'round'; ctx.shadowColor = 'rgba(255,180,60,0.7)'; ctx.shadowBlur = blur; }
+function gfill(blur = 30) { ctx.fillStyle = metal(-320, 320, -200, 200); ctx.shadowColor = 'rgba(255,180,60,0.7)'; ctx.shadowBlur = blur; }
+
+const ICON = {
+  rings(lt) { // Varna: ancient treasure rings
+    gstroke(12);
+    for (let i = 0; i < 4; i++) {
+      const r = 90 + i * 60, a = eo(lt * 1.2 - i * 0.15) * 6.283;
+      ctx.save(); ctx.rotate(lt * (i % 2 ? -0.4 : 0.4));
+      ctx.setLineDash(i % 2 ? [30, 18] : []);
+      ctx.beginPath(); ctx.arc(0, 0, r, 0, a); ctx.stroke(); ctx.restore();
+    }
+    ctx.setLineDash([]);
+    gfill(); ctx.beginPath(); ctx.arc(0, 0, 55 * eback(lt * 2), 0, 6.283); ctx.fill();
+  },
+  pyramid(lt) {
+    const s = eo(lt * 1.3);
+    // sun
+    ctx.save(); ctx.globalAlpha = s; gfill(60); ctx.beginPath(); ctx.arc(0, -150, 110, 0, 6.283); ctx.fill(); ctx.restore();
+    ctx.fillStyle = '#0b0805'; ctx.shadowBlur = 0;
+    ctx.beginPath(); ctx.moveTo(-330, 260); ctx.lineTo(0, -90 - 200 * s + 200); ctx.lineTo(330, 260); ctx.closePath();
+    gstroke(8); ctx.fill(); ctx.stroke();
+    // brick lines
+    ctx.save(); ctx.clip(); ctx.lineWidth = 3; ctx.globalAlpha = 0.6;
+    for (let y = 150; y > -100; y -= 40) { ctx.beginPath(); ctx.moveTo(-400, y + 110); ctx.lineTo(400, y + 110); ctx.stroke(); }
+    ctx.restore();
+    // capstone
+    const cy = -90 + (1 - eback(lt * 1.5 - 0.3)) * -300;
+    gfill(70); ctx.beginPath(); ctx.moveTo(-58, cy + 64); ctx.lineTo(0, cy); ctx.lineTo(58, cy + 64); ctx.closePath(); ctx.fill();
+  },
+  coin(lt, spin = 1) {
+    const a = lt * 3.2 * spin;
+    const sx = Math.cos(a);
+    ctx.save(); ctx.scale(Math.max(0.06, Math.abs(sx)), 1);
+    gfill(50); ctx.beginPath(); ctx.arc(0, 0, 250, 0, 6.283); ctx.fill();
+    ctx.shadowBlur = 0; ctx.strokeStyle = 'rgba(90,55,10,0.8)'; ctx.lineWidth = 6;
+    ctx.beginPath(); ctx.arc(0, 0, 215, 0, 6.283); ctx.stroke();
+    ctx.fillStyle = 'rgba(90,55,10,0.8)';
+    for (let i = 0; i < 48; i++) { const q = i / 48 * 6.283; ctx.beginPath(); ctx.arc(Math.cos(q) * 232, Math.sin(q) * 232, 5, 0, 6.283); ctx.fill(); }
+    // emblem: sunburst lion-mane
+    ctx.lineWidth = 7;
+    for (let i = 0; i < 16; i++) { const q = i / 16 * 6.283; ctx.beginPath(); ctx.moveTo(Math.cos(q) * 70, Math.sin(q) * 70); ctx.lineTo(Math.cos(q) * 150, Math.sin(q) * 150); ctx.stroke(); }
+    ctx.beginPath(); ctx.arc(0, 0, 62, 0, 6.283); ctx.stroke();
+    ctx.restore();
+  },
+  temple(lt) {
+    gstroke(9);
+    const s = eo(lt * 1.4);
+    ctx.beginPath(); ctx.moveTo(-300, -120); ctx.lineTo(0, -120 - 130 * s); ctx.lineTo(300, -120); ctx.closePath(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-320, -100); ctx.lineTo(320, -100); ctx.stroke();
+    for (let i = 0; i < 6; i++) {
+      const x = -250 + i * 100, h = 320 * eo(lt * 1.6 - i * 0.08);
+      ctx.beginPath(); ctx.moveTo(x, -80); ctx.lineTo(x, -80 + h); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x - 25, -80); ctx.lineTo(x + 25, -80); ctx.stroke();
+    }
+    ctx.beginPath(); ctx.moveTo(-340, 260); ctx.lineTo(340, 260); ctx.stroke();
+    // aureus in pediment
+    gfill(40); ctx.beginPath(); ctx.arc(0, -165 * s, 34 * s, 0, 6.283); ctx.fill();
+  },
+  crown(lt) {
+    const s = eback(lt * 1.6);
+    ctx.save(); ctx.scale(s, s);
+    gfill(50);
+    ctx.beginPath();
+    ctx.moveTo(-230, 120); ctx.lineTo(-260, -120); ctx.lineTo(-130, 0); ctx.lineTo(0, -170); ctx.lineTo(130, 0); ctx.lineTo(260, -120); ctx.lineTo(230, 120); ctx.closePath(); ctx.fill();
+    ctx.fillRect(-235, 140, 470, 60);
+    ctx.fillStyle = '#3a1a05'; ctx.shadowBlur = 0;
+    [[-260, -120], [0, -170], [260, -120]].forEach(([x, y]) => { gfill(40); ctx.beginPath(); ctx.arc(x, y - 20, 26, 0, 6.283); ctx.fill(); });
+    ctx.restore();
+    // coins raining
+    for (let i = 0; i < 14; i++) {
+      const x = -380 + (i * 61) % 760, y = ((lt * 700 + i * 137) % 900) - 450;
+      ctx.save(); ctx.translate(x, y); ctx.scale(Math.abs(Math.cos(lt * 5 + i)), 1); gfill(15); ctx.beginPath(); ctx.arc(0, 0, 18, 0, 6.283); ctx.fill(); ctx.restore();
+    }
+  },
+  compass(lt) {
+    gstroke(8);
+    ctx.beginPath(); ctx.arc(0, 0, 280, 0, 6.283); ctx.stroke();
+    ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(0, 0, 250, 0, 6.283); ctx.stroke();
+    ctx.save(); ctx.rotate(-lt * 1.5 + 0.3);
+    gfill(40);
+    for (let i = 0; i < 8; i++) {
+      const L = i % 2 ? 150 : 240;
+      ctx.beginPath(); ctx.moveTo(0, -L); ctx.lineTo(24, 0); ctx.lineTo(0, 0); ctx.lineTo(-24, 0); ctx.closePath(); ctx.fill();
+      ctx.rotate(Math.PI / 4);
+    }
+    ctx.restore();
+  },
+  pickaxe(lt) {
+    ctx.save(); ctx.rotate(-0.6 + Math.sin(lt * 9) * 0.25 * clamp(1 - lt));
+    gstroke(22);
+    ctx.beginPath(); ctx.moveTo(-60, 260); ctx.lineTo(60, -160); ctx.stroke();
+    ctx.lineWidth = 26;
+    ctx.beginPath(); ctx.moveTo(-190, -160); ctx.quadraticCurveTo(60, -300, 300, -120); ctx.stroke();
+    ctx.restore();
+    for (let i = 0; i < 7; i++) {
+      const a = i / 7 * 6.283 + 1, d = 120 + 180 * eo(lt * 2);
+      ctx.save(); ctx.translate(Math.cos(a) * d + 40, Math.sin(a) * d * 0.6 + 200); ctx.rotate(a);
+      gfill(25); ctx.beginPath(); ctx.moveTo(-22, -10); ctx.lineTo(4, -24); ctx.lineTo(26, -4); ctx.lineTo(12, 20); ctx.lineTo(-18, 16); ctx.closePath(); ctx.fill(); ctx.restore();
+    }
+  },
+  mountain(lt) {
+    ctx.fillStyle = '#0d0a06'; gstroke(8);
+    ctx.beginPath(); ctx.moveTo(-360, 260); ctx.lineTo(-150, -120); ctx.lineTo(-40, 20); ctx.lineTo(110, -230); ctx.lineTo(360, 260); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.save(); ctx.clip();
+    const s = eo(lt * 1.3);
+    gstroke(14, 45);
+    ctx.beginPath(); ctx.moveTo(-360, 180);
+    for (let x = -360; x <= -360 + 720 * s; x += 40) ctx.lineTo(x, 150 + Math.sin(x * 0.02) * 50 - x * 0.1);
+    ctx.stroke(); ctx.restore();
+  },
+  bars(lt, n = 6) {
+    const pos = [[-180, 180], [0, 180], [180, 180], [-90, 80], [90, 80], [0, -20]];
+    for (let i = 0; i < n; i++) {
+      const [x, y0] = pos[i % 6];
+      const d = eback(lt * 2.2 - i * 0.12);
+      const y = y0 - (1 - d) * 700;
+      ctx.save(); ctx.translate(x, y);
+      gfill(30);
+      ctx.beginPath(); ctx.moveTo(-85, 45); ctx.lineTo(-62, -45); ctx.lineTo(62, -45); ctx.lineTo(85, 45); ctx.closePath(); ctx.fill();
+      ctx.shadowBlur = 0; ctx.fillStyle = 'rgba(255,250,220,0.35)'; ctx.fillRect(-58, -42, 116, 12);
+      ctx.restore();
+    }
+  },
+  globe(lt) {
+    gstroke(6);
+    ctx.beginPath(); ctx.arc(0, 0, 260, 0, 6.283); ctx.stroke();
+    ctx.lineWidth = 4;
+    for (let i = -2; i <= 2; i++) { const y = i * 90; const r = Math.sqrt(260 * 260 - y * y); ctx.beginPath(); ctx.ellipse(0, y, r, r * 0.12, 0, 0, 6.283); ctx.stroke(); }
+    for (let i = 0; i < 6; i++) { const ph = (lt * 0.8 + i / 6) % 1; const rx = Math.abs(Math.cos(ph * Math.PI)) * 260; ctx.beginPath(); ctx.ellipse(0, 0, rx, 260, 0, 0, 6.283); ctx.stroke(); }
+  },
+  moon(lt) {
+    ctx.save(); ctx.fillStyle = '#1b1712'; ctx.beginPath(); ctx.arc(170, -170, 120, 0, 6.283); ctx.fill();
+    ctx.strokeStyle = 'rgba(240,230,210,0.5)'; ctx.lineWidth = 3; ctx.stroke(); ctx.restore();
+    // helmet
+    const s = eo(lt * 1.5);
+    ctx.save(); ctx.translate(-40, 60 + (1 - s) * 200);
+    ctx.fillStyle = '#e8e2d6'; ctx.beginPath(); ctx.arc(0, 0, 230, 0, 6.283); ctx.fill();
+    gfill(60); ctx.beginPath(); ctx.ellipse(0, 10, 175, 150, 0, 0, 6.283); ctx.fill();
+    ctx.shadowBlur = 0; ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.beginPath(); ctx.ellipse(-70, -50, 40, 22, -0.6, 0, 6.283); ctx.fill();
+    // earthrise reflection
+    ctx.fillStyle = 'rgba(40,70,120,0.7)'; ctx.beginPath(); ctx.arc(60, 50, 26, 0, 6.283); ctx.fill();
+    ctx.restore();
+  },
+  chart(lt) {
+    gstroke(4, 0); ctx.globalAlpha = 0.4;
+    for (let i = 0; i < 5; i++) { ctx.beginPath(); ctx.moveTo(-340, 240 - i * 110); ctx.lineTo(340, 240 - i * 110); ctx.stroke(); }
+    ctx.globalAlpha = 1;
+    const pts = []; const rr = mulberry(71);
+    for (let i = 0; i <= 40; i++) { const x = -340 + i * 17; const base = Math.pow(i / 40, 2.2) * 470; pts.push([x, 240 - base - rr() * 40]); }
+    const n = Math.floor(eo(lt * 1.4) * pts.length);
+    gstroke(12, 40); ctx.beginPath(); pts.slice(0, Math.max(2, n)).forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); ctx.stroke();
+    const [ex, ey] = pts[Math.max(1, n - 1)]; gfill(50); ctx.beginPath(); ctx.arc(ex, ey, 18, 0, 6.283); ctx.fill();
+  },
+  phone(lt) {
+    gstroke(10);
+    ctx.beginPath(); ctx.roundRect(-150, -290, 300, 580, 44); ctx.stroke();
+    ctx.lineWidth = 4; ctx.beginPath(); ctx.roundRect(-120, -250, 240, 470, 16); ctx.stroke();
+    // gold traces
+    gstroke(6, 30);
+    for (let i = 0; i < 6; i++) {
+      const y = -200 + i * 80, p = eo(lt * 3 - i * 0.1);
+      ctx.beginPath(); ctx.moveTo(-100, y); ctx.lineTo(-100 + 200 * p, y); ctx.lineTo(-100 + 200 * p, y + 30 * p); ctx.stroke();
+    }
+    gfill(); ctx.beginPath(); ctx.arc(0, 255, 14, 0, 6.283); ctx.fill();
+  },
+  chip(lt) {
+    ctx.fillStyle = '#12100c'; gstroke(8);
+    ctx.beginPath(); ctx.roundRect(-150, -150, 300, 300, 20); ctx.fill(); ctx.stroke();
+    gstroke(6, 25);
+    for (let i = 0; i < 7; i++) {
+      const o = -120 + i * 40, p = eo(lt * 3 - i * 0.05) * 110;
+      [[o, -150, o, -150 - p], [o, 150, o, 150 + p], [-150, o, -150 - p, o], [150, o, 150 + p, o]].forEach(([a, b, c, d]) => { ctx.beginPath(); ctx.moveTo(a, b); ctx.lineTo(c, d); ctx.stroke(); });
+    }
+    gfill(40); ctx.beginPath(); ctx.roundRect(-70, -70, 140, 140, 10); ctx.fill();
+  },
+  satellite(lt) {
+    ctx.save(); ctx.rotate(Math.sin(lt * 1.2) * 0.15);
+    gfill(40); ctx.beginPath(); ctx.roundRect(-90, -110, 180, 220, 12); ctx.fill();
+    ctx.shadowBlur = 0; ctx.strokeStyle = 'rgba(90,55,10,0.7)'; ctx.lineWidth = 3;
+    for (let i = 0; i < 6; i++) { ctx.beginPath(); ctx.moveTo(-90, -110 + i * 40 + 15); ctx.bezierCurveTo(-30, -90 + i * 40, 30, -130 + i * 40, 90, -110 + i * 40 + 20); ctx.stroke(); }
+    gstroke(6, 10);
+    const e = eo(lt * 2);
+    [-1, 1].forEach(sd => {
+      ctx.beginPath(); ctx.moveTo(sd * 90, 0); ctx.lineTo(sd * 130, 0); ctx.stroke();
+      ctx.save(); ctx.translate(sd * (130 + 110 * e), 0); ctx.scale(e, 1);
+      ctx.fillStyle = '#10192a'; ctx.fillRect(-110, -70, 220, 140); ctx.strokeRect(-110, -70, 220, 140);
+      for (let k = -1; k <= 1; k++) { ctx.beginPath(); ctx.moveTo(k * 55, -70); ctx.lineTo(k * 55, 70); ctx.stroke(); }
+      ctx.restore();
+    });
+    ctx.restore();
+  },
+  jwst(lt) {
+    const hx = (x, y, r) => { ctx.beginPath(); for (let i = 0; i < 6; i++) { const a = i / 6 * 6.283 + Math.PI / 6; ctx.lineTo(x + Math.cos(a) * r, y + Math.sin(a) * r); } ctx.closePath(); };
+    const r = 64, dx = r * Math.sqrt(3), cells = [];
+    for (let q = -2; q <= 2; q++) for (let s = -2; s <= 2; s++) { const k = -q - s; if (Math.abs(k) > 2) continue; if (!q && !s) continue; cells.push([dx * (q + s / 2), s * r * 1.5]); }
+    cells.sort((a, b) => Math.hypot(...a) - Math.hypot(...b));
+    cells.forEach(([x, y], i) => { const p = eback(lt * 3.5 - i * 0.06); if (p <= 0) return; gfill(30); ctx.save(); ctx.translate(x, y); ctx.scale(p, p); hx(0, 0, r - 5); ctx.fill(); ctx.restore(); });
+    ctx.fillStyle = '#050403'; ctx.shadowBlur = 0; hx(0, 0, r - 5); ctx.fill();
+  },
+  nano(lt) {
+    const rr = mulberry(5);
+    for (let i = 0; i < 40; i++) {
+      const a = rr() * 6.283, d = 60 + rr() * 260, sp = 0.5 + rr();
+      const x = Math.cos(a + lt * sp) * d, y = Math.sin(a + lt * sp) * d * 0.9;
+      gfill(25); ctx.beginPath(); ctx.arc(x, y, 8 + rr() * 16, 0, 6.283); ctx.fill();
+    }
+    ctx.strokeStyle = 'rgba(255,120,90,0.6)'; ctx.lineWidth = 5; ctx.shadowBlur = 0;
+    ctx.beginPath(); ctx.arc(0, 0, 70 * (1 - 0.4 * eo(lt * 2)), 0, 6.283); ctx.stroke();
+  },
+  network(lt) {
+    const rr = mulberry(11); const nodes = [];
+    for (let i = 0; i < 16; i++) nodes.push([(rr() - 0.5) * 640, (rr() - 0.5) * 560]);
+    gstroke(3, 15);
+    nodes.forEach((a, i) => nodes.forEach((b, j) => { if (j <= i) return; if (Math.hypot(a[0] - b[0], a[1] - b[1]) < 230) { ctx.globalAlpha = 0.7; ctx.beginPath(); ctx.moveTo(...a); ctx.lineTo(...b); ctx.stroke(); } }));
+    ctx.globalAlpha = 1;
+    nodes.forEach(([x, y], i) => { gfill(30); ctx.beginPath(); ctx.arc(x, y, 12 + 6 * Math.sin(lt * 8 + i), 0, 6.283); ctx.fill(); });
+  },
+  vault(lt) {
+    gstroke(12);
+    ctx.beginPath(); ctx.arc(0, 0, 270, 0, 6.283); ctx.stroke();
+    ctx.lineWidth = 6; ctx.beginPath(); ctx.arc(0, 0, 225, 0, 6.283); ctx.stroke();
+    ctx.save(); ctx.rotate(eo(lt * 1.5) * Math.PI * 1.5);
+    ctx.lineWidth = 14;
+    for (let i = 0; i < 3; i++) { ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, -150); ctx.stroke(); gfill(); ctx.beginPath(); ctx.arc(0, -160, 22, 0, 6.283); ctx.fill(); ctx.rotate(6.283 / 3); }
+    gfill(40); ctx.beginPath(); ctx.arc(0, 0, 50, 0, 6.283); ctx.fill();
+    ctx.restore();
+    for (let i = 0; i < 12; i++) { const a = i / 12 * 6.283; gfill(10); ctx.beginPath(); ctx.arc(Math.cos(a) * 248, Math.sin(a) * 248, 7, 0, 6.283); ctx.fill(); }
+  },
+  cube(lt) {
+    const s = 210 * eback(lt * 1.2), ry = lt * 0.5 + 0.6;
+    const c = Math.cos(ry), sn = Math.sin(ry), tilt = 0.45;
+    const V = [[-1, -1, -1], [1, -1, -1], [1, 1, -1], [-1, 1, -1], [-1, -1, 1], [1, -1, 1], [1, 1, 1], [-1, 1, 1]].map(([x, y, z]) => {
+      let X = x * c - z * sn, Z = x * sn + z * c; let Y = y * Math.cos(tilt) - Z * Math.sin(tilt); Z = y * Math.sin(tilt) + Z * Math.cos(tilt);
+      return [X * s, Y * s, Z];
+    });
+    const F = [[0, 1, 2, 3], [4, 5, 6, 7], [0, 1, 5, 4], [2, 3, 7, 6], [1, 2, 6, 5], [0, 3, 7, 4]];
+    F.map(f => ({ f, z: f.reduce((a, i) => a + V[i][2], 0) })).sort((a, b) => b.z - a.z).forEach(({ f }, k) => {
+      const [a, b, cc] = [V[f[0]], V[f[1]], V[f[2]]];
+      const nz = (b[0] - a[0]) * (cc[1] - a[1]) - (b[1] - a[1]) * (cc[0] - a[0]);
+      ctx.beginPath(); f.forEach((i, j) => j ? ctx.lineTo(V[i][0], V[i][1]) : ctx.moveTo(V[i][0], V[i][1])); ctx.closePath();
+      gfill(k === 5 ? 80 : 0);
+      ctx.fill();
+      ctx.shadowBlur = 0; ctx.fillStyle = `rgba(60,30,0,${0.1 + 0.35 * (k % 3) / 2})`; ctx.fill();
+      ctx.strokeStyle = 'rgba(255,245,200,0.6)'; ctx.lineWidth = 3; ctx.stroke();
+    });
+  },
+};
+
+// ------------------------------------------------------------ scenes
+const S = [];
+function sc(b0, b1, fn) { S.push({ t0: b0 * BAR, t1: b1 * BAR, fn }); }
+
+// standard "era card": year, icon, title, subtitle
+function era(year, icon, title, sub, o = {}) {
+  return (lt, d) => {
+    const k = Math.min(1, d / 1.2); // animation speed scale (shorter scenes animate faster)
+    const T = lt / k;
+    const iconY = o.iconY || 880;
+    ctx.save(); ctx.translate(CX, iconY); const zs = lerp(1.18, 1, eo(T * 2)) + 0.02 * beatPulse(curT); ctx.scale(zs * (o.iconScale || 1), zs * (o.iconScale || 1));
+    ctx.globalAlpha = eo(T * 3); ICON[icon](T, o.spin); ctx.restore();
+    ctx.globalAlpha = 1;
+    gtext(year, 0, 330 + (1 - eo(T * 3)) * 60, o.yearSize || 210, { font: 'Bebas', weight: 400, track: 14, alpha: eo(T * 3), shine: (T * 0.6) % 1.4 });
+    if (o.place) ptext(o.place, 455, 40, eo(T * 3 - 0.3), { color: '#d9b25e', weight: 800, track: 14 });
+    gtext(title, 0, 1400 + (1 - eo(T * 3 - 0.2)) * 50, o.titleSize || 84, { alpha: eo(T * 3 - 0.2), track: 4, shine: ((T - 0.3) * 0.7) % 1.5 });
+    if (sub) ptext(sub, 1400 + (o.subOff || 150), 42, eo(T * 3 - 0.45));
+  };
+}
+
+// INTRO
+sc(0, 2, (lt) => {
+  const a = eo((lt - 0.4) / 1.2);
+  gtext('6,000 YEARS', 0, 820, 150, { font: 'Bebas', weight: 400, track: 22, alpha: a, shine: lt / 3.2, scale: 1 + lt * 0.03 });
+  ptext('ONE  METAL  SHAPED  EVERYTHING', 960, 36, eo((lt - 1.6) / 0.8), { track: 10, color: '#e8cf93' });
+});
+sc(2, 4, (lt) => {
+  const s = eo(lt / 1.1);
+  gtext('Au', 0, 560, 110, { alpha: s * 0.9, track: 4, font: 'Cinzel', weight: 600 });
+  ptext('79', 480, 32, s * 0.8, { color: '#d9b25e', weight: 800 });
+  ctx.save(); ctx.strokeStyle = 'rgba(214,170,80,0.7)'; ctx.lineWidth = 3; ctx.globalAlpha = s; ctx.strokeRect(CX - 110, 440, 220, 230); ctx.restore();
+  gtext('GOLD', 0, 900, 240 - 30 * (1 - s), { alpha: s, track: 18 * s + 6, shine: (lt / 2.4), glow: 60 });
+  ptext('THE METAL THAT\nBUILT CIVILIZATION', 1150, 46, eo((lt - 1) / 0.8), { track: 8, weight: 800 });
+});
+// ANCIENT (2 bars each)
+sc(4, 6, era('4600 BC', 'rings', "THE FIRST\nTREASURE", 'Varna — humanity crafts\nits oldest gold', { place: 'BULGARIA' }));
+sc(6, 8, era('3000 BC', 'pyramid', 'FLESH OF\nTHE GODS', 'Egypt crowns its pharaohs\nin eternal gold', { place: 'EGYPT' }));
+sc(8, 10, era('600 BC', 'coin', 'MONEY\nIS BORN', 'Lydia strikes the world\'s first coins', { place: 'LYDIA' }));
+sc(10, 12, era('46 BC', 'temple', 'THE AUREUS', 'Gold coin that powered\nthe Roman Empire', { place: 'ROME', subOff: 110 }));
+// EMPIRES & REVOLUTIONS (1 bar each)
+sc(12, 13, era('1324', 'crown', 'MANSA MUSA', 'The richest man in history\ncrosses the desert in gold', { place: 'MALI EMPIRE', subOff: 120 }));
+sc(13, 14, era('1492', 'compass', 'AGE OF\nDISCOVERY', 'Gold funds voyages across oceans', { place: 'THE NEW WORLD' }));
+sc(14, 15, era('1848', 'pickaxe', 'GOLD RUSH', '300,000 dreamers head west', { place: 'CALIFORNIA', subOff: 110 }));
+sc(15, 16, era('1886', 'mountain', 'WITWATERSRAND', 'The richest gold field on Earth', { place: 'SOUTH AFRICA', titleSize: 74, subOff: 100 }));
+sc(16, 17, era('1871', 'bars', 'GOLD STANDARD', 'Money backed by metal —\nglobal trade explodes', { place: 'THE WORLD', titleSize: 76, subOff: 120 }));
+sc(17, 18, era('1944', 'globe', 'BRETTON WOODS', '$35 an ounce anchors\nthe world economy', { place: 'NEW HAMPSHIRE', titleSize: 76, subOff: 120 }));
+sc(18, 19, era('1969', 'moon', 'APOLLO 11', 'Gold visors guard\nthe first moonwalk', { place: 'THE MOON', subOff: 120 }));
+sc(19, 20, era('1971', 'chart', 'GOLD SET FREE', 'The dollar leaves gold.\nGold finds its true value.', { place: 'WALL STREET', titleSize: 80, subOff: 120 }));
+
+// BUILD — technology (half-bar cuts)
+const tech = [
+  ['phone', 'IN YOUR POCKET', 'Gold contacts inside\nevery smartphone'],
+  ['chip', 'MICROCHIPS', 'Gold bond wires carry\nthe digital age'],
+  ['satellite', 'SPACECRAFT', 'Gold film shields\nmissions from the sun'],
+  ['jwst', 'JAMES WEBB', '18 gold mirrors see\nthe first galaxies'],
+  ['nano', 'MEDICINE', 'Gold nanoparticles\nhunt cancer cells'],
+  ['network', 'CONNECTIONS', 'It never corrodes —\nso the world stays online'],
+  ['vault', 'CENTRAL BANKS', '1,000+ tonnes bought\nevery year since 2022'],
+  ['bars', 'WEALTH PRESERVED', 'Purchasing power held\nacross generations'],
+];
+tech.forEach(([icon, title, sub], i) => {
+  sc(20 + i * 0.5, 20.5 + i * 0.5, (lt, d) => {
+    const T = lt / d; // 0..1
+    ctx.save(); ctx.translate(CX, 860); const z = lerp(1.35, 1, eo(T * 3)); ctx.scale(z, z); ICON[icon](lt * 2.2); ctx.restore();
+    ptext('TECHNOLOGY', 330, 38, 1, { color: '#d9b25e', weight: 800, track: 18 });
+    ctx.save(); ctx.fillStyle = 'rgba(214,170,80,0.6)'; ctx.fillRect(CX - 70, 370, 140, 3); ctx.restore();
+    gtext(title, 0, 1370, 84, { track: 6, shine: T * 1.2, alpha: eo(T * 5) });
+    ptext(sub, 1510, 42, eo(T * 5 - 0.3));
+    // tech HUD ticks
+    ctx.save(); ctx.strokeStyle = 'rgba(214,170,80,0.45)'; ctx.lineWidth = 3; ctx.translate(CX, 860); ctx.rotate(lt * 2);
+    ctx.setLineDash([12, 20]); ctx.beginPath(); ctx.arc(0, 0, 390, 0, 6.283); ctx.stroke(); ctx.restore();
+  });
+});
+// BUILD — word slams (beat cuts), last beat = breath before the drop
+const words = ['RARE', 'ETERNAL', 'TRUSTED', 'UNBREAKABLE', 'UNIVERSAL', 'TIMELESS', 'UNSTOPPABLE'];
+words.forEach((w, i) => {
+  sc(24 + i / 4, 24 + (i + 1) / 4, (lt, d) => {
+    const T = lt / d;
+    const size = w.length > 9 ? 150 : 210;
+    gtext(w, 0, 960, size, { font: 'Bebas', weight: 400, track: 16, scale: lerp(1.6, 1, eo(T * 4)) + T * 0.06, shine: T, glow: 70 });
+    ptext(['I', 'II', 'III', 'IV', 'V', 'VI', 'VII'][i], 1180, 40, 0.8, { color: '#d9b25e', font: 'Cinzel', weight: 900, track: 6 });
+  });
+});
+sc(25.75, 26, (lt, d) => {
+  ctx.fillStyle = `rgba(0,0,0,${0.7})`; ctx.fillRect(0, 0, W, H);
+  const r = 4 + 40 * (lt / d) ** 2;
+  gfill(80); ctx.beginPath(); ctx.arc(CX, 960, r, 0, 6.283); ctx.fill(); ctx.shadowBlur = 0;
+});
+
+// DROP
+sc(26, 28, (lt, d) => {
+  ctx.save(); ctx.translate(CX, 820); ICON.cube(lt); ctx.restore();
+  const n = Math.round(216000 * eo(lt / 1.4));
+  gtext(n.toLocaleString('en-US'), 0, 1330, 170, { font: 'Bebas', weight: 400, track: 8, shine: (lt * 0.7) % 1.3, glow: 50 });
+  gtext('TONNES', 0, 1450, 70, { track: 20, alpha: eo(lt * 2) });
+  ptext('All the gold ever mined — and almost\nall of it still exists today', 1570, 40, eo(lt * 2 - 0.6));
+  ptext('IN ALL OF HUMAN HISTORY', 330, 40, eo(lt * 3), { color: '#d9b25e', weight: 800, track: 12 });
+});
+const recap = [['pyramid', 'PHARAOHS'], ['coin', 'COINS'], ['crown', 'EMPIRES'], ['bars', 'NATIONS'], ['chip', 'CHIPS'], ['moon', 'THE MOON'], ['jwst', 'THE STARS'], ['vault', 'YOUR FUTURE']];
+recap.forEach(([icon, label], i) => {
+  sc(28 + i / 4, 28 + (i + 1) / 4, (lt, d) => {
+    const T = lt / d;
+    ptext(i < 4 ? 'FROM' : 'TO', 400, 44, 1, { color: '#d9b25e', weight: 800, track: 20 });
+    ctx.save(); ctx.translate(CX, 900); const z = lerp(0.6, 0.85, eo(T * 3)); ctx.scale(z, z); ICON[icon](0.6 + T * 0.6, 1); ctx.restore();
+    gtext(label, 0, 1380, 130, { font: 'Bebas', weight: 400, track: 14, scale: lerp(1.3, 1, eo(T * 4)), shine: T });
+  });
+});
+// FINALE
+sc(30, 32, (lt, d) => {
+  const s = eo(lt / 0.9);
+  // halo
+  ctx.save(); ctx.globalCompositeOperation = 'lighter';
+  const g = ctx.createRadialGradient(CX, 860, 0, CX, 860, 520);
+  g.addColorStop(0, `rgba(255,210,120,${0.45 * s})`); g.addColorStop(1, 'rgba(255,200,90,0)');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); ctx.restore();
+  gtext('GOLD', 0, 860, 250, { track: lerp(60, 16, s), alpha: s, shine: lt / 3, glow: 90, scale: 1 + lt * 0.025 });
+  ctx.save(); ctx.globalAlpha = eo((lt - 0.4) / 0.6); ctx.fillStyle = metal(0, 1, 250, 830);
+  ctx.fillRect(CX - 280 * eo((lt - 0.3) / 0.8), 1060, 560 * eo((lt - 0.3) / 0.8), 4); ctx.restore();
+  gtext('THE ETERNAL METAL', 0, 1170, 62, { weight: 600, track: 14, alpha: eo((lt - 0.6) / 0.6) });
+  ptext('6,000 years of value. The best is yet to come.', 1290, 36, eo((lt - 1.2) / 0.6), { color: '#e8cf93' });
+  // final fade
+  if (lt > 3.1) { ctx.fillStyle = `rgba(0,0,0,${clamp((lt - 3.1) / 0.65)})`; ctx.fillRect(0, 0, W, H); }
+});
+
+// ------------------------------------------------------------ main render
+let curT = 0;
+function render(t, frame = Math.round(t * 30)) {
+  curT = t;
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.globalAlpha = 1; ctx.shadowBlur = 0; ctx.globalCompositeOperation = 'source-over';
+  background(t);
+  const s = S.find(x => t >= x.t0 && t < x.t1) || S[S.length - 1];
+  const lt = t - s.t0, d = s.t1 - s.t0;
+  // camera: shake on drop, subtle drift otherwise
+  const I = intensity(t), bp = beatPulse(t);
+  const sh = (t >= 26 * BAR && t < 30 * BAR) ? 10 * bp : (t >= 24 * BAR && t < 25.75 * BAR ? 7 * bp + 3 : 0);
+  const rr = mulberry(frame + 3);
+  ctx.save();
+  ctx.translate(CX + (rr() - 0.5) * sh * 2, H / 2 + (rr() - 0.5) * sh * 2);
+  const zoom = 1 + 0.015 * bp * I;
+  ctx.scale(zoom, zoom); ctx.translate(-CX, -H / 2);
+  s.fn(lt, d);
+  ctx.restore();
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.shadowBlur = 0;
+  timelineHUD(t);
+  // cut flash
+  const flashLen = t < 12 * BAR ? 0.35 : 0.18;
+  if (s.t0 > 0 && lt < flashLen && !(s.t0 >= 25.75 * BAR - 1e-6 && s.t0 < 26 * BAR - 1e-6)) {
+    const a = (1 - lt / flashLen) ** 2 * (t >= 26 * BAR && Math.abs(s.t0 - 26 * BAR) < 1e-6 || Math.abs(s.t0 - 30 * BAR) < 1e-6 ? 1 : 0.55);
+    ctx.fillStyle = `rgba(255,236,190,${a})`; ctx.fillRect(0, 0, W, H);
+  }
+  finish(t, frame);
+  // fade in from black
+  if (t < 0.6) { ctx.fillStyle = `rgba(0,0,0,${1 - t / 0.6})`; ctx.fillRect(0, 0, W, H); }
+}
+function timelineHUD(t) {
+  if (t < 4 * BAR || t >= 20 * BAR) return;
+  const p = (t - 4 * BAR) / (16 * BAR);
+  ctx.save();
+  ctx.strokeStyle = 'rgba(214,170,80,0.3)'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(150, 150); ctx.lineTo(W - 150, 150); ctx.stroke();
+  ctx.fillStyle = metal(140, 160); ctx.fillRect(150, 148, (W - 300) * p, 4);
+  ctx.shadowColor = 'rgba(255,190,60,0.9)'; ctx.shadowBlur = 20;
+  ctx.beginPath(); ctx.arc(150 + (W - 300) * p, 150, 9, 0, 6.283); ctx.fill();
+  ctx.restore();
+  ptext('6,000 YEARS OF GOLD', 110, 22, 0.55, { color: '#d9b25e', track: 8, weight: 800 });
+}
+window.render = render;
+window.ready = (async () => {
+  const faces = ['900 40px Cinzel', '600 40px Cinzel', '40px Bebas', '600 40px Mont', '800 40px Mont'];
+  await Promise.all(faces.map(f => document.fonts.load(f)));
+  await document.fonts.ready;
+  render(0);
+  return true;
+})();
+</script>
+</body>
+</html>
