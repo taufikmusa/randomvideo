@@ -55,6 +55,15 @@ engine.js exposes these bar constants and music.py follows the same map. If the 
 | 36–41 | DROP | Drop | 2+2+2 bars | Big stat with a count-up, a mind-blowing comparison, then 8-beat evolution recap ("FROM X / TO Y") |
 | 42–45 | FINALE | Finale | 6s | Title again, tagline, one-line meaning; at bar 44 a callback to the cold open (sfx + small icon + question), fade out |
 
+**Slow mode** (when Taufik says "slow sikit", "cukup masa nak baca", or the copy is text-heavy): keep the same music and bar constants, but use fewer, longer scenes:
+- Act 2: 5 × 2 bars.
+- Act 3: 6 × 1 bar.
+- Word slams: only 3 words (34–34.5, 34.5–35, 35–BREATH).
+- Drop: three 2-bar scenes with no 8-beat recap.
+- `glitchFromBar: null`.
+- Keep subs to at most 2 lines, and 1 short line for 2s scenes.
+The escalation still reads (4s → 4s → 2s → beats) while everything stays readable. Example: `references/scenes-emas-20-tahun-slow.js`.
+
 Want 60s? Remove Act 1 scenes and shift the constants, and cut the same bars in music.py. Do this only when Taufik asks, because 90s is the approved default.
 
 ## Writing scenes.js
@@ -144,6 +153,15 @@ Fact-check the post itself before animating it, because his copy sometimes carri
 - The South Pole–Aitken basin is about 6–8 km deep, not 13 km.
 - Chang'e-6 also landed on the far side in 2024, so China is the only *country*, but Chang'e-4 is not the only *robot*.
 - From "3 golongan": the post said Titanic sailed "tanpa bot penyelamat". In fact it had 20 lifeboats for about 1,178 people, with about 2,224 on board. The true version is more powerful on-screen: show it as "not enough".
+
+**Financial claims** (returns, "mengatasi ASB/KWSP", "% setahun"):
+- Compute the figure yourself from data before showing it. For example, gold in RM averaged about RM1,685/oz in 2005 and RM14,695/oz in 2025, which is about ×8.7, or about 11%/yr. Compare with ASB and KWSP, whose 10-year averages are about 6%, and FD at about 3%.
+- Show numbers with "≈" and the period and currency, e.g. "ANGGARAN PURATA SETAHUN · 2005–2025 · RM".
+- Add a small line to the finale: "Prestasi lalu bukan jaminan pulangan masa depan."
+- Swap unverifiable claims for verifiable ones:
+  - "pakar senyap-senyap beli emas" becomes central banks buying 1,000+ t/yr since 2022.
+  - "tak boleh dibekukan oleh sesiapa" becomes "tiada risiko pihak ketiga". Governments have seized gold before, e.g. the US in 1933.
+- Tell Taufik about each change.
 
 The gold palette for the money section: `[255,204,96]` / `[255,140,60]`. The shared helper `goldbar()` from the Chang'e-4 scenes.js is worth copying (a 999.9 trapezoid bar with a gradient).
 
