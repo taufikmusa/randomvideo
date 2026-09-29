@@ -70,7 +70,17 @@ mono(str, y, size, alpha, color, track)       // Space Mono label in accent colo
 neon(w, blur, a) / neonA / fillA(a, blur) / fillB / rr(x,y,w,h,r) / waves(x,y,n,t,dir,r0,spread) / slab(w,h,r,glass) / keypad(...)
 ca(a) / cb(a)             // current primary / secondary grade colour as rgba()
 eo, eback, lerp, clamp, mulberry(seed), beatPulse(curT), TAU, CX, IY (icon centre y = 860)
+useImage('name', 'file.png')   // top level of scenes.js; preloaded before any frame, then ctx.drawImage(IMG.name, ...)
 ```
+
+**Watermark / handle**: `CFG.watermark = {text: '@taufik.pg', y: 1700, alpha: 0.6, fromBar: 0.5, toBar: FINALE}`. When Taufik asks for his handle on the video, add it. It is drawn after the vignette, so it stays readable, and it stops at the finale because the CTA shows the handle big there.
+
+**Photo CTA finale**: when he supplies his photo, which is usually a transparent PNG cutout:
+- Crop it to the alpha bounding box, downscale it to 1000px wide, and save it as `taufik.png` in the project.
+- Check the cutout for stray fringe pixels, e.g. a purple hair wisp. Remove them by colour inside a small region.
+- In the finale, slide the photo up from the bottom (width about 900, top edge about y 700) inside a glowing ring with a gold halo.
+- Fade the bottom to black and stack the CTA on top: `SHARE. / LIKE. / FOLLOW` (Orbitron 118, one slam per word), `@taufik.pg` (Grot 88), `DEALER PUBLIC GOLD` (mono).
+- The full example is in `references/scenes-emas-penyelamat-cta-photo.js`.
 
 Act 3 scenes and word slams use custom `sc()` bodies. Copy the patterns from the phone scenes.js (the `smart.forEach` and `words.forEach` blocks).
 
@@ -95,7 +105,16 @@ Act 3 scenes and word slams use custom `sc()` bodies. Copy the patterns from the
 
 ## Input: a copywriting post instead of a topic
 
-Taufik may paste one of his FB posts. The usual shape is: hook question → story → "Tiga pengajaran" → gold analogy → question CTA → sign-off. Map it onto the same slots:
+Taufik may paste one of his FB posts. There are two common shapes:
+- **Story post**: hook question → story → "Tiga pengajaran" → gold analogy → question CTA → sign-off. The example is Chang'e-4, in `references/scenes-chang-e4-copywriting.js`.
+- **Argument / segmentation post**: contrarian hook ("tak semua orang perlu emas") → N groups or reasons → formula → comment prompt → punchline → CTA. The example is "3 golongan", in `references/scenes-emas-penyelamat-cta-photo.js`. That one mapped as follows:
+  - Act 1 = groups 01–02, with 2–3 cards each.
+  - Act 2 = the most dramatic group told through real history. The post's Titanic metaphor became 1912 facts, plus the Cyprus 2013 bail-in and the Lebanon 2019 withdrawal limits for "akaun dibekukan".
+  - Act 3 = the formula steps, then the "drop di komen: kumpulan mana?" prompt.
+  - Drop = the post's punchline, split across the beat ("BOT…" then "PENYELAMAT!").
+  - Give each group its own grade colour so the viewer feels the section change.
+
+For a story post, map it onto the same slots:
 
 | Copy part | Slot |
 |---|---|
@@ -116,6 +135,7 @@ Fact-check the post itself before animating it, because his copy sometimes carri
 - The biosphere carried fruit-fly eggs, not silkworm eggs.
 - The South Pole–Aitken basin is about 6–8 km deep, not 13 km.
 - Chang'e-6 also landed on the far side in 2024, so China is the only *country*, but Chang'e-4 is not the only *robot*.
+- From "3 golongan": the post said Titanic sailed "tanpa bot penyelamat". In fact it had 20 lifeboats for about 1,178 people, with about 2,224 on board. The true version is more powerful on-screen: show it as "not enough".
 
 The gold palette for the money section: `[255,204,96]` / `[255,140,60]`. The shared helper `goldbar()` from the Chang'e-4 scenes.js is worth copying (a 999.9 trapezoid bar with a gradient).
 

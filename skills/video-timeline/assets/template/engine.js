@@ -1,6 +1,7 @@
 /* video-timeline engine — do not edit per video; write scenes.js instead.
  * Exposes: htext/ptext/mono (text), neon/neonA/fillA/fillB/rr/waves/slab/keypad (painters),
- * ca()/cb() (current grade colours), eo/eback/lerp/clamp/mulberry, sc()/era() (scenes), beatPulse(). */
+ * ca()/cb() (current grade colours), eo/eback/lerp/clamp/mulberry, sc()/era() (scenes), beatPulse(),
+ * useImage(name, src) -> IMG[name] (preloaded before render), CFG.watermark. */
 const W = 1080, H = 1920, CX = W / 2, IY = 860;
 const BPM = 120, BEAT = 60 / BPM, BAR = BEAT * 4, DUR = 90;
 const cv = document.getElementById('c'), ctx = cv.getContext('2d');
@@ -140,6 +141,23 @@ for (let k = 0; k < 6; k++) {
   for (let i = 0; i < im.data.length; i += 4) { const v = rr() * 255; im.data[i] = im.data[i + 1] = im.data[i + 2] = v; im.data[i + 3] = 255; }
   x.putImageData(im, 0, 0); GR.push(c);
 }
+// ------------------------------------------------------------ images: useImage('name', 'file.png') in scenes.js, then IMG.name
+const IMG = {}, IMG_LOADS = [];
+function useImage(name, src) {
+  const im = new Image(); IMG[name] = im;
+  IMG_LOADS.push(new Promise((ok, bad) => { im.onload = ok; im.onerror = () => bad(new Error('image failed: ' + src)); }));
+  im.src = src;
+  return im;
+}
+// watermark: CFG.watermark = {text:'@handle', y:1700, alpha:0.6, fromBar:0, toBar:42}
+function watermark(t) {
+  const w = (typeof CFG !== 'undefined') && CFG.watermark; if (!w) return;
+  if (t < (w.fromBar || 0) * BAR || t >= (w.toBar ?? 45) * BAR) return;
+  ctx.save(); ctx.globalAlpha = w.alpha ?? 0.6; ctx.font = '700 30px Mono'; ctx.letterSpacing = '4px';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = '#ffffff';
+  ctx.shadowColor = 'rgba(0,0,0,0.9)'; ctx.shadowBlur = 10; ctx.fillText(w.text, CX, w.y ?? 1700);
+  ctx.restore();
+}
 function finish(t, frame) {
   ctx.drawImage(SCAN, 0, 0);
   const v = ctx.createRadialGradient(CX, H / 2, H * 0.28, CX, H / 2, H * 0.72);
@@ -255,12 +273,14 @@ function render(t, frame = Math.round(t * 30)) {
     ctx.fillStyle = `rgba(235,248,255,${a})`; ctx.fillRect(0, 0, W, H);
   }
   finish(t, frame);
+  watermark(t);
   if (t < 0.5) { ctx.fillStyle = `rgba(0,0,0,${1 - t / 0.5})`; ctx.fillRect(0, 0, W, H); }
 }
 window.render = render;
 window.ready = (async () => {
   await Promise.all(['900 40px Orb', '700 40px Orb', '500 40px Grot', '700 40px Grot', '400 40px Mono', '700 40px Mono'].map(f => document.fonts.load(f)));
   await document.fonts.ready;
+  await Promise.all(IMG_LOADS);
   render(0);
   return true;
 })();
