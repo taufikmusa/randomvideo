@@ -1,0 +1,14 @@
+{
+  "key_shift": 0,
+  "events": [
+    {"type": "ring", "bar": 0, "beat": 0.3},
+    {"type": "ring", "bar": 1, "beat": 0.3},
+    {"type": "clicks", "bar": 8, "beat": 0.5, "count": 7},
+    {"type": "clicks", "bar": 8, "beat": 2.0, "count": 3},
+    {"type": "dtmf", "bar": 16},
+    {"type": "beep2", "bar": 20, "beat": 0.25},
+    {"type": "beep2", "bar": 20, "beat": 2.25},
+    {"type": "shutter", "bar": 24, "beat": 1},
+    {"type": "ring", "bar": 44, "beat": 0.2, "length": 1.2, "gain": 0.3}
+  ]
+}
