@@ -75,12 +75,19 @@ useImage('name', 'file.png')   // top level of scenes.js; preloaded before any f
 
 **Watermark / handle**: `CFG.watermark = {text: '@taufik.pg', y: 1700, alpha: 0.6, fromBar: 0.5, toBar: FINALE}`. When Taufik asks for his handle on the video, add it. It is drawn after the vignette, so it stays readable, and it stops at the finale because the CTA shows the handle big there.
 
-**Photo CTA finale**: when he supplies his photo, which is usually a transparent PNG cutout:
+**Photo CTA finale**: when he supplies his photo (usually a transparent PNG cutout), prepare it first:
 - Crop it to the alpha bounding box, downscale it to 1000px wide, and save it as `taufik.png` in the project.
 - Check the cutout for stray fringe pixels, e.g. a purple hair wisp. Remove them by colour inside a small region.
-- In the finale, slide the photo up from the bottom (width about 900, top edge about y 700) inside a glowing ring with a gold halo.
-- Fade the bottom to black and stack the CTA on top: `SHARE. / LIKE. / FOLLOW` (Orbitron 118, one slam per word), `@taufik.pg` (Grot 88), `DEALER PUBLIC GOLD` (mono).
-- The full example is in `references/scenes-emas-penyelamat-cta-photo.js`.
+- If he doesn't send a new one, reuse the previous project's `taufik.png`.
+
+**Default layout: SMALL and PREMIUM.** Taufik said "kecik nampak lebih pro dan premium", so this is the default. Plenty of negative space and thin lines:
+- Top: a short 2-line takeaway in Orbitron at about 64px, plus a 32px thank-you line.
+- A circular portrait of R = 150 (head and shoulders cropped from the cutout) on a dark radial fill, with a thin 3px accent ring that draws on.
+- Below it: `TAUFIK MUSA` (Grot 46), `DEALER PUBLIC GOLD` (mono 22), a 120px hairline, `SHARE · LIKE · FOLLOW` (mono 26, wide tracking), `@taufik.pg` (Grot 40).
+- Everything stays between y 560 and 1520.
+- Example: `references/scenes-alasan-1-dolar-premium-cta.js` (finale scene).
+
+Use the older big version only if he asks for it: a 900px-wide photo sliding up plus slam words. It is in `references/scenes-emas-penyelamat-cta-photo.js`.
 
 Act 3 scenes and word slams use custom `sc()` bodies. Copy the patterns from the phone scenes.js (the `smart.forEach` and `words.forEach` blocks).
 
@@ -99,6 +106,7 @@ Act 3 scenes and word slams use custom `sc()` bodies. Copy the patterns from the
 - `mono()`/`ptext()` are centred on CX in *screen* space. Inside an ICON painter (translated context), draw text with `ctx.fillText(..., 0, y)` instead, or it lands off-screen.
 - Keep text out of the bottom 280px (TikTok UI). Titles sit around y 1390, subs around y 1500–1550.
 - Flash and glow effects: cap full-screen white at about 0.75 alpha, otherwise frames blow out.
+- Keep the whole look restrained rather than loud: small, well-spaced text reads premium. Taufik prefers this.
 - On-screen language follows the input. A topic given as a prompt in English means English. A Malay copywriting post means Malay on-screen (keep technical and proper names as they are). Malay words run longer, so use `yearSize` 120–140 for word-labels like `ZON MATI` and keep titles at 68–84px.
 
 **Fact rules**: use only milestones you're confident in: well-documented dates, names and numbers. Prefer the safer phrasing ("the richest gold field on Earth" over a contested percentage). For "today" stats, use round, widely published figures and phrase them with "+" or "more than". In the final message, list the numeric claims you used so Taufik can sanity-check them.
