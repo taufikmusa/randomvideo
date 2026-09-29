@@ -26,7 +26,7 @@ scripts/new_video.sh <dest>          scaffold a project
 scripts/contact_sheet.sh <project>   tile stills into one JPG to eyeball
 ```
 
-The scenes.js shipped in the template is the full phone video. Read it before writing a new one, because it is the best reference for tone, density and icon style.
+The scenes.js shipped in the template is the full phone video (topic mode). `references/scenes-chang-e4-copywriting.js` is a full Malay copywriting-mode example with a gold CTA ending. Read the one that matches the request before writing, because they are the best reference for tone, density and icon style.
 
 ## Workflow
 
@@ -89,9 +89,35 @@ Act 3 scenes and word slams use custom `sc()` bodies. Copy the patterns from the
 - `mono()`/`ptext()` are centred on CX in *screen* space. Inside an ICON painter (translated context), draw text with `ctx.fillText(..., 0, y)` instead, or it lands off-screen.
 - Keep text out of the bottom 280px (TikTok UI). Titles sit around y 1390, subs around y 1500–1550.
 - Flash and glow effects: cap full-screen white at about 0.75 alpha, otherwise frames blow out.
-- Titles are in English unless Taufik asks for Malay (the approved style is English on-screen).
+- On-screen language follows the input. A topic given as a prompt in English means English. A Malay copywriting post means Malay on-screen (keep technical and proper names as they are). Malay words run longer, so use `yearSize` 120–140 for word-labels like `ZON MATI` and keep titles at 68–84px.
 
 **Fact rules**: use only milestones you're confident in: well-documented dates, names and numbers. Prefer the safer phrasing ("the richest gold field on Earth" over a contested percentage). For "today" stats, use round, widely published figures and phrase them with "+" or "more than". In the final message, list the numeric claims you used so Taufik can sanity-check them.
+
+## Input: a copywriting post instead of a topic
+
+Taufik may paste one of his FB posts. The usual shape is: hook question → story → "Tiga pengajaran" → gold analogy → question CTA → sign-off. Map it onto the same slots:
+
+| Copy part | Slot |
+|---|---|
+| Hook question ("Tahu tak…?") | Cold open: sensory icon plus the question, with the answer held back until the title |
+| Topic / answer | Title card, with one line promising the money angle |
+| Background context (earlier history the post implies) | Act 1. Add real prior milestones so the timeline has depth, e.g. Luna 3 1959 and Apollo 8 1968 for a Moon story |
+| Story beats | Act 2, one fact per bar |
+| "Tiga pengajaran" | Pivot = "3 PENGAJARAN", then Act 3 slots 1–6 (two cuts per lesson: `01` + headline, then the payoff line) |
+| Gold analogy / cash vs gold | Act 3 slots 7–12, with the grade shifting to gold here |
+| Word slams | 7 verbs that summarise the lessons plus gold (SEDIA, SAMBUNG, SIMPAN, LINDUNG…) |
+| Core analogy line ("Emas = X anda") | Drop part 1 |
+| Question CTA ("kenapa biarkan…?") | Drop part 2 |
+| Recap | "DARI … / KE …" from the story's milestones ending on EMAS, ANDA |
+| Sign-off | Finale: tagline, "Moga perkongsian ini bermanfaat", TAUFIK MUSA, DEALER PUBLIC GOLD, simpanemasfizikal.com, then the bar-44 callback question |
+
+Fact-check the post itself before animating it, because his copy sometimes carries viral-article errors. Correct them on-screen and tell him what you changed and why, since he may also want to fix the post. Examples from the Chang'e-4 post:
+- It was cotton that sprouted, not potato.
+- The biosphere carried fruit-fly eggs, not silkworm eggs.
+- The South Pole–Aitken basin is about 6–8 km deep, not 13 km.
+- Chang'e-6 also landed on the far side in 2024, so China is the only *country*, but Chang'e-4 is not the only *robot*.
+
+The gold palette for the money section: `[255,204,96]` / `[255,140,60]`. The shared helper `goldbar()` from the Chang'e-4 scenes.js is worth copying (a 999.9 trapezoid bar with a gradient).
 
 ## sfx.json
 

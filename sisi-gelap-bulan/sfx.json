@@ -1,0 +1,15 @@
+{
+  "key_shift": -2,
+  "events": [
+    {"type": "beep2", "bar": 0, "beat": 0.3},
+    {"type": "beep2", "bar": 1, "beat": 0.3},
+    {"type": "shutter", "bar": 4, "beat": 1.2},
+    {"type": "shutter", "bar": 5, "beat": 1.2},
+    {"type": "whoosh", "bar": 12, "beat": 0, "length": 1.6, "gain": 0.35},
+    {"type": "whoosh", "bar": 16, "beat": 0, "length": 1.2, "gain": 0.3},
+    {"type": "boom", "bar": 18, "beat": 0, "gain": 0.5},
+    {"type": "coin", "bar": 32, "beat": 2},
+    {"type": "coin", "bar": 36, "beat": 0.5},
+    {"type": "beep2", "bar": 44, "beat": 0.2}
+  ]
+}
