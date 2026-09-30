@@ -1,0 +1,19 @@
+{
+  "key_shift": -2,
+  "events": [
+    {"type": "whoosh", "bar": 0, "beat": 0.3, "length": 1.2, "gain": 0.25},
+    {"type": "whoosh", "bar": 2, "beat": 0, "length": 1.0},
+    {"type": "shutter", "bar": 4, "beat": 2.0},
+    {"type": "clicks", "bar": 6, "beat": 0.5, "count": 5},
+    {"type": "whoosh", "bar": 14, "beat": 0, "length": 1.2},
+    {"type": "clicks", "bar": 16, "beat": 2.8, "count": 3},
+    {"type": "boom", "bar": 22, "beat": 0.5, "gain": 0.4},
+    {"type": "clicks", "bar": 32, "beat": 0.8, "count": 3},
+    {"type": "coin", "bar": 33, "beat": 0.5},
+    {"type": "coin", "bar": 33, "beat": 1.5},
+    {"type": "whoosh", "bar": 36, "beat": 1.5, "length": 1.2},
+    {"type": "boom", "bar": 38, "beat": 0, "gain": 0.6},
+    {"type": "coin", "bar": 40, "beat": 0.5},
+    {"type": "bell", "bar": 44, "beat": 0.2, "note": 88}
+  ]
+}
