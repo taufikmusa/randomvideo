@@ -1,0 +1,194 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Carousel Dana Anak</title>
+<style>
+@font-face{font-family:PF;font-weight:900;font-style:normal;src:url(fonts/Playfair-900.woff2)}
+@font-face{font-family:PF;font-weight:700;font-style:italic;src:url(fonts/Playfair-700i.woff2)}
+@font-face{font-family:IN;font-weight:500;src:url(fonts/Inter-500.woff2)}
+@font-face{font-family:IN;font-weight:800;src:url(fonts/Inter-800.woff2)}
+@font-face{font-family:IN;font-weight:900;src:url(fonts/Inter-900.woff2)}
+@font-face{font-family:MO;font-weight:700;src:url(fonts/Mono-700.woff2)}
+html,body{margin:0;background:#000}
+canvas{display:block;width:1890px;height:337px}
+</style>
+</head>
+<body>
+<canvas id="c" width="7560" height="1350"></canvas>
+<script>
+// 7-slide IG carousel (1080x1350 each) drawn as one seamless 7560px panorama, then sliced.
+const SW = 1080, SH = 1350, N = 7;
+const C = { navy: '#07152B', navy2: '#1E3050', y: '#FFCE32', ylt: '#FFF8D6', red: '#EF4444', green: '#16A34A', muted: '#6B7280' };
+const X = document.getElementById('c').getContext('2d');
+const IMG = {};
+const font = (f, w, s, i) => `${i ? 'italic ' : ''}${w} ${s}px ${f}`;
+function txt(s, x, y, f, fill, align = 'left', ls = 0) { X.save(); X.font = f; X.textAlign = align; X.letterSpacing = ls + 'px'; X.fillStyle = fill; X.fillText(s, x, y); X.restore(); }
+function rr(x, y, w, h, r) { X.beginPath(); X.roundRect(x, y, w, h, r); }
+function gold(x0, y0, x1, y1) { const g = X.createLinearGradient(x0, y0, x1, y1); [[0, '#7d5210'], [.2, '#e2ad3b'], [.42, '#fff0b3'], [.58, '#f4c54a'], [.8, '#a8741a'], [1, '#f2d27a']].forEach(([o, c]) => g.addColorStop(o, c)); return g; }
+function wrap(s, f, maxW) { X.save(); X.font = f; const out = []; let line = ''; for (const w of s.split(' ')) { const t = line ? line + ' ' + w : w; if (X.measureText(t).width > maxW && line) { out.push(line); line = w; } else line = t; } out.push(line); X.restore(); return out; }
+function para(s, x, y, f, lh, fill, maxW, align = 'left') { const ls = wrap(s, f, maxW); ls.forEach((l, i) => txt(l, x, y + i * lh, f, fill, align)); return y + ls.length * lh; }
+function pill(s, x, y, bg, fg, f = font('MO', 700, 26), h = 60, ls = 4) { X.save(); X.font = f; X.letterSpacing = ls + 'px'; const w = X.measureText(s).width + 56; X.restore(); rr(x, y, w, h, h / 2); X.fillStyle = bg; X.fill(); txt(s, x + 28, y + h * .66, f, fg, 'left', ls); return w; }
+function photo(im, cx, cy, w, rot) {
+  const h = w * im.height / im.width, b = 18;
+  X.save(); X.translate(cx, cy); X.rotate(rot);
+  X.save(); X.filter = 'blur(28px)'; X.fillStyle = 'rgba(0,0,0,.5)'; X.fillRect(-w / 2 - b + 16, -h / 2 - b + 34, w + 2 * b, h + 2 * b + 60); X.restore();
+  X.fillStyle = '#fbfaf6'; X.fillRect(-w / 2 - b, -h / 2 - b, w + 2 * b, h + 2 * b + 60); X.drawImage(im, -w / 2, -h / 2, w, h);
+  X.save(); X.rotate(-.06); X.fillStyle = 'rgba(255,214,90,.8)'; X.fillRect(-90, -h / 2 - b - 28, 180, 52); X.restore();
+  X.restore();
+}
+function cutout(im, x, y, h) { const w = h * im.width / im.height; X.drawImage(im, x - w / 2, y - h, w, h); }
+function tick(x, y, r, col = C.green) { X.beginPath(); X.arc(x, y, r, 0, 7); X.fillStyle = col; X.fill(); X.strokeStyle = '#fff'; X.lineWidth = r * .22; X.lineCap = 'round'; X.lineJoin = 'round'; X.beginPath(); X.moveTo(x - r * .42, y + r * .04); X.lineTo(x - r * .12, y + r * .34); X.lineTo(x + r * .45, y - r * .3); X.stroke(); }
+function sparkle(x, y, s) { X.save(); X.translate(x, y); X.fillStyle = '#fff6cf'; X.beginPath(); X.moveTo(0, -s); X.quadraticCurveTo(0, 0, s, 0); X.quadraticCurveTo(0, 0, 0, s); X.quadraticCurveTo(0, 0, -s, 0); X.quadraticCurveTo(0, 0, 0, -s); X.fill(); X.restore(); }
+function goldBar(cx, cy, w, h, rot = 0) { X.save(); X.translate(cx, cy); X.rotate(rot); const r = h * .12; rr(-w / 2, -h / 2 + h * .1, w, h, r); X.fillStyle = '#6b440c'; X.fill(); rr(-w / 2, -h / 2, w, h, r); X.fillStyle = gold(-w / 2, -h / 2, w / 2, h / 2); X.fill(); rr(-w / 2 + h * .1, -h / 2 + h * .1, w - h * .2, h - h * .2, r * .6); X.fillStyle = gold(w / 2, h / 2, -w / 2, -h / 2); X.fill(); X.restore(); }
+
+// ---------- backgrounds + the continuous timeline ----------
+const BG = ['navy', 'navy', 'navy', 'yel', 'navy', 'navy', 'navy'];
+function backgrounds() {
+  for (let i = 0; i < N; i++) {
+    const x0 = i * SW;
+    if (BG[i] === 'yel') { X.fillStyle = C.y; X.fillRect(x0, 0, SW, SH); X.fillStyle = 'rgba(7,21,43,.08)'; for (let y = 30; y < SH; y += 60) for (let x = 30; x < SW; x += 60) { X.beginPath(); X.arc(x0 + x, y, 3, 0, 7); X.fill(); } }
+    else { X.fillStyle = C.navy; X.fillRect(x0, 0, SW, SH); const g = X.createRadialGradient(x0 + 540, 700, 0, x0 + 540, 700, 900); g.addColorStop(0, 'rgba(30,48,80,.95)'); g.addColorStop(1, 'rgba(7,21,43,0)'); X.fillStyle = g; X.fillRect(x0, 0, SW, SH); }
+  }
+  // big decorative arcs that cross slide edges (seamless swipe)
+  X.save(); X.strokeStyle = 'rgba(255,206,50,.10)'; X.lineWidth = 3;
+  [[1080, 120], [3240, 1250], [5400, 140], [7560, 1200]].forEach(([cx, cy]) => { for (let k = 0; k < 6; k++) { X.beginPath(); X.arc(cx, cy, 140 + k * 80, 0, 7); X.stroke(); } });
+  X.restore();
+  // timeline along the bottom: one node per slide
+  const y = 1268;
+  X.strokeStyle = 'rgba(255,206,50,.45)'; X.lineWidth = 4; X.setLineDash([14, 12]); X.beginPath(); X.moveTo(0, y); X.lineTo(SW * N, y); X.stroke(); X.setLineDash([]);
+  for (let i = 0; i < N; i++) {
+    const cx = i * SW + 120, yel = BG[i] === 'yel';
+    X.save(); X.fillStyle = yel ? C.y : C.navy; X.fillRect(cx - 60, y - 30, 280, 60); X.restore();
+    X.beginPath(); X.arc(cx, y, 22, 0, 7); X.fillStyle = yel ? C.navy : C.y; X.fill();
+    txt(String(i + 1).padStart(2, '0') + ' / 07', cx + 40, y + 10, font('MO', 700, 26), yel ? C.navy : '#fff', 'left', 3);
+  }
+}
+function chrome(i) {
+  const x0 = i * SW, yel = BG[i] === 'yel';
+  // handle pill
+  rr(x0 + 56, 52, 290, 60, 30); X.fillStyle = yel ? C.navy : 'rgba(255,255,255,.12)'; X.fill();
+  X.beginPath(); X.arc(x0 + 88, 82, 10, 0, 7); X.fillStyle = C.y; X.fill();
+  txt('@taufik.pg', x0 + 108, 93, font('IN', 800, 32), '#fff');
+  // swipe arrow (all but the last)
+  if (i < N - 1) {
+    const ax = x0 + SW - 96, ay = 1268;
+    X.beginPath(); X.arc(ax, ay, 44, 0, 7); X.fillStyle = yel ? C.navy : C.y; X.fill();
+    X.strokeStyle = yel ? C.y : C.navy; X.lineWidth = 8; X.lineCap = 'round'; X.lineJoin = 'round';
+    X.beginPath(); X.moveTo(ax - 16, ay); X.lineTo(ax + 16, ay); X.moveTo(ax + 2, ay - 15); X.lineTo(ax + 17, ay); X.lineTo(ax + 2, ay + 15); X.stroke();
+    txt('SWIPE', ax - 64, ay + 9, font('MO', 700, 24), yel ? C.navy : C.y, 'right', 4);
+  }
+}
+
+// ---------- slides ----------
+const S = [
+  function s1(x) {
+    cutout(IMG.thumbs, x + 850, 1230, 800);
+    pill('SOALAN DI FEED THREADS', x + 70, 170, C.red, '#fff');
+    // chat bubble
+    rr(x + 70, 260, 640, 300, 36); X.fillStyle = '#fff'; X.fill();
+    X.beginPath(); X.moveTo(x + 140, 560); X.lineTo(x + 120, 610); X.lineTo(x + 200, 560); X.fill();
+    para('“Hi i nak tanya, saving untuk future anak better simpan/invest dekat mana eh?”', x + 110, 335, font('IN', 800, 40), 52, '#111', 560);
+    txt('Dana masa', x + 70, 760, font('PF', 900, 92), '#fff');
+    txt('depan anak:', x + 70, 865, font('PF', 900, 92), '#fff');
+    txt('simpan di', x + 70, 975, font('PF', 700, 96, true), gold(x + 70, 890, x + 500, 975));
+    txt('mana?', x + 70, 1075, font('PF', 700, 96, true), gold(x + 70, 990, x + 400, 1075));
+    txt('Jawapan saya', x + 70, 1150, font('IN', 800, 36), 'rgba(255,255,255,.8)'); txt('dalam 7 slaid →', x + 70, 1195, font('IN', 800, 36), C.y);
+  },
+  function s2(x) {
+    photo(IMG.blue, x + 905, 330, 200, .1);
+    pill('KESILAPAN PALING BIASA', x + 70, 170, C.red, '#fff');
+    txt('Duit anak terbiar', x + 70, 330, font('PF', 900, 76), '#fff');
+    txt('dalam akaun', x + 70, 420, font('PF', 900, 76), '#fff');
+    txt('bank biasa.', x + 70, 515, font('PF', 700, 84, true), '#ff8a80');
+    ['Simpanan anak', 'Hadiah kelahiran', 'Duit raya'].reduce((xx, s) => xx + pill(s, xx, 570, 'rgba(255,255,255,.12)', '#fff', font('IN', 800, 30), 60, 0) + 14, x + 70);
+    const card = (y, n, h, b) => { rr(x + 70, y, 940, 250, 28); X.fillStyle = 'rgba(239,68,68,.12)'; X.fill(); X.strokeStyle = 'rgba(239,68,68,.6)'; X.lineWidth = 3; X.stroke(); X.beginPath(); X.arc(x + 150, y + 80, 44, 0, 7); X.fillStyle = C.red; X.fill(); txt(n, x + 150, y + 96, font('IN', 900, 40), '#fff', 'center'); txt(h, x + 220, y + 96, font('IN', 900, 46), '#fff'); para(b, x + 110, y + 170, font('IN', 500, 34), 44, 'rgba(255,255,255,.8)', 860); };
+    card(680, '1', 'Mudah “terpinjam”', 'Wang tunai di bank terlalu mudah dipinjam untuk belanja harian keluarga.');
+    card(950, '2', 'Dimamah inflasi', 'Dalam 15–18 tahun, kos yuran & sara hidup pasti berganda lebih mahal.');
+  },
+  function s3(x) {
+    const book = (bx, by, title, author, col) => { X.save(); X.translate(bx, by); X.rotate(-.05); X.save(); X.filter = 'blur(18px)'; X.fillStyle = 'rgba(0,0,0,.5)'; X.fillRect(-90, -110, 200, 260); X.restore(); X.fillStyle = '#e8e2d4'; X.fillRect(-84, -124, 190, 256); X.fillStyle = col; X.fillRect(-96, -130, 190, 256); X.fillStyle = 'rgba(0,0,0,.25)'; X.fillRect(-96, -130, 12, 256); wrap(title, font('PF', 900, 28), 150).forEach((l, i) => txt(l, 0, -60 + i * 32, font('PF', 900, 28), '#fff', 'center')); X.fillStyle = C.y; X.fillRect(-36, 50, 72, 3); txt(author.toUpperCase(), 0, 90, font('MO', 700, 13), 'rgba(255,255,255,.85)', 'center', 2); X.restore(); };
+    pill('2 BUKU · 2 PRINSIP', x + 70, 170, C.y, C.navy);
+    book(x + 170, 420, 'The Psychology of Money', 'Morgan Housel', '#0e7c66');
+    txt('Masa ialah kelebihan', x + 320, 360, font('PF', 900, 54), '#fff');
+    txt('terbesar anak kecil.', x + 320, 425, font('PF', 900, 54), '#fff');
+    para('18 tahun menuju universiti = medan terbaik untuk biar masa melindungi nilai simpanan.', x + 320, 490, font('IN', 500, 32), 42, 'rgba(255,255,255,.8)', 680);
+    rr(x + 320, 610, 580, 64, 32); X.fillStyle = 'rgba(255,206,50,.15)'; X.fill(); txt('Hadiah terbaik: Freedom & Time', x + 350, 653, font('IN', 800, 32), C.y);
+    book(x + 170, 900, 'The Success Principles', 'Jack Canfield', '#b8322a');
+    txt('Disiplin kecil,', x + 320, 840, font('PF', 900, 54), '#fff');
+    txt('setiap bulan.', x + 320, 905, font('PF', 700, 58, true), gold(x + 320, 860, x + 700, 905));
+    para('Bukan modal puluhan ribu sekali gus. Buat konsisten, tanpa kompromi: No-Exceptions Rule.', x + 320, 970, font('IN', 500, 32), 42, 'rgba(255,255,255,.8)', 680);
+    // 18-year ruler
+    const y = 1150; X.strokeStyle = C.y; X.lineWidth = 6; X.beginPath(); X.moveTo(x + 90, y); X.lineTo(x + 990, y); X.stroke();
+    for (let a = 0; a <= 18; a++) { const xx = x + 90 + a * 50; X.fillStyle = C.y; X.fillRect(xx - 2, y - (a % 6 ? 10 : 20), 4, a % 6 ? 20 : 40); if (a % 6 === 0) txt(String(a), xx, y + 50, font('IN', 900, 30), C.y, 'center'); }
+    txt('0 → 18 TAHUN', x + 90, y - 40, font('MO', 700, 22), 'rgba(255,255,255,.65)', 'left', 3);
+  },
+  function s4(x) {
+    photo(IMG.bar10, x + 820, 860, 330, .07);
+    pill('PESAN GURU EMAS SAYA', x + 70, 170, C.navy, C.y);
+    txt('1 Bulan', x + 70, 350, font('PF', 900, 150), C.navy);
+    txt('1 Gram Emas', x + 70, 500, font('PF', 700, 140, true), '#7d5210');
+    txt('Tn Mohd Zulkifli Shafie · Pengasas G100 Network', x + 70, 570, font('IN', 800, 28), 'rgba(7,21,43,.75)');
+    const steps = [['Buka Akaun GAP Junior', 'Seawal hari pertama kelahiran.'], ['1 gram setiap bulan', 'Umur 1 hingga 18 tahun, atau tukar duit raya ke gram.'], ['Kalis kenaikan yuran', 'Umur 18: sekitar 150 hingga 200 gram emas.']];
+    steps.forEach(([h, b], i) => {
+      const y = 650 + i * 180; rr(x + 70, y, 560, 160, 24); X.fillStyle = C.navy; X.fill();
+      X.beginPath(); X.arc(x + 135, y + 80, 38, 0, 7); X.fillStyle = C.y; X.fill(); txt(String(i + 1), x + 135, y + 96, font('IN', 900, 44), C.navy, 'center');
+      txt(h, x + 195, y + 66, font('IN', 900, 34), '#fff'); para(b, x + 195, y + 110, font('IN', 500, 26), 32, 'rgba(255,255,255,.75)', 410);
+    });
+  },
+  function s5(x) {
+    photo(IMG.green, x + 910, 290, 190, -.08);
+    pill('3 PENGAJARAN', x + 70, 170, C.y, C.navy);
+    txt('Persediaan dana', x + 70, 330, font('PF', 900, 76), '#fff');
+    txt('masa depan anak.', x + 70, 420, font('PF', 700, 80, true), gold(x + 70, 360, x + 700, 420));
+    const L = [['Manfaatkan garis masa 18 tahun', 'Mula seawal kelahiran. Sikit-sikit dari awal jauh lebih ringan.'], ['Elak perangkap “duit terpinjam”', 'Alihkan dana anak ke aset fizikal yang terkunci selamat.'], ['Sasarkan gram, bukan ringgit', 'Emas fizikal jaga kuasa beli tabung pendidikan anak.']];
+    L.forEach(([h, b], i) => {
+      const y = 520 + i * 225; rr(x + 70, y, 940, 205, 28); X.fillStyle = 'rgba(255,255,255,.07)'; X.fill(); X.strokeStyle = 'rgba(255,206,50,.5)'; X.lineWidth = 3; X.stroke();
+      txt('#' + (i + 1), x + 110, y + 92, font('PF', 900, 76), C.y);
+      txt(h, x + 230, y + 80, font('IN', 900, 40), '#fff'); para(b, x + 230, y + 135, font('IN', 500, 32), 40, 'rgba(255,255,255,.78)', 740);
+    });
+  },
+  function s6(x) {
+    cutout(IMG.bar, x + 850, 1230, 690);
+    pill('ANALOGI', x + 70, 170, C.y, C.navy);
+    txt('Tunai di bank:', x + 70, 320, font('PF', 900, 66), '#fff');
+    txt('botol bocor halus.', x + 70, 400, font('PF', 700, 66, true), '#ff8a80');
+    txt('Emas:', x + 70, 500, font('PF', 900, 66), '#fff');
+    txt('perigi kekal.', x + 70, 580, font('PF', 700, 66, true), gold(x + 70, 520, x + 600, 580));
+    // bottle + well icons
+    X.save(); X.translate(x + 150, 830); X.save(); X.beginPath(); X.roundRect(-55, -120, 110, 240, 26); X.clip(); X.fillStyle = 'rgba(58,116,204,.9)'; X.fillRect(-55, 70, 110, 60); X.restore(); X.strokeStyle = '#fff'; X.lineWidth = 6; X.beginPath(); X.roundRect(-55, -120, 110, 240, 26); X.stroke(); X.fillStyle = '#fff'; X.fillRect(-22, -150, 44, 30); [0, 1, 2].forEach(k => { X.fillStyle = `rgba(58,116,204,${1 - k * .3})`; X.beginPath(); X.arc(46, 110 + k * 40, 9, 0, 7); X.fill(); }); X.restore();
+    X.save(); X.translate(x + 380, 870); X.fillStyle = C.y; X.fillRect(-85, -30, 170, 110); X.fillStyle = 'rgba(7,21,43,.35)'; for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) X.fillRect(-78 + c * 56 + (r % 2) * 14, -24 + r * 34, 44, 26); X.fillStyle = C.y; X.fillRect(-80, -190, 12, 160); X.fillRect(68, -190, 12, 160); X.beginPath(); X.moveTo(-105, -185); X.lineTo(0, -245); X.lineTo(105, -185); X.closePath(); X.fill(); X.restore();
+    sparkle(x + 440, 810, 22);
+    // RM500 card
+    rr(x + 70, 990, 500, 220, 28); X.fillStyle = 'rgba(255,255,255,.08)'; X.fill(); X.strokeStyle = 'rgba(239,68,68,.6)'; X.lineWidth = 3; X.stroke();
+    txt('Duit raya RM500 hari ini', x + 100, 1050, font('IN', 800, 32), '#fff');
+    txt('≈ separuh kuasa beli', x + 100, 1108, font('IN', 900, 42), '#ff8a80');
+    txt('dalam 15 tahun, jika kekal tunai.', x + 100, 1155, font('IN', 500, 28), 'rgba(255,255,255,.75)');
+    txt('(anggaran)', x + 100, 1190, font('IN', 500, 22), 'rgba(255,255,255,.5)');
+  },
+  function s7(x) {
+    cutout(IMG.arms, x + 850, 1230, 740);
+    pill('KESIMPULAN', x + 70, 170, C.y, C.navy);
+    txt('Hadiahkan', x + 70, 340, font('PF', 900, 96), '#fff');
+    txt('masa depan', x + 70, 445, font('PF', 900, 96), '#fff');
+    txt('bebas hutang.', x + 70, 560, font('PF', 700, 92, true), gold(x + 70, 480, x + 660, 560));
+    para('Mulakan tabung emas anak bermula hari ini. Bila dia melangkah ke menara gading, dananya dah tersedia.', x + 70, 640, font('IN', 800, 34), 46, 'rgba(255,255,255,.85)', 520);
+    // CTA chips
+    const ctas = ['LIKE', 'SHARE', 'SAVE', 'FOLLOW'];
+    ctas.forEach((lab, i) => { const cx = x + 70 + (i % 2) * 250, yy = 880 + Math.floor(i / 2) * 84; rr(cx, yy, 230, 66, 33); X.fillStyle = i === 3 ? C.y : 'rgba(255,255,255,.12)'; X.fill(); txt(lab, cx + 115, yy + 44, font('IN', 900, 30), i === 3 ? C.navy : '#fff', 'center', 3); });
+    txt('Ikuti', x + 70, 1100, font('IN', 800, 32), 'rgba(255,255,255,.7)'); txt('@taufik.pg', x + 70, 1170, font('IN', 900, 64), gold(x + 70, 1115, x + 420, 1170));
+  },
+];
+
+window.ready = Promise.all([
+  ...[font('PF', 900, 40), font('PF', 700, 40, true), font('IN', 500, 40), font('IN', 800, 40), font('IN', 900, 40), font('MO', 700, 40)].map(f => document.fonts.load(f)),
+  ...Object.entries({ purple: 'card-purple.jpg', bar10: 'bar-10g.jpg', blue: 'card-blue.jpg', green: 'coin-green.jpg', arms: 'taufik-arms.png', thumbs: 'taufik-thumbs.png', bar: 'taufik-bar.png' })
+    .map(([k, f]) => new Promise(r => { const i = new Image(); i.onload = () => { IMG[k] = i; r(); }; i.src = 'img/' + f; })),
+]).then(() => {
+  backgrounds();
+  S.forEach((fn, i) => { X.save(); X.beginPath(); X.rect(i * SW, 0, SW, SH); X.clip(); fn(i * SW); X.restore(); chrome(i); });
+  return true;
+});
+</script>
+</body>
+</html>
