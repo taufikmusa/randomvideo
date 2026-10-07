@@ -3,7 +3,8 @@
 Setiap folder = satu video motion graphics (canvas `main.js` + `music.py` + `render.js`).
 Render: `python3 music.py && node render.js` dalam folder projek.
 
-## Hantar video (WAJIB)
+## Hantar hasil (WAJIB)
+- **Gambar** (JPG/PNG, carousel, post IG): hantar terus dalam chat (SendUserFile). Tak perlu commit ke repo.
 - **Jangan** hantar MP4 dalam chat (SendUserFile). Commit + push MP4, kemudian beri **link GitHub raw sahaja**:
   `https://github.com/taufikmusa/randomvideo/raw/<branch>/<projek>/<projek>.mp4`
   (iPhone: buka link → video main → Share → Save Video). Sertakan durasi + saiz.
