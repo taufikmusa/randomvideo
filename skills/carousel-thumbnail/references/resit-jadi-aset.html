@@ -1,0 +1,207 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Carousel Resit Aset</title>
+<style>
+@font-face{font-family:AN;src:url(fonts/Anton-Regular.ttf)}
+@font-face{font-family:PF;font-weight:900;font-style:normal;src:url(fonts/Playfair-900.woff2)}
+@font-face{font-family:PF;font-weight:700;font-style:italic;src:url(fonts/Playfair-700i.woff2)}
+@font-face{font-family:IN;font-weight:500;src:url(fonts/Inter-500.woff2)}
+@font-face{font-family:IN;font-weight:800;src:url(fonts/Inter-800.woff2)}
+@font-face{font-family:IN;font-weight:900;src:url(fonts/Inter-900.woff2)}
+@font-face{font-family:MO;font-weight:700;src:url(fonts/Mono-700.woff2)}
+html,body{margin:0;background:#000}
+canvas{display:block;width:1800px;height:450px}
+</style>
+</head>
+<body>
+<canvas id="c" width="5400" height="1350"></canvas>
+<script>
+// 5-slide IG carousel "Resit → Aset" — thumbnail style (Anton + brush blocks + white-outline portraits), seamless panorama.
+const SW = 1080, SH = 1350, N = 5; window.N = N;
+const C = { navy: '#07152B', y: '#FFCE32', red: '#E0262E', dred: '#3a0a0e', green: '#16A34A', ink: '#0b0b0b' };
+const X = document.getElementById('c').getContext('2d');
+const IMG = {};
+const font = (f, w, s, i) => f === 'AN' ? `${s}px AN` : `${i ? 'italic ' : ''}${w} ${s}px ${f}`;
+function rng(s) { return () => { s |= 0; s = s + 0x6D2B79F5 | 0; let t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function txt(s, x, y, f, fill, align = 'left', ls = 0) { X.save(); X.font = f; X.textAlign = align; X.letterSpacing = ls + 'px'; X.fillStyle = fill; X.fillText(s, x, y); X.restore(); }
+function tw(s, f, ls = 0) { X.save(); X.font = f; X.letterSpacing = ls + 'px'; const w = X.measureText(s).width; X.restore(); return w; }
+function rr(x, y, w, h, r) { X.beginPath(); X.roundRect(x, y, w, h, r); }
+function gold(x0, y0, x1, y1) { const g = X.createLinearGradient(x0, y0, x1, y1); [[0, '#b07a12'], [.3, '#ffd23f'], [.5, '#fff3b0'], [.7, '#ffc81f'], [1, '#c98e12']].forEach(([o, c]) => g.addColorStop(o, c)); return g; }
+function wrap(s, f, maxW) { X.save(); X.font = f; const out = []; let line = ''; for (const w of s.split(' ')) { const t = line ? line + ' ' + w : w; if (X.measureText(t).width > maxW && line) { out.push(line); line = w; } else line = t; } out.push(line); X.restore(); return out; }
+function para(s, x, y, f, lh, fill, maxW, align = 'left') { const ls = wrap(s, f, maxW); ls.forEach((l, i) => txt(l, x, y + i * lh, f, fill, align)); return y + ls.length * lh; }
+// rough brush-stroke block (thumbnail style)
+function brush(x, y, w, h, col, seed = 1) {
+  const R = rng(seed); X.save(); X.fillStyle = col; X.beginPath();
+  X.moveTo(x + R() * 14, y + R() * 10);
+  for (let i = 1; i <= 24; i++) X.lineTo(x + w * i / 24, y + (R() - .5) * 14);
+  for (let i = 1; i <= 10; i++) X.lineTo(x + w + (R() - .3) * 26, y + h * i / 10);
+  for (let i = 23; i >= 0; i--) X.lineTo(x + w * i / 24, y + h + (R() - .5) * 14);
+  for (let i = 9; i > 0; i--) X.lineTo(x - (R() - .3) * 26, y + h * i / 10);
+  X.closePath(); X.fill();
+  for (let i = 0; i < 40; i++) { X.globalAlpha = .5 + R() * .5; X.fillRect(x + w + 10 + R() * 40, y + R() * h, 3 + R() * 12, 2 + R() * 4); } // dry-brush tail
+  X.restore();
+}
+// Anton headline word with hard drop shadow
+function head(s, x, y, size, fill, shadow = C.ink, align = 'left') {
+  X.save(); X.font = font('AN', 0, size); X.textAlign = align; X.lineJoin = 'round';
+  X.fillStyle = shadow; X.fillText(s, x + size * .05, y + size * .06);
+  X.strokeStyle = shadow; X.lineWidth = size * .07; X.strokeText(s, x, y);
+  X.fillStyle = fill; X.fillText(s, x, y); X.restore();
+}
+function brushHead(s, x, y, size, fill, bg, seed) { const w = tw(s, font('AN', 0, size)); brush(x - 26, y - size * .9, w + 52, size * 1.05, bg, seed); txt(s, x, y, font('AN', 0, size), fill); return w; }
+function pill(s, x, y, bg, fg, f = font('MO', 700, 26), h = 60, ls = 4) { const w = tw(s, f, ls) + 56; rr(x, y, w, h, h / 2); X.fillStyle = bg; X.fill(); txt(s, x + 28, y + h * .66, f, fg, 'left', ls); return w; }
+function cutout(im, x, y, h) { const w = h * im.width / im.height; X.drawImage(im, x - w / 2, y - h, w, h); }
+function photo(im, cx, cy, w, rot) {
+  const h = w * im.height / im.width, b = 16;
+  X.save(); X.translate(cx, cy); X.rotate(rot);
+  X.save(); X.filter = 'blur(26px)'; X.fillStyle = 'rgba(0,0,0,.55)'; X.fillRect(-w / 2 - b + 16, -h / 2 - b + 30, w + 2 * b, h + 2 * b + 50); X.restore();
+  X.fillStyle = '#fbfaf6'; X.fillRect(-w / 2 - b, -h / 2 - b, w + 2 * b, h + 2 * b + 50); X.drawImage(im, -w / 2, -h / 2, w, h);
+  X.save(); X.rotate(-.06); X.fillStyle = 'rgba(255,214,90,.85)'; X.fillRect(-80, -h / 2 - b - 26, 160, 48); X.restore();
+  X.restore();
+}
+function stamp(lines, cx, cy, rot, col, w, h) {
+  X.save(); X.translate(cx, cy); X.rotate(rot); X.globalAlpha = .92; X.strokeStyle = col; X.lineWidth = 9; rr(-w / 2, -h / 2, w, h, 16); X.stroke(); X.lineWidth = 3; rr(-w / 2 + 14, -h / 2 + 14, w - 28, h - 28, 10); X.stroke();
+  if (lines.length === 1) txt(lines[0], 0, 26, font('AN', 0, 76), col, 'center', 2); else { txt(lines[0], 0, 4, font('AN', 0, 64), col, 'center', 2); txt(lines[1], 0, 50, font('MO', 700, 22), col, 'center', 4); }
+  X.restore();
+}
+function tick(x, y, r, col = C.green) { X.beginPath(); X.arc(x, y, r, 0, 7); X.fillStyle = col; X.fill(); X.strokeStyle = '#fff'; X.lineWidth = r * .22; X.lineCap = 'round'; X.lineJoin = 'round'; X.beginPath(); X.moveTo(x - r * .42, y + r * .04); X.lineTo(x - r * .12, y + r * .34); X.lineTo(x + r * .45, y - r * .3); X.stroke(); }
+
+// ---------- backgrounds ----------
+const BG = ['red', 'dark', 'navy', 'yel', 'navy'];
+function backgrounds() {
+  for (let i = 0; i < N; i++) {
+    const x0 = i * SW;
+    if (BG[i] === 'yel') { X.fillStyle = C.y; X.fillRect(x0, 0, SW, SH); }
+    else {
+      const [a, b] = BG[i] === 'red' ? ['#5c0d14', '#14040a'] : BG[i] === 'dark' ? ['#2a0c10', '#0a0a0e'] : ['#1E3050', C.navy];
+      const g = X.createRadialGradient(x0 + 540, 600, 0, x0 + 540, 600, 1000); g.addColorStop(0, a); g.addColorStop(1, b); X.fillStyle = g; X.fillRect(x0, 0, SW, SH);
+    }
+  }
+  // bokeh lights drifting across slide joins
+  const R = rng(9); X.save(); X.globalCompositeOperation = 'lighter';
+  for (let i = 0; i < 70; i++) { const x = R() * SW * N, y = R() * SH, r = 20 + R() * 90, ix = Math.floor(x / SW); if (BG[ix] === 'yel') continue; const g = X.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, `rgba(255,${150 + R() * 80 | 0},60,${.08 + R() * .1})`); g.addColorStop(1, 'rgba(255,150,60,0)'); X.fillStyle = g; X.fillRect(x - r, y - r, r * 2, r * 2); }
+  X.restore();
+  // grain
+  X.save(); X.globalAlpha = .06; for (let i = 0; i < 26000; i++) { X.fillStyle = R() < .5 ? '#000' : '#fff'; X.fillRect(R() * SW * N, R() * SH, 2, 2); } X.restore();
+  // continuous bottom track
+  const y = 1268; X.strokeStyle = 'rgba(255,206,50,.5)'; X.lineWidth = 4; X.setLineDash([14, 12]); X.beginPath(); X.moveTo(0, y); X.lineTo(SW * N, y); X.stroke(); X.setLineDash([]);
+}
+function chrome(i) {
+  const x0 = i * SW, yel = BG[i] === 'yel', y = 1268;
+  X.save(); X.fillStyle = yel ? C.y : 'rgba(10,10,14,.0)'; X.restore();
+  X.beginPath(); X.arc(x0 + 110, y, 22, 0, 7); X.fillStyle = yel ? C.ink : C.y; X.fill();
+  rr(x0 + 140, y - 28, 150, 56, 28); X.fillStyle = yel ? C.ink : 'rgba(0,0,0,.55)'; X.fill();
+  txt(`0${i + 1} / 0${N}`, x0 + 162, y + 10, font('MO', 700, 26), '#fff', 'left', 3);
+  // handle pill top-left (like Taufik's thumbnails, but top so it never hides content)
+  rr(x0 + 56, 52, 290, 60, 30); X.fillStyle = 'rgba(0,0,0,.78)'; X.fill();
+  X.beginPath(); X.arc(x0 + 88, 82, 10, 0, 7); X.fillStyle = C.y; X.fill();
+  txt('@taufik.pg', x0 + 108, 93, font('IN', 800, 32), '#fff');
+  if (i < N - 1) {
+    const ax = x0 + SW - 96;
+    X.beginPath(); X.arc(ax, y, 46, 0, 7); X.fillStyle = yel ? C.ink : C.y; X.fill();
+    X.strokeStyle = yel ? C.y : C.ink; X.lineWidth = 8; X.lineCap = 'round'; X.lineJoin = 'round';
+    X.beginPath(); X.moveTo(ax - 16, y); X.lineTo(ax + 16, y); X.moveTo(ax + 2, y - 15); X.lineTo(ax + 17, y); X.lineTo(ax + 2, y + 15); X.stroke();
+    rr(ax - 210, y - 26, 140, 52, 26); X.fillStyle = yel ? C.ink : 'rgba(0,0,0,.6)'; X.fill();
+    txt('SWIPE', ax - 140, y + 9, font('MO', 700, 24), C.y, 'center', 4);
+  }
+}
+
+// ---------- slides ----------
+function receipt(cx, cy, w, h, rot, rows) {
+  X.save(); X.translate(cx, cy); X.rotate(rot);
+  X.save(); X.filter = 'blur(20px)'; X.fillStyle = 'rgba(0,0,0,.5)'; X.fillRect(-w / 2 + 12, -h / 2 + 24, w, h); X.restore();
+  X.fillStyle = '#f7f4ec'; X.beginPath(); X.moveTo(-w / 2, -h / 2);
+  for (let i = 0; i <= 16; i++) X.lineTo(-w / 2 + w * i / 16, -h / 2 + (i % 2 ? 10 : 0));
+  X.lineTo(w / 2, h / 2); for (let i = 16; i >= 0; i--) X.lineTo(-w / 2 + w * i / 16, h / 2 - (i % 2 ? 12 : 0)); X.closePath(); X.fill();
+  txt('RESIT', 0, -h / 2 + 62, font('MO', 700, 30), '#222', 'center', 6);
+  X.strokeStyle = '#999'; X.setLineDash([6, 6]); X.lineWidth = 2; X.beginPath(); X.moveTo(-w / 2 + 24, -h / 2 + 82); X.lineTo(w / 2 - 24, -h / 2 + 82); X.stroke(); X.setLineDash([]);
+  rows.forEach(([a, b], i) => { const y = -h / 2 + 125 + i * 40; txt(a, -w / 2 + 28, y, font('MO', 700, 22), '#333'); txt(b, w / 2 - 28, y, font('MO', 700, 22), '#333', 'right'); });
+  const ty = -h / 2 + 125 + rows.length * 40 + 20;
+  X.strokeStyle = '#333'; X.lineWidth = 2; X.beginPath(); X.moveTo(-w / 2 + 24, ty - 26); X.lineTo(w / 2 - 24, ty - 26); X.stroke();
+  txt('BAKI SIMPANAN', -w / 2 + 28, ty + 10, font('MO', 700, 22), C.red); txt('RM 0', w / 2 - 28, ty + 10, font('AN', 0, 40), C.red, 'right');
+  X.restore();
+}
+const S = [
+  function s1(x) {
+    cutout(IMG.arms, x + 860, 1225, 960);
+    brushHead('KENAPA', x + 80, 280, 110, '#fff', C.ink, 21);
+    head('SIMPANAN', x + 70, 430, 140, '#fff');
+    head('ANDA JADI', x + 70, 570, 140, '#fff');
+    brushHead('RESIT?', x + 80, 740, 150, C.y, C.red, 22);
+    para('Dikumpul sikit-sikit setiap bulan... akhirnya tetap lesap.', x + 72, 830, font('IN', 800, 36), 48, '#fff', 500);
+    receipt(x + 290, 1085, 380, 300, -.07, [['Kasut baru', 'RM189'], ['Makan luar', 'RM76'], ['Gajet', 'RM450']]);
+  },
+  function s2(x) {
+    pill('MASALAH SEBENAR', x + 70, 170, C.red, '#fff');
+    head('BUKAN TAK', x + 70, 350, 120, '#fff'); head('MAMPU SIMPAN.', x + 70, 480, 120, 'rgba(255,255,255,.55)');
+    head('TAPI GAGAL', x + 70, 620, 120, C.y);
+    brushHead('PERTAHANKAN!', x + 80, 770, 116, '#fff', C.red, 31);
+    // leaking bank balance
+    X.save(); X.translate(x + 270, 1030); X.rotate(-.04);
+    rr(-170, -170, 340, 300, 30); X.fillStyle = '#16161c'; X.fill(); X.strokeStyle = '#444'; X.lineWidth = 4; X.stroke();
+    txt('BAKI AKAUN BANK', 0, -110, font('MO', 700, 22), 'rgba(255,255,255,.6)', 'center', 3);
+    txt('RM 3,200', 0, -30, font('AN', 0, 80), '#fff', 'center');
+    rr(-130, 20, 260, 18, 9); X.fillStyle = '#333'; X.fill(); rr(-130, 20, 90, 18, 9); X.fillStyle = C.red; X.fill();
+    txt('tunai melimpah', 0, 90, font('IN', 800, 24), 'rgba(255,255,255,.7)', 'center');
+    X.restore();
+    const chips = [['Belanja online', 900], ['Makan luar', 1020], ['Benda bukan-bukan', 1140]];
+    chips.forEach(([l, y], i) => {
+      X.strokeStyle = 'rgba(224,38,46,.7)'; X.lineWidth = 5; X.setLineDash([10, 10]); X.beginPath(); X.moveTo(x + 440, 1000 + i * 20); X.quadraticCurveTo(x + 520, y - 30, x + 590, y - 18); X.stroke(); X.setLineDash([]);
+      [0, 1].forEach(k => { X.fillStyle = C.red; X.beginPath(); X.arc(x + 470 + k * 50 + i * 10, 1010 + i * 40 + k * 30, 9, 0, 7); X.fill(); });
+      pill(l, x + 600, y - 52, 'rgba(224,38,46,.9)', '#fff', font('IN', 900, 30), 64, 0);
+    });
+    txt('Tangan jadi terlalu gatal nak berbelanja.', x + 72, 1210, font('IN', 800, 32), '#ff8a80');
+  },
+  function s3(x) {
+    pill('PENYIMPAN BIJAK', x + 70, 170, C.y, C.ink);
+    head('TUKAR SEBAHAGIAN', x + 70, 340, 106, '#fff');
+    head('TUNAI → EMAS', x + 70, 480, 130, C.y);
+    photo(IMG.dinar, x + 230, 800, 270, -.13);
+    photo(IMG.peacock, x + 850, 800, 270, .13);
+    photo(IMG.bar100, x + 540, 770, 300, 0);
+    brushHead('MASA BERTENANG', x + 80, 1185, 92, C.y, C.ink, 41);
+  },
+  function s4(x) {
+    cutout(IMG.bar, x + 860, 1225, 800);
+    pill('BEZA RASA', x + 70, 170, C.ink, C.y);
+    head('SAYANG NAK', x + 70, 340, 110, C.ink, 'rgba(0,0,0,.25)'); head('JUAL!', x + 70, 480, 140, C.red, C.ink);
+    para('Tak sanggup jual kepingan emas yang cantik semata-mata untuk nafsu remeh.', x + 72, 560, font('IN', 800, 32), 42, C.ink, 520);
+    // card A: digits on a screen
+    rr(x + 70, 680, 540, 230, 26); X.fillStyle = C.ink; X.fill();
+    txt('NAMPAK DI SKRIN', x + 100, 730, font('MO', 700, 22), 'rgba(255,255,255,.6)', 'left', 3);
+    txt('RM ratusan ribu', x + 100, 800, font('AN', 0, 56), '#fff');
+    txt('Rasa kaya. Tangan gatal.', x + 100, 865, font('IN', 900, 30), '#ff8a80');
+    // card B: gold in hand
+    rr(x + 70, 940, 540, 260, 26); X.fillStyle = '#fff'; X.fill();
+    X.save(); rr(x + 90, 960, 170, 220, 18); X.clip(); const im = IMG.tier, s = Math.max(170 / im.width, 220 / im.height); X.drawImage(im, x + 175 - im.width * s / 2, 1070 - im.height * s / 2, im.width * s, im.height * s); X.restore();
+    txt('SEKILO EMAS', x + 285, 1010, font('MO', 700, 22), 'rgba(11,11,11,.6)', 'left', 3);
+    txt('Tak rasa', x + 285, 1070, font('AN', 0, 48), C.ink); txt('sombong.', x + 285, 1125, font('AN', 0, 48), C.ink);
+    txt('Tenang & sayang.', x + 285, 1170, font('IN', 900, 28), C.green);
+  },
+  function s5(x) {
+    cutout(IMG.chest, x + 880, 1225, 840);
+    pill('JUJUR, KOMEN DI BAWAH', x + 70, 170, C.y, C.ink);
+    head('BERAPA HARI', x + 70, 330, 100, '#fff'); head('SIMPANAN GAJI', x + 70, 440, 100, '#fff'); head('BERTAHAN?', x + 70, 560, 110, C.y);
+    ['1 hari', '7 hari', '14 hari', '30 hari'].forEach((l, i) => { const cx = x + 70 + (i % 2) * 250, cy = 610 + Math.floor(i / 2) * 84; rr(cx, cy, 230, 66, 33); X.fillStyle = 'rgba(255,255,255,.12)'; X.fill(); X.strokeStyle = 'rgba(255,206,50,.6)'; X.lineWidth = 2; X.stroke(); txt(l, cx + 115, cy + 44, font('IN', 900, 30), '#fff', 'center'); });
+    txt('Emas mengunci tabiat', x + 72, 880, font('IN', 800, 34), 'rgba(255,255,255,.8)');
+    txt('boros menjadi...', x + 72, 925, font('IN', 800, 34), 'rgba(255,255,255,.8)');
+    X.save(); X.translate(x + 72, 1170); X.rotate(-.03); head('ASET!', 0, 0, 210, gold(0, -190, 520, 0), C.ink); X.restore();
+  },
+];
+
+window.ready = Promise.all([
+  ...[font('AN', 0, 40), font('PF', 900, 40), font('PF', 700, 40, true), font('IN', 500, 40), font('IN', 800, 40), font('IN', 900, 40), font('MO', 700, 40)].map(f => document.fonts.load(f)),
+  ...Object.entries({ arms: 'peluk-tubuh.png', bar: 'pegang-jongkong.png', chest: 'thumb-dada.png', bar100: 'jongkong-100g-kad-bungamas-ungu.jpg', peacock: 'jongkong-merak-100g-dulang-merah.jpg', dinar: 'kad-dinar-5-hijau-pantai.jpg', tier: 'set-jongkong-bertingkat-bunga-raya.jpg' })
+    .map(([k, f]) => new Promise(r => { const i = new Image(); i.onload = () => { IMG[k] = i; r(); }; i.src = 'img/' + f; })),
+]).then(() => {
+  backgrounds();
+  S.forEach((fn, i) => { X.save(); X.beginPath(); X.rect(i * SW, 0, SW, SH); X.clip(); fn(i * SW); X.restore(); chrome(i); });
+  // CTA strip on the last slide (over the track)
+  const x0 = (N - 1) * SW; ['LIKE', 'SHARE', 'FOLLOW'].forEach((l, i) => { const cx = x0 + 420 + i * 196; rr(cx - 88, 1240, 176, 56, 28); X.fillStyle = i === 2 ? C.y : 'rgba(0,0,0,.75)'; X.fill(); txt(l, cx, 1278, font('IN', 900, 26), i === 2 ? C.ink : '#fff', 'center', 3); });
+  return true;
+});
+</script>
+</body>
+</html>

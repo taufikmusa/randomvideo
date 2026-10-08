@@ -1,0 +1,232 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Carousel Resit Hilang</title>
+<style>
+@font-face{font-family:AN;src:url(fonts/Anton-Regular.ttf)}
+@font-face{font-family:PF;font-weight:900;font-style:normal;src:url(fonts/Playfair-900.woff2)}
+@font-face{font-family:PF;font-weight:700;font-style:italic;src:url(fonts/Playfair-700i.woff2)}
+@font-face{font-family:IN;font-weight:500;src:url(fonts/Inter-500.woff2)}
+@font-face{font-family:IN;font-weight:800;src:url(fonts/Inter-800.woff2)}
+@font-face{font-family:IN;font-weight:900;src:url(fonts/Inter-900.woff2)}
+@font-face{font-family:MO;font-weight:700;src:url(fonts/Mono-700.woff2)}
+html,body{margin:0;background:#000}
+canvas{display:block;width:1800px;height:450px}
+</style>
+</head>
+<body>
+<canvas id="c" width="5400" height="1350"></canvas>
+<script>
+// 5-slide IG carousel "Resit Hilang" — thumbnail style (Anton + brush blocks + white-outline portraits), seamless panorama.
+const SW = 1080, SH = 1350, N = 5; window.N = N;
+const C = { navy: '#07152B', y: '#FFCE32', red: '#E0262E', dred: '#3a0a0e', green: '#16A34A', ink: '#0b0b0b' };
+const X = document.getElementById('c').getContext('2d');
+const IMG = {};
+const font = (f, w, s, i) => f === 'AN' ? `${s}px AN` : `${i ? 'italic ' : ''}${w} ${s}px ${f}`;
+function rng(s) { return () => { s |= 0; s = s + 0x6D2B79F5 | 0; let t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function txt(s, x, y, f, fill, align = 'left', ls = 0) { X.save(); X.font = f; X.textAlign = align; X.letterSpacing = ls + 'px'; X.fillStyle = fill; X.fillText(s, x, y); X.restore(); }
+function tw(s, f, ls = 0) { X.save(); X.font = f; X.letterSpacing = ls + 'px'; const w = X.measureText(s).width; X.restore(); return w; }
+function rr(x, y, w, h, r) { X.beginPath(); X.roundRect(x, y, w, h, r); }
+function gold(x0, y0, x1, y1) { const g = X.createLinearGradient(x0, y0, x1, y1); [[0, '#b07a12'], [.3, '#ffd23f'], [.5, '#fff3b0'], [.7, '#ffc81f'], [1, '#c98e12']].forEach(([o, c]) => g.addColorStop(o, c)); return g; }
+function wrap(s, f, maxW) { X.save(); X.font = f; const out = []; let line = ''; for (const w of s.split(' ')) { const t = line ? line + ' ' + w : w; if (X.measureText(t).width > maxW && line) { out.push(line); line = w; } else line = t; } out.push(line); X.restore(); return out; }
+function para(s, x, y, f, lh, fill, maxW, align = 'left') { const ls = wrap(s, f, maxW); ls.forEach((l, i) => txt(l, x, y + i * lh, f, fill, align)); return y + ls.length * lh; }
+// rough brush-stroke block (thumbnail style)
+function brush(x, y, w, h, col, seed = 1) {
+  const R = rng(seed); X.save(); X.fillStyle = col; X.beginPath();
+  X.moveTo(x + R() * 14, y + R() * 10);
+  for (let i = 1; i <= 24; i++) X.lineTo(x + w * i / 24, y + (R() - .5) * 14);
+  for (let i = 1; i <= 10; i++) X.lineTo(x + w + (R() - .3) * 26, y + h * i / 10);
+  for (let i = 23; i >= 0; i--) X.lineTo(x + w * i / 24, y + h + (R() - .5) * 14);
+  for (let i = 9; i > 0; i--) X.lineTo(x - (R() - .3) * 26, y + h * i / 10);
+  X.closePath(); X.fill();
+  for (let i = 0; i < 40; i++) { X.globalAlpha = .5 + R() * .5; X.fillRect(x + w + 10 + R() * 40, y + R() * h, 3 + R() * 12, 2 + R() * 4); } // dry-brush tail
+  X.restore();
+}
+// Anton headline word with hard drop shadow
+function head(s, x, y, size, fill, shadow = C.ink, align = 'left') {
+  X.save(); X.font = font('AN', 0, size); X.textAlign = align; X.lineJoin = 'round';
+  X.fillStyle = shadow; X.fillText(s, x + size * .05, y + size * .06);
+  X.strokeStyle = shadow; X.lineWidth = size * .07; X.strokeText(s, x, y);
+  X.fillStyle = fill; X.fillText(s, x, y); X.restore();
+}
+function brushHead(s, x, y, size, fill, bg, seed) { const w = tw(s, font('AN', 0, size)); brush(x - 26, y - size * .9, w + 52, size * 1.05, bg, seed); txt(s, x, y, font('AN', 0, size), fill); return w; }
+function pill(s, x, y, bg, fg, f = font('MO', 700, 26), h = 60, ls = 4) { const w = tw(s, f, ls) + 56; rr(x, y, w, h, h / 2); X.fillStyle = bg; X.fill(); txt(s, x + 28, y + h * .66, f, fg, 'left', ls); return w; }
+function cutout(im, x, y, h) { const w = h * im.width / im.height; X.drawImage(im, x - w / 2, y - h, w, h); }
+function photo(im, cx, cy, w, rot) {
+  const h = w * im.height / im.width, b = 16;
+  X.save(); X.translate(cx, cy); X.rotate(rot);
+  X.save(); X.filter = 'blur(26px)'; X.fillStyle = 'rgba(0,0,0,.55)'; X.fillRect(-w / 2 - b + 16, -h / 2 - b + 30, w + 2 * b, h + 2 * b + 50); X.restore();
+  X.fillStyle = '#fbfaf6'; X.fillRect(-w / 2 - b, -h / 2 - b, w + 2 * b, h + 2 * b + 50); X.drawImage(im, -w / 2, -h / 2, w, h);
+  X.save(); X.rotate(-.06); X.fillStyle = 'rgba(255,214,90,.85)'; X.fillRect(-80, -h / 2 - b - 26, 160, 48); X.restore();
+  X.restore();
+}
+function stamp(lines, cx, cy, rot, col, w, h) {
+  X.save(); X.translate(cx, cy); X.rotate(rot); X.globalAlpha = .92; X.strokeStyle = col; X.lineWidth = 9; rr(-w / 2, -h / 2, w, h, 16); X.stroke(); X.lineWidth = 3; rr(-w / 2 + 14, -h / 2 + 14, w - 28, h - 28, 10); X.stroke();
+  if (lines.length === 1) txt(lines[0], 0, 26, font('AN', 0, 76), col, 'center', 2); else { txt(lines[0], 0, 4, font('AN', 0, 64), col, 'center', 2); txt(lines[1], 0, 50, font('MO', 700, 22), col, 'center', 4); }
+  X.restore();
+}
+function tick(x, y, r, col = C.green) { X.beginPath(); X.arc(x, y, r, 0, 7); X.fillStyle = col; X.fill(); X.strokeStyle = '#fff'; X.lineWidth = r * .22; X.lineCap = 'round'; X.lineJoin = 'round'; X.beginPath(); X.moveTo(x - r * .42, y + r * .04); X.lineTo(x - r * .12, y + r * .34); X.lineTo(x + r * .45, y - r * .3); X.stroke(); }
+
+// ---------- backgrounds ----------
+const BG = ['red', 'navy', 'yel', 'navy', 'red'];
+function backgrounds() {
+  for (let i = 0; i < N; i++) {
+    const x0 = i * SW;
+    if (BG[i] === 'yel') { X.fillStyle = C.y; X.fillRect(x0, 0, SW, SH); }
+    else {
+      const [a, b] = BG[i] === 'red' ? ['#5c0d14', '#14040a'] : BG[i] === 'dark' ? ['#2a0c10', '#0a0a0e'] : ['#1E3050', C.navy];
+      const g = X.createRadialGradient(x0 + 540, 600, 0, x0 + 540, 600, 1000); g.addColorStop(0, a); g.addColorStop(1, b); X.fillStyle = g; X.fillRect(x0, 0, SW, SH);
+    }
+  }
+  // bokeh lights drifting across slide joins
+  const R = rng(9); X.save(); X.globalCompositeOperation = 'lighter';
+  for (let i = 0; i < 70; i++) { const x = R() * SW * N, y = R() * SH, r = 20 + R() * 90, ix = Math.floor(x / SW); if (BG[ix] === 'yel') continue; const g = X.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, `rgba(255,${150 + R() * 80 | 0},60,${.08 + R() * .1})`); g.addColorStop(1, 'rgba(255,150,60,0)'); X.fillStyle = g; X.fillRect(x - r, y - r, r * 2, r * 2); }
+  X.restore();
+  // grain
+  X.save(); X.globalAlpha = .06; for (let i = 0; i < 26000; i++) { X.fillStyle = R() < .5 ? '#000' : '#fff'; X.fillRect(R() * SW * N, R() * SH, 2, 2); } X.restore();
+  // continuous bottom track
+  const y = 1268; X.strokeStyle = 'rgba(255,206,50,.5)'; X.lineWidth = 4; X.setLineDash([14, 12]); X.beginPath(); X.moveTo(0, y); X.lineTo(SW * N, y); X.stroke(); X.setLineDash([]);
+}
+function chrome(i) {
+  const x0 = i * SW, yel = BG[i] === 'yel', y = 1268;
+  X.save(); X.fillStyle = yel ? C.y : 'rgba(10,10,14,.0)'; X.restore();
+  X.beginPath(); X.arc(x0 + 110, y, 22, 0, 7); X.fillStyle = yel ? C.ink : C.y; X.fill();
+  rr(x0 + 140, y - 28, 150, 56, 28); X.fillStyle = yel ? C.ink : 'rgba(0,0,0,.55)'; X.fill();
+  txt(`0${i + 1} / 0${N}`, x0 + 162, y + 10, font('MO', 700, 26), '#fff', 'left', 3);
+  // handle pill top-left (like Taufik's thumbnails, but top so it never hides content)
+  rr(x0 + 56, 52, 290, 60, 30); X.fillStyle = 'rgba(0,0,0,.78)'; X.fill();
+  X.beginPath(); X.arc(x0 + 88, 82, 10, 0, 7); X.fillStyle = C.y; X.fill();
+  txt('@taufik.pg', x0 + 108, 93, font('IN', 800, 32), '#fff');
+  if (i < N - 1) {
+    const ax = x0 + SW - 96;
+    X.beginPath(); X.arc(ax, y, 46, 0, 7); X.fillStyle = yel ? C.ink : C.y; X.fill();
+    X.strokeStyle = yel ? C.y : C.ink; X.lineWidth = 8; X.lineCap = 'round'; X.lineJoin = 'round';
+    X.beginPath(); X.moveTo(ax - 16, y); X.lineTo(ax + 16, y); X.moveTo(ax + 2, y - 15); X.lineTo(ax + 17, y); X.lineTo(ax + 2, y + 15); X.stroke();
+    rr(ax - 210, y - 26, 140, 52, 26); X.fillStyle = yel ? C.ink : 'rgba(0,0,0,.6)'; X.fill();
+    txt('SWIPE', ax - 140, y + 9, font('MO', 700, 24), C.y, 'center', 4);
+  }
+}
+
+// ---------- slides ----------
+function receipt(cx, cy, w, h, rot, rows) {
+  X.save(); X.translate(cx, cy); X.rotate(rot);
+  X.save(); X.filter = 'blur(20px)'; X.fillStyle = 'rgba(0,0,0,.5)'; X.fillRect(-w / 2 + 12, -h / 2 + 24, w, h); X.restore();
+  X.fillStyle = '#f7f4ec'; X.beginPath(); X.moveTo(-w / 2, -h / 2);
+  for (let i = 0; i <= 16; i++) X.lineTo(-w / 2 + w * i / 16, -h / 2 + (i % 2 ? 10 : 0));
+  X.lineTo(w / 2, h / 2); for (let i = 16; i >= 0; i--) X.lineTo(-w / 2 + w * i / 16, h / 2 - (i % 2 ? 12 : 0)); X.closePath(); X.fill();
+  txt('RESIT', 0, -h / 2 + 62, font('MO', 700, 30), '#222', 'center', 6);
+  X.strokeStyle = '#999'; X.setLineDash([6, 6]); X.lineWidth = 2; X.beginPath(); X.moveTo(-w / 2 + 24, -h / 2 + 82); X.lineTo(w / 2 - 24, -h / 2 + 82); X.stroke(); X.setLineDash([]);
+  rows.forEach(([a, b], i) => { const y = -h / 2 + 125 + i * 40; txt(a, -w / 2 + 28, y, font('MO', 700, 22), '#333'); txt(b, w / 2 - 28, y, font('MO', 700, 22), '#333', 'right'); });
+  const ty = -h / 2 + 125 + rows.length * 40 + 20;
+  X.strokeStyle = '#333'; X.lineWidth = 2; X.beginPath(); X.moveTo(-w / 2 + 24, ty - 26); X.lineTo(w / 2 - 24, ty - 26); X.stroke();
+  txt('BAKI SIMPANAN', -w / 2 + 28, ty + 10, font('MO', 700, 22), C.red); txt('RM 0', w / 2 - 28, ty + 10, font('AN', 0, 40), C.red, 'right');
+  X.restore();
+}
+function torn(cx, cy, w, h, rot) { // receipt torn in two
+  [[-1, -.09, 0], [1, .06, 1]].forEach(([sd, r, k]) => {
+    X.save(); X.translate(cx + sd * 30, cy + k * 18); X.rotate(rot + r);
+    X.beginPath(); X.rect(sd < 0 ? -w / 2 - 20 : 0, -h / 2 - 20, w / 2 + 20, h + 40); X.clip();
+    X.save(); X.filter = 'blur(14px)'; X.fillStyle = 'rgba(0,0,0,.45)'; X.fillRect(-w / 2 + 10, -h / 2 + 20, w, h); X.restore();
+    X.beginPath(); X.moveTo(-w / 2, -h / 2); X.lineTo(w / 2, -h / 2); X.lineTo(w / 2, h / 2); X.lineTo(-w / 2, h / 2); X.closePath();
+    X.fillStyle = '#f7f4ec'; X.fill();
+    txt('RESIT', 0, -h / 2 + 60, font('MO', 700, 32), '#333', 'center', 8);
+    [['Rantai 916', '12.4g'], ['Gelang', '8.1g'], ['Tarikh', '1998']].forEach(([l, v], i) => { txt(l, -w / 2 + 26, -h / 2 + 115 + i * 40, font('MO', 700, 20), '#555'); txt(v, w / 2 - 26, -h / 2 + 115 + i * 40, font('MO', 700, 20), '#555', 'right'); });
+    X.restore();
+  });
+  // jagged tear gap
+  X.save(); X.translate(cx, cy); X.rotate(rot); X.strokeStyle = 'rgba(92,13,20,.9)'; X.lineWidth = 10; X.beginPath();
+  for (let i = 0; i <= 12; i++) { const y = -h / 2 - 10 + (h + 30) * i / 12, xx = (i % 2 ? 12 : -12); i ? X.lineTo(xx, y) : X.moveTo(xx, y); } X.stroke(); X.restore();
+}
+function goldBar(cx, cy, w, h, rot = 0) { X.save(); X.translate(cx, cy); X.rotate(rot); const r = h * .12; rr(-w / 2, -h / 2 + h * .1, w, h, r); X.fillStyle = '#6b440c'; X.fill(); rr(-w / 2, -h / 2, w, h, r); X.fillStyle = gold(-w / 2, -h / 2, w / 2, h / 2); X.fill(); rr(-w / 2 + h * .1, -h / 2 + h * .1, w - h * .2, h - h * .2, r * .6); X.fillStyle = gold(w / 2, h / 2, -w / 2, -h / 2); X.fill(); X.restore(); }
+function scanner(cx, cy) {
+  X.save(); X.translate(cx, cy);
+  rr(-150, -110, 300, 220, 26); X.fillStyle = '#e9edf3'; X.fill(); X.strokeStyle = C.navy; X.lineWidth = 6; X.stroke();
+  rr(-120, -80, 240, 90, 12); X.fillStyle = C.navy; X.fill();
+  txt('Au 99.9%', 0, -22, font('MO', 700, 34), '#4ade80', 'center');
+  rr(-90, 30, 180, 50, 10); X.fillStyle = '#c9d1dc'; X.fill();
+  X.fillStyle = 'rgba(74,222,128,.25)'; X.beginPath(); X.moveTo(-60, 110); X.lineTo(60, 110); X.lineTo(95, 170); X.lineTo(-95, 170); X.closePath(); X.fill();
+  goldBar(0, 170, 130, 52, 0);
+  X.restore();
+}
+function phone(im, cx, cy, w, rot) {
+  const h = w * 2.05; X.save(); X.translate(cx, cy); X.rotate(rot);
+  X.save(); X.filter = 'blur(26px)'; X.fillStyle = 'rgba(0,0,0,.5)'; rr(-w / 2 + 12, -h / 2 + 26, w, h, 46); X.fill(); X.restore();
+  rr(-w / 2, -h / 2, w, h, 46); X.fillStyle = '#0d0d10'; X.fill();
+  X.save(); rr(-w / 2 + 12, -h / 2 + 12, w - 24, h - 24, 36); X.clip(); const iw = w - 24, ih = iw * im.height / im.width; X.drawImage(im, -iw / 2, -h / 2 + 12, iw, ih); X.restore();
+  X.restore();
+}
+const S = [
+  function s1(x) {
+    cutout(IMG.point, x + 860, 1225, 900);
+    pill('TAKUT KENA TOLAK SEPARUH HARGA?', x + 70, 170, C.ink, C.y, font('MO', 700, 22), 56, 3);
+    brushHead('RESIT', x + 80, 360, 140, C.y, C.ink, 51);
+    head('EMAS LAMA', x + 70, 510, 130, '#fff');
+    brushHead('DAH HILANG?', x + 80, 670, 120, '#fff', C.red, 52);
+    torn(x + 260, 880, 380, 240, -.05);
+    txt('Jangan panik.', x + 72, 1100, font('PF', 700, 52, true), C.y);
+    txt('Public Gold terima, sebab', x + 72, 1160, font('IN', 800, 32), '#fff'); txt('3 jaminan ni →', x + 72, 1202, font('IN', 900, 32), C.y);
+  },
+  function s2(x) {
+    pill('JAMINAN #1', x + 70, 170, C.y, C.ink);
+    txt('Ingat resit hilang,', x + 72, 290, font('IN', 800, 44), 'rgba(255,255,255,.85)');
+    txt('emas automatik tak laku?', x + 72, 345, font('IN', 800, 44), 'rgba(255,255,255,.85)');
+    stamp(['MITOS!'], x + 300, 480, -.08, C.red, 440, 150);
+    head('TERIMA APA', x + 70, 680, 110, '#fff'); head('JUA JENAMA', x + 70, 800, 110, C.y);
+    txt('walaupun resit dah bertahun hilang.', x + 72, 860, font('IN', 800, 34), '#fff');
+    photo(IMG.jewel, x + 540, 1055, 700, .02);
+    ['Rosak', 'Kemek', 'Patah', 'Bengkok'].forEach((l, i) => pill(l, x + 160 + i * 190, 985, C.red, '#fff', font('IN', 900, 28), 56, 0));
+  },
+  function s3(x) {
+    pill('JAMINAN #2', x + 70, 170, C.ink, C.y);
+    head('BERAPA HARGA', x + 70, 330, 110, C.ink, 'rgba(0,0,0,.25)'); head('BELIAN SEMULA?', x + 70, 450, 110, C.red, C.ink);
+    const card = (cx, price, k, sub) => { rr(cx, 520, 450, 330, 30); X.fillStyle = C.ink; X.fill(); txt(k, cx + 225, 590, font('MO', 700, 26), C.y, 'center', 4); txt(price, cx + 225, 720, font('AN', 0, 120), gold(cx, 620, cx + 450, 720), 'center'); txt('segram', cx + 225, 775, font('IN', 900, 32), '#fff', 'center'); txt(sub, cx + 225, 820, font('IN', 500, 24), 'rgba(255,255,255,.6)', 'center'); };
+    card(x + 70, 'RM525', 'EMAS 999', '24 karat'); card(x + 560, 'RM483', 'EMAS 916', '22 karat');
+    txt('Harga 8 Okt 2026, update 11.55 AM. Berubah setiap hari.', x + 540, 895, font('IN', 800, 26), 'rgba(11,11,11,.7)', 'center');
+    photo(IMG.bar250, x + 250, 1080, 250, -.08);
+    head('TELUS.', x + 450, 1050, 96, C.ink, 'rgba(0,0,0,.25)');
+    txt('Harga pasaran tinggi,', x + 452, 1115, font('IN', 900, 32), C.ink);
+    txt('tanpa caj tersembunyi.', x + 452, 1160, font('IN', 900, 32), C.ink);
+  },
+  function s4(x) {
+    pill('JAMINAN #3', x + 70, 170, C.y, C.ink);
+    head('PROSES DI', x + 70, 330, 110, '#fff'); head('KAUNTER', x + 70, 450, 110, C.y);
+    scanner(x + 260, 620);
+    txt('1', x + 90, 960, font('AN', 0, 90), C.y);
+    txt('Uji ketulenan guna mesin', x + 150, 925, font('IN', 900, 30), '#fff');
+    txt('pengimbas, depan mata anda.', x + 150, 965, font('IN', 900, 30), '#fff');
+    txt('2', x + 90, 1110, font('AN', 0, 90), C.y);
+    txt('Bayaran terus ke akaun', x + 150, 1075, font('IN', 900, 30), '#fff');
+    txt('bank anda, hari yang sama.', x + 150, 1115, font('IN', 900, 30), C.green);
+    photo(IMG.branch, x + 800, 650, 340, .07);
+    txt('di cawangan Public Gold', x + 800, 1000, font('PF', 700, 28, true), C.y, 'center');
+  },
+  function s5(x) {
+    cutout(IMG.thumbs, x + 905, 1225, 700);
+    pill('MANA NAK MULA?', x + 70, 170, C.y, C.ink);
+    head('DAFTAR AHLI', x + 70, 320, 100, '#fff'); head('PUBLIC GOLD', x + 70, 430, 100, '#fff');
+    brushHead('PERCUMA', x + 80, 570, 110, C.ink, C.y, 61);
+    txt('Klik link dekat bio ↗', x + 72, 650, font('IN', 900, 38), '#fff');
+    phone(IMG.app, x + 190, 950, 200, -.06);
+    txt('Dapat?', x + 340, 820, font('PF', 700, 54, true), C.y);
+    txt('Kalau dapat,', x + 340, 880, font('IN', 800, 34), '#fff');
+    head('SHARE!', x + 340, 990, 92, gold(x + 340, 900, x + 640, 990), C.ink);
+    txt('Jangan simpan', x + 340, 1050, font('IN', 800, 32), '#fff');
+    txt('sorang-sorang.', x + 340, 1092, font('IN', 800, 32), '#fff');
+  },
+];
+
+window.ready = Promise.all([
+  ...[font('AN', 0, 40), font('PF', 900, 40), font('PF', 700, 40, true), font('IN', 500, 40), font('IN', 800, 40), font('IN', 900, 40), font('MO', 700, 40)].map(f => document.fonts.load(f)),
+  ...Object.entries({ point: 'tunjuk-kamera.png', thumbs: 'thumbs-up.png', bar250: 'jongkong-250g-merah.jpg', branch: 'kad-taifook-depan-kedai-public-gold.jpg', jewel: 'perhiasan-terpakai.jpg', app: 'app-gap-taufik-harga-8okt2026.jpg' })
+    .map(([k, f]) => new Promise(r => { const i = new Image(); i.onload = () => { IMG[k] = i; r(); }; i.src = 'img/' + f; })),
+]).then(() => {
+  backgrounds();
+  S.forEach((fn, i) => { X.save(); X.beginPath(); X.rect(i * SW, 0, SW, SH); X.clip(); fn(i * SW); X.restore(); chrome(i); });
+  // CTA strip on the last slide (over the track)
+  const x0 = (N - 1) * SW; ['LIKE', 'SHARE', 'FOLLOW'].forEach((l, i) => { const cx = x0 + 420 + i * 196; rr(cx - 88, 1240, 176, 56, 28); X.fillStyle = i === 2 ? C.y : 'rgba(0,0,0,.75)'; X.fill(); txt(l, cx, 1278, font('IN', 900, 26), i === 2 ? C.ink : '#fff', 'center', 3); });
+  return true;
+});
+</script>
+</body>
+</html>
