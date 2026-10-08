@@ -6,6 +6,7 @@ Guna semula aset ni untuk video / carousel / thumbnail. Jangan minta Taufik uplo
 - **Potret Taufik WAJIB ada outline putih (gaya sticker).** Jana: `sh assets/sticker.sh assets/taufik/<fail>.png <projek>/img/<fail>-sticker.png [tebal]`
 - Watermark `@taufik.pg` pada setiap output.
 - Gambar emas ada watermark G100 sendiri — biarkan.
+- Potret = "selfie" Taufik: sentiasa ambil dari `taufik/`.
 
 ## taufik/ (PNG lutsinar, cutout)
 | Fail | Pose | Sesuai untuk |
@@ -21,6 +22,9 @@ Guna semula aset ni untuk video / carousel / thumbnail. Jangan minta Taufik uplo
 ## emas/ (foto sebenar)
 kad-ungu-merak-5g · jongkong-10g-closeup · kad-biru-bungamas-pantai · kad-hijau-syiling-pantai ·
 jongkong-250g-merah (latar logo Public Gold) · koleksi-binder-kad · kad-50g-bunga-raya · koleksi-dulang-1kg (koleksi besar, hasil konsisten)
+jongkong-100g-kad-bungamas-ungu (100g + kad Bunga Mas) · kad-dinar-5-hijau-pantai (5 Dinar, sijil) ·
+jongkong-merak-100g-dulang-merah (jongkong ukiran merak, cantik) · set-jongkong-bertingkat-bunga-raya / set-jongkong-bertingkat-bungamas (saiz kecil ke besar, "kumpul sikit-sikit") ·
+kad-mangga · kad-merdeka-69 / kad-merdeka-69-skrin (edisi Merdeka, sesuai post Ogos)
 
 ## rujukan-gaya/ (contoh thumbnail Taufik — RUJUKAN gaya sahaja)
 Tajuk Anton besar huruf besar, blok berus merah/kuning/hitam, potret outline putih di kanan, pil @taufik.pg bawah kanan.
