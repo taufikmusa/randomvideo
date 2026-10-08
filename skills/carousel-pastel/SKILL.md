@@ -1,9 +1,9 @@
 ---
-name: carousel-kartun
-description: 'Carousel IG 1080x1350 gaya STICKER KARTUN KELUARGA comel pastel untuk content emas Taufik (@taufik.pg, Public Gold G100). Watak keluarga: BABA (Taufik), MAMI (isteri, tudung pink + cermin mata), AMANI (kakak sulung, rambut bob berponi) dan AILEEN (adik, rambut belah tepi) dari assets/kartun/{baba,mami,amani,aileen}. Latar pastel (krim/biru/kuning/pink/mint) dengan blob lembut & titik, tajuk Fredoka bulat coklat gelap dengan *kata* diserlah kuning, pil label sticker, belon cakap bulat putih, kad putih bayang lembut, emas comel (jongkong/syiling), titik halaman + swipe. Guna bila Taufik sebut "gaya kartun", "kartun keluarga", "guna kartun wife/anak", "sticker comel", atau topik keluarga/anak/isteri. BERBEZA daripada carousel-komik (pop-art keras merah/kuning) — ini lembut & mesra keluarga.'
+name: carousel-pastel
+description: 'Carousel IG 1080x1350 gaya STICKER KARTUN KELUARGA comel pastel untuk content emas Taufik (@taufik.pg, Public Gold G100). Watak keluarga: BABA (Taufik), MAMI (isteri, tudung pink + cermin mata), AMANI (kakak sulung, rambut bob berponi) dan AILEEN (adik, rambut belah tepi) dari assets/kartun/{baba,mami,amani,aileen}. Latar pastel (krim/biru/kuning/pink/mint) dengan blob lembut & titik, tajuk Fredoka bulat coklat gelap dengan *kata* diserlah kuning, pil label sticker, belon cakap bulat putih, kad putih bayang lembut, emas comel (jongkong/syiling), titik halaman + swipe. Guna bila Taufik sebut "gaya kartun", "kartun keluarga", "guna kartun wife/anak", "sticker comel", atau topik keluarga/anak/isteri. BERBEZA daripada carousel-red (pop-art merah/kuning) — ini lembut & mesra keluarga.'
 ---
 
-# carousel-kartun — sticker keluarga pastel (1080x1350)
+# carousel-pastel — sticker keluarga pastel (1080x1350)
 
 - **Watak & nama panggilan** (WAJIB guna nama ni dalam dialog):
   | Watak | Folder | Rupa |
@@ -27,7 +27,7 @@ fonts/                       Fredoka 600/700, Nunito 700/900
 ```
 
 ## Aliran kerja
-1. `sh skills/carousel-kartun/scripts/new_carousel.sh carousel-<topik>`
+1. `sh skills/carousel-pastel/scripts/new_carousel.sh carousel-<topik>`
 2. `cp assets/kartun/{baba,mami,amani,aileen}/<watak>-<pose>.png assets/emas/<foto>.jpg carousel-<topik>/img/`
 3. Tulis slides.js → `node render.js` → semak `out/panorama.png` (tajuk terkeluar tepi? kurangkan maxW) → betulkan.
 4. Hantar `out/0*.jpg` TERUS dalam chat. Commit kod sahaja.

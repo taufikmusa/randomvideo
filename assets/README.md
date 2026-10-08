@@ -62,6 +62,6 @@ Anton (tajuk gaya thumbnail), Playfair Display 900/700i, Inter 500/800/900, JetB
 | **Aileen** (adik, belah tepi) | `aileen/` | merajuk, depa-tangan, jari-hati, peace-jelir, tabik-merah, lambai-belang, makan-ayam, peluk-hati, marah-peluk-tubuh |
 Anak panggil Taufik **Baba**. Guna nama panggilan sahaja dalam output (bukan nama penuh).
 `sheets/` = helaian asal. Potong baru: `python3 assets/potong_sticker.py helaian.png assets/kartun/<watak> <prefix> 40 6` (bercantum? `60 16`), buang serpihan, namakan ikut pose.
-Guna untuk `carousel-kartun` (pastel keluarga) dan `carousel-komik` (pop-art). Kartun BOLEH di mana-mana slaid.
+Guna untuk `carousel-pastel` (pastel keluarga) dan `carousel-red` (pop-art merah). Kartun BOLEH di mana-mana slaid.
 `rujukan-gaya/komik-popart-turun-rm180.jpg` = rujukan komik (harga bertarikh — jangan guna semula).
 `rujukan-gaya/poster-matlamat-10-gram.jpg`, `poster-fungsi-aplikasi-public-gold.jpg` = poster premium gelap-emas Taufik (app: baki 27.4071g, harga 25 Apr 2026 — data bertarikh).

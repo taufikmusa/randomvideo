@@ -1,4 +1,4 @@
-// carousel-kartun engine — soft pastel sticker-storybook carousel (1080x1350 per slide).
+// carousel-pastel engine — soft pastel sticker-storybook carousel (1080x1350 per slide).
 // Family cartoon stickers (assets/kartun/{taufik,isteri,anak}), rounded Fredoka type, sticker pill labels,
 // soft speech bubbles, rounded white cards, cute drawn gold. slides.js defines N, ASSETS, BG[], SLIDES[]. DO NOT EDIT per carousel.
 const SW = 1080, SH = 1350;

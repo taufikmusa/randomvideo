@@ -1,4 +1,4 @@
-// carousel-komik engine — comic pop-art carousel (1080x1350 per slide).
+// carousel-red engine — comic pop-art carousel (1080x1350 per slide).
 // Cream halftone paper, thick-bordered panels, jagged starbursts with speed lines, Bangers headlines
 // with heavy black outline, speech bubbles, red marker circles, cartoon Taufik stickers.
 // slides.js defines: N, ASSETS {key:'file'}, SLIDES [fn(x, i)].  DO NOT EDIT per carousel.

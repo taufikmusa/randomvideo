@@ -1,14 +1,17 @@
 ---
-name: carousel-komik
+name: carousel-red
 description: 'Carousel IG 1080x1350 gaya KOMIK POP-ART untuk content emas Taufik (@taufik.pg, Public Gold G100): kertas krim halftone, panel komik border hitam tebal + bayang offset, burst letupan merah/kuning dengan garis laju, tajuk Bangers outline hitam tebal, belon cakap, label marker kuning, bulatan merah, anak panah merah komik, dan WATAK KARTUN TAUFIK (assets/kartun/). Guna bila Taufik sebut "gaya komik", "pop art", "macam poster turun RM180", "guna kartun aku", "cartoon", atau beri copywriting dan minta gaya ni. BERBEZA daripada carousel-thumbnail (default gelap) dan carousel-editorial (putih majalah).'
 ---
 
-# carousel-komik — komik pop-art (1080x1350)
+# carousel-red — komik pop-art (1080x1350)
 
 Rujukan gaya: `assets/rujukan-gaya/komik-popart-turun-rm180.jpg`.
 
-- **Watak = kartun Taufik**, bukan selfie. Kartun boleh muncul di mana-mana slaid (dia maskot, bukan iklan). Pilih dari `assets/kartun/` (versi `-tanpa-teks` bila mahu letak belon sendiri):
-  jongkong-250g (cover/emas), buku-guru (pesan guru), hahaha (lucu/reaksi), siap-tabik (tindakan/setuju), terima-kasih / alhamdulillah (CTA, syukur).
+- **Watak keluarga** (kartun, boleh di mana-mana slaid — bukan selfie):
+  **Baba** `assets/kartun/baba/` (watak utama), **Mami** `mami/` (isteri), **Amani** `amani/` (kakak sulung), **Aileen** `aileen/` (adik).
+  Guna Mami bila topik suami-isteri/rumah tangga; Amani & Aileen bila topik anak/keluarga. Anak panggil Taufik "Baba". Nama panggilan sahaja.
+  Pose baba popular: peluk-tubuh-sengih (cover/CTA), buku-guru (pesan guru), berfikir-polo, tangan-terbuka, dua-thumbs-2, tabik-sengih, hahaha-tanpa-teks, peluk-hati.
+- **Foto emas SEBENAR (pilihan)**: `photoPanel(IMG.x, x, y, w, h, fx, fy, rot)` dari `assets/emas/` — guna di slaid bukti/kesimpulan (contoh: "simpanan emas bulanan") + `label()` kapsyen.
 - **Setiap slaid**: 1 label kuning (bab) → 1 tajuk `pow()` besar (atau dalam `burst()`) → 1 panel/visual → 1 belon cakap kartun.
 - Warna: merah `K.red`, kuning `K.yel`, hitam `K.ink`, kertas `K.paper`. Footer: pil @taufik.pg, `i/N`, butang SWIPE kuning.
 
@@ -16,12 +19,12 @@ Rujukan gaya: `assets/rujukan-gaya/komik-popart-turun-rm180.jpg`.
 ```
 assets/template/engine.js   JANGAN EDIT. paper, panel, burst, pow, bubble, label, circleMark, ticks, bigArrow, img, photoPanel
 assets/template/slides.js   FAIL YANG DITULIS: N, ASSETS, SLIDES[]  (contoh: dana anak 6 slaid)
-references/slides-dana-anak-komik.js
+references/slides-dana-anak-komik.js, references/slides-suami-provider.js (8 slaid, Baba + Mami + anak + foto emas)
 scripts/new_carousel.sh     salin template (abaikan argumen pose — kartun disalin manual)
 ```
 
 ## Aliran kerja
-1. `sh skills/carousel-komik/scripts/new_carousel.sh carousel-<topik>`
+1. `sh skills/carousel-red/scripts/new_carousel.sh carousel-<topik>`
 2. `cp assets/kartun/taufik/taufik-<pose>.png assets/emas/<foto>.jpg carousel-<topik>/img/`
 3. Tulis slides.js → `node render.js` → semak `out/panorama.png` → betulkan tindihan (belon vs footer y>1230, bulatan merah vs teks, kartun vs teks).
 4. Hantar `out/0*.jpg` TERUS dalam chat. Commit kod sahaja.
@@ -32,3 +35,5 @@ scripts/new_carousel.sh     salin template (abaikan argumen pose — kartun disa
 
 ## Peraturan isi
 Ayat dari copywriting; belon cakap pendek boleh rekaan (senaraikan dalam laporan). Harga/angka bertarikh. Graf tanpa data = ILUSTRASI. Bahasa Melayu Malaysia.
+
+- Label/burst: lukis `burst()` DAHULU, kemudian `label()`/`sebabTag` supaya garis laju tak tutup label. Panjang carousel 5–9 slaid.
