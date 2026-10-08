@@ -31,6 +31,19 @@ jongkong-100g-kad-bungamas-meja / jongkong-100g-kad-bunga-raya-meja (product sho
 kad-dinar-hijau-dua-pantai (santai, cuti) · kad-taifook-depan-kedai-public-gold (bukti beli di cawangan) ·
 kad-10-dinar-dulang-hitam · kad-dinar-dan-app-gap-ipad (app GAP + baki gram — sesuai topik Akaun GAP) ·
 dompet-wealthcard-safari (WealthCard 1g dalam dompet, "simpan & lupa")
+jongkong-1kg-tapak-tangan (1kg berat dalam tangan) · kad-taifook-4-saiz-tangan (5g→100g, naik saiz) · binder-kad-durian (koleksi WealthCard durian) ·
+jongkong-1kg-250g-100g-50g-buku-guru (susunan saiz + buku guru + flyer "RM100 sahaja") ·
+dinar-10-belon-udara-panas / dinar-10-atas-hutan-belon (gaya hidup, percutian) · dinar-10-closeup-koleksi-hitam
+- ⚠️ `app-gap-phone-koleksi-kad-ORANG-LAIN.jpg` tunjuk nama & PG code AHLI LAIN di skrin. Jangan guna tanpa blur/crop skrin.
+
+## app/ (screenshot app Public Gold — data BERTARIKH, sahkan sebelum guna angka)
+| Fail | Isi |
+|---|---|
+| app-gap-taufik-harga-8okt2026.jpg | Akaun Taufik PG00359605 (baki disorok). GAP 8 Okt 2026: RM100 = 0.1698g, RM589 = 1g |
+| app-withdraw-dinar-caj-git.jpg | Keluarkan GAP ke dinar fizikal: 1/4, 1/2, 1, 5 dinar + caj GIT |
+| app-withdraw-bungamas-caj-git.jpg | Keluarkan GAP ke Bunga Mas 1g/10g/20g/50g + caj |
+| app-withdraw-aurora-kartun.jpg | Aurora 1g edisi Upin Ipin, Hello Kitty, Spiderman (sesuai topik anak) |
+| app-pg-jewel-cincin-999.jpg / app-pg-jewel-rantai-916.jpg | Katalog PG Jewel (harga perhiasan) |
 
 ## rujukan-gaya/ (contoh thumbnail Taufik — RUJUKAN gaya sahaja)
 Tajuk Anton besar huruf besar, blok berus merah/kuning/hitam, potret outline putih di kanan, pil @taufik.pg bawah kanan.
