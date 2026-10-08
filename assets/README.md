@@ -52,3 +52,9 @@ Tajuk Anton besar huruf besar, blok berus merah/kuning/hitam, potret outline put
 
 ## fonts/
 Anton (tajuk gaya thumbnail), Playfair Display 900/700i, Inter 500/800/900, JetBrains Mono 700.
+
+## kartun/ (watak kartun Taufik — PNG lutsinar dengan outline putih)
+kartun-taufik-jongkong-250g · kartun-taufik-buku-guru · kartun-taufik-{alhamdulillah,hahaha,siap-tabik,terima-kasih}[-tanpa-teks]
+sheet-kartun-taufik-pelbagai-baju / sheet-kartun-lelaki-pejabat-site / sheet-kartun-wanita-hijab = helaian sticker penuh (belum dipotong) — potong bila perlu.
+Guna untuk gaya `carousel-komik`. Kartun BOLEH di mana-mana slaid (bukan selfie).
+`rujukan-gaya/komik-popart-turun-rm180.jpg` = rujukan gaya komik (harga dalam poster bertarikh 29 Jan & 8 Okt 2026 — jangan guna semula).
