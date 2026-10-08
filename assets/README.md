@@ -65,3 +65,5 @@ Anak panggil Taufik **Baba**. Guna nama panggilan sahaja dalam output (bukan nam
 Guna untuk `carousel-pastel` (pastel keluarga) dan `carousel-red` (pop-art merah). Kartun BOLEH di mana-mana slaid.
 `rujukan-gaya/komik-popart-turun-rm180.jpg` = rujukan komik (harga bertarikh — jangan guna semula).
 `rujukan-gaya/poster-matlamat-10-gram.jpg`, `poster-fungsi-aplikasi-public-gold.jpg` = poster premium gelap-emas Taufik (app: baki 27.4071g, harga 25 Apr 2026 — data bertarikh).
+
+`rujukan-gaya/maroon-impian-01..04.jpg` = rujukan gaya `carousel-maroon` (orang dalam poster BUKAN Taufik — rujukan gaya sahaja; angka dana haji/kahwin dalam poster bukan data kita).
