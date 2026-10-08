@@ -25,10 +25,17 @@ jongkong-250g-merah (latar logo Public Gold) · koleksi-binder-kad · kad-50g-bu
 jongkong-100g-kad-bungamas-ungu (100g + kad Bunga Mas) · kad-dinar-5-hijau-pantai (5 Dinar, sijil) ·
 jongkong-merak-100g-dulang-merah (jongkong ukiran merak, cantik) · set-jongkong-bertingkat-bunga-raya / set-jongkong-bertingkat-bungamas (saiz kecil ke besar, "kumpul sikit-sikit") ·
 kad-mangga · kad-merdeka-69 / kad-merdeka-69-skrin (edisi Merdeka, sesuai post Ogos)
+timbunan-jongkong-50g-100g-tikar / jongkong-50g-100g-atas-kad-tikar (latar tikar mengkuang, rasa kampung) ·
+jongkong-berdiri-meja-hitam (premium, gelap) · dulang-merah-1kg-koleksi-penuh / jongkong-1kg-100g-50g-dulang-merah (koleksi besar, hasil konsisten) ·
+jongkong-100g-kad-bungamas-meja / jongkong-100g-kad-bunga-raya-meja (product shot bersih, sesuai slaid harga/produk) ·
+kad-dinar-hijau-dua-pantai (santai, cuti) · kad-taifook-depan-kedai-public-gold (bukti beli di cawangan) ·
+kad-10-dinar-dulang-hitam · kad-dinar-dan-app-gap-ipad (app GAP + baki gram — sesuai topik Akaun GAP) ·
+dompet-wealthcard-safari (WealthCard 1g dalam dompet, "simpan & lupa")
 
 ## rujukan-gaya/ (contoh thumbnail Taufik — RUJUKAN gaya sahaja)
 Tajuk Anton besar huruf besar, blok berus merah/kuning/hitam, potret outline putih di kanan, pil @taufik.pg bawah kanan.
 `thumb-simpan-emas-jadi-kaya-AI.jpg` ada tanda "Ai" — jangan guna terus dalam output.
+`poster-jual-emas-terpakai-8okt2026.jpg` = poster harga buyback **bertarikh 8 Okt 2026** (RM525/g 999, RM483/g 916). Rujukan gaya sahaja — JANGAN guna harganya dalam post lain tanpa sahkan harga semasa.
 
 ## fonts/
 Anton (tajuk gaya thumbnail), Playfair Display 900/700i, Inter 500/800/900, JetBrains Mono 700.
