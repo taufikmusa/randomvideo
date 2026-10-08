@@ -25,15 +25,18 @@ function bg(x0, col, seed) {
 }
 // title: rounded, dark brown, optional highlight words wrapped in *...* get a butter swash
 function title(s, x, y, size, maxW = 940, align = 'left', lh = 1.08) {
-  const ls = wrap(s, F.t(size), maxW);
-  ls.forEach((l, i) => {
-    const yy = y + i * size * lh, total = tw(l.replace(/\*/g, ''), F.t(size));
+  // word-level highlight: *a b c* stays highlighted across line wraps
+  let hot = false; const words = s.split(' ').map(t => { const h = hot || t.startsWith('*'); if (t.startsWith('*')) hot = true; if (/\*[.,!?:]?$/.test(t)) hot = false; return { t: t.replace(/\*/g, ''), h }; });
+  const f = F.t(size), sp = tw(' ', f), lines = [[]]; let lw = 0;
+  words.forEach(w => { const ww = tw(w.t, f) + (w.h ? 20 : 0); if (lw + ww > maxW && lines[lines.length - 1].length) { lines.push([]); lw = 0; } lines[lines.length - 1].push(w); lw += ww + sp; });
+  lines.forEach((ln, i) => {
+    const yy = y + i * size * lh, total = ln.reduce((a, w) => a + tw(w.t, f) + sp, -sp);
     let cx = align === 'center' ? x - total / 2 : x;
-    l.split(/(\*[^*]+\*)/).forEach(seg => { if (!seg) return; const hot = seg.startsWith('*'), t = hot ? seg.slice(1, -1) : seg, w = tw(t, F.t(size));
-      if (hot) { X.save(); X.fillStyle = K.butter; rr(cx - 10, yy - size * .62, w + 20, size * .78, size * .3); X.fill(); X.restore(); }
-      txt(t, cx, yy, F.t(size), hot ? K.red : K.ink); cx += w; });
+    ln.forEach((w, j) => { const ww = tw(w.t, f), nextHot = ln[j + 1] && ln[j + 1].h;
+      if (w.h) { X.save(); X.fillStyle = K.butter; rr(cx - 10, yy - size * .62, ww + 20 + (nextHot ? sp : 0), size * .78, size * .3); X.fill(); X.restore(); }
+      txt(w.t, cx, yy, f, w.h ? K.red : K.ink); cx += ww + sp; });
   });
-  return y + ls.length * size * lh;
+  return y + lines.length * size * lh;
 }
 function para(s, x, y, w, size = 38, col = K.brown, align = 'left') { const ls = wrap(s, F.b(size), w); ls.forEach((l, i) => txt(l, x, y + i * size * 1.32, F.b(size), col, align)); return y + ls.length * size * 1.32; }
 // sticker pill label (white, brown outline, like the sticker sheets)
@@ -72,6 +75,17 @@ function goldBar(cx, cy, w, rot = 0, label = '') {
   X.restore();
 }
 function coin(cx, cy, r, label = '') { soft(() => { X.beginPath(); X.arc(cx, cy, r, 0, 7); }, 10, .2, 6); X.beginPath(); X.arc(cx, cy, r, 0, 7); X.fillStyle = '#F6C94C'; X.fill(); X.lineWidth = 4; X.strokeStyle = K.ink; X.stroke(); X.beginPath(); X.arc(cx, cy, r * .74, 0, 7); X.strokeStyle = '#D79A1E'; X.stroke(); if (label) txt(label, cx, cy + r * .28, F.t(r * .8), K.brown, 'center'); }
+// real photo (assets/emas) in a rounded white frame with washi tape + optional caption pill
+function photoCard(im, cx, cy, w, h, rot = 0, caption = '', fx = .5, fy = .5) {
+  X.save(); X.translate(cx, cy); X.rotate(rot);
+  soft(() => rr(-w / 2 - 16, -h / 2 - 16, w + 32, h + 32, 30), 24, .2, 14);
+  rr(-w / 2 - 16, -h / 2 - 16, w + 32, h + 32, 30); X.fillStyle = K.white; X.fill(); X.lineWidth = 3; X.strokeStyle = 'rgba(59,42,32,.25)'; X.stroke();
+  X.save(); rr(-w / 2, -h / 2, w, h, 20); X.clip(); const s = Math.max(w / im.width, h / im.height), sw = w / s, sh = h / s;
+  X.drawImage(im, Math.max(0, Math.min(im.width - sw, fx * im.width - sw / 2)), Math.max(0, Math.min(im.height - sh, fy * im.height - sh / 2)), sw, sh, -w / 2, -h / 2, w, h); X.restore();
+  X.save(); X.rotate(-.08); X.globalAlpha = .85; X.fillStyle = K.butter; X.fillRect(-70, -h / 2 - 38, 140, 44); X.restore();
+  X.restore();
+  if (caption) pill(caption, cx, cy + h / 2 + 30, 30, K.ink, K.white, rot);
+}
 function sparkle(x, y, s, col = '#FFC93C') { X.save(); X.translate(x, y); X.fillStyle = col; X.beginPath(); X.moveTo(0, -s); X.quadraticCurveTo(0, 0, s, 0); X.quadraticCurveTo(0, 0, 0, s); X.quadraticCurveTo(0, 0, -s, 0); X.quadraticCurveTo(0, 0, 0, -s); X.fill(); X.restore(); }
 function heart(x, y, s, col = K.red) { X.save(); X.translate(x, y); X.fillStyle = col; X.beginPath(); X.moveTo(0, s * .35); X.bezierCurveTo(-s * 1.1, -s * .3, -s * .45, -s * 1.05, 0, -s * .45); X.bezierCurveTo(s * .45, -s * 1.05, s * 1.1, -s * .3, 0, s * .35); X.fill(); X.restore(); }
 function footer(x0, i, last) {

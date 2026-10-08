@@ -1,10 +1,10 @@
 // Carousel kartun keluarga "Bila masa terbaik mula dana emas anak?"
 var N = 6;
 var BG = ['#FFF6E5', '#CFE6FA', '#FFEFA8', '#FFD1DC', '#CFEFDF', '#FFF6E5']; // cream sky butter pink mint cream
-var ASSETS = { tLaugh: 'taufik-hahaha-tanpa-teks.png', tSalute: 'taufik-tabik.png', tArms: 'taufik-peluk-tubuh-senyum.png', tWave: 'taufik-lambai.png',
-  wPray: 'isteri-doa.png', wExcited: 'isteri-teruja.png', wWave: 'isteri-lambai.png',
-  kJump: 'anak-3d-lompat-gembira.png', kCheek: 'anak-pipi-tangan.png', kJumpBlue: 'anak-lompat-biru.png', kPoint: 'anak-3d-telunjuk.png',
-  kOverall: 'anak-overall.png', kFist: 'anak-semangat-kuning.png', kStand: 'anak-3d-berdiri.png', kWave: 'anak-lambai-ungu.png' };
+var ASSETS = { tLaugh: 'baba-hahaha-tanpa-teks.png', tSalute: 'baba-tabik.png', tArms: 'baba-peluk-tubuh-senyum.png', tWave: 'baba-lambai.png',
+  wPray: 'mami-doa.png', wExcited: 'mami-teruja.png', wWave: 'mami-lambai.png',
+  kJump: 'amani-3d-lompat-gembira.png', kCheek: 'amani-pipi-tangan.png', kJumpBlue: 'amani-lompat-biru.png', kPoint: 'amani-3d-telunjuk.png',
+  kOverall: 'amani-overall.png', kFist: 'amani-semangat-kuning.png', kStand: 'amani-3d-berdiri.png', kWave: 'amani-lambai-ungu.png' };
 
 function calendar(cx, cy, s) {
   X.save(); X.translate(cx, cy); X.scale(s, s);
@@ -24,7 +24,7 @@ var SLIDES = [
     chara(IMG.kPoint, x + 300, 1215, 470);
     goldBar(x + 690, 1040, 300, -.12, '1g');
     sparkle(x + 870, 920, 30); sparkle(x + 560, 900, 20);
-    bubble(['Abah, bila', 'nak mula?'], x + 720, 790, 380, 190, x + 450, 880, 50);
+    bubble(['Baba, bila', 'nak mula?'], x + 720, 790, 380, 190, x + 450, 880, 50);
   },
   // 1. 10 tahun lalu
   function (x) {

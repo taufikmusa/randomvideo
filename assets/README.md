@@ -54,11 +54,14 @@ Tajuk Anton besar huruf besar, blok berus merah/kuning/hitam, potret outline put
 Anton (tajuk gaya thumbnail), Playfair Display 900/700i, Inter 500/800/900, JetBrains Mono 700.
 
 ## kartun/ (watak kartun keluarga — PNG lutsinar, outline putih)
-- `taufik/` (19): tabik, lambai, kenyit-tunjuk, tunjuk-atas, peluk-tubuh-senyum/batik, thumb-polo-kelabu, teruja-polo-hitam, jongkong-250g, buku-guru, semi-realistik-buku-guru, alhamdulillah/hahaha/siap-tabik/terima-kasih (+ -tanpa-teks)
-- `isteri/` (15) = ISTERI Taufik (tudung pink, cermin mata): doa, doa-senyum, lambai, teruja, ok, hadiah, semangat, thumb-gelak, duduk-minum-thumb, headphone-*, 3d-*
-- `anak/` (36) = ANAK PEREMPUAN Taufik (rambut bob): lambai-*, lompat-*, peace-*, doa-*, semangat-*, pipi-*, overall, hadiah-topi-party, 3d-*
-- `sheets/` helaian asal (ADA NAMA anak/isteri — jangan guna terus dalam post). Potong baru: `python3 assets/potong_sticker.py`.
-- Privasi: jangan tulis nama sebenar anak/isteri dalam output.
+| Watak | Folder | Pose (nama fail `<watak>-<pose>.png`) |
+|---|---|---|
+| **Baba** (Taufik) | `baba/` | tabik, lambai, kenyit-tunjuk, peluk-tubuh-*, sorak-polo, peace-kot, dua-thumbs-2, peluk-hati, berfikir-polo, tangan-terbuka, jongkong-250g, buku-guru, alhamdulillah/hahaha/siap-tabik/terima-kasih(-tanpa-teks), semi-realistik-{buku-guru,siap-bosskuu,mantul,terima-kasih,semangat,padu-siot,jom} |
+| **Mami** (isteri) | `mami/` | doa, lambai, teruja, ok, hadiah, semangat, jari-hati, dua-thumbs, peluk-hati, peluk-tubuh-senyum, headphone-{peace,lambai,tunjuk,tabik,berfikir,...}, 3d-* |
+| **Amani** (kakak sulung, poni rata) | `amani/` | lambai-*, lompat-*, peace-*, doa-*, semangat-*, pipi-*, overall, jari-hati, tabik-senyum, peluk-hati, tunjuk-tepi, tangan-atas-gembira, makan-bijirin, 3d-* |
+| **Aileen** (adik, belah tepi) | `aileen/` | merajuk, depa-tangan, jari-hati, peace-jelir, tabik-merah, lambai-belang, makan-ayam, peluk-hati, marah-peluk-tubuh |
+Anak panggil Taufik **Baba**. Guna nama panggilan sahaja dalam output (bukan nama penuh).
+`sheets/` = helaian asal. Potong baru: `python3 assets/potong_sticker.py helaian.png assets/kartun/<watak> <prefix> 40 6` (bercantum? `60 16`), buang serpihan, namakan ikut pose.
 Guna untuk `carousel-kartun` (pastel keluarga) dan `carousel-komik` (pop-art). Kartun BOLEH di mana-mana slaid.
 `rujukan-gaya/komik-popart-turun-rm180.jpg` = rujukan komik (harga bertarikh — jangan guna semula).
 `rujukan-gaya/poster-matlamat-10-gram.jpg`, `poster-fungsi-aplikasi-public-gold.jpg` = poster premium gelap-emas Taufik (app: baki 27.4071g, harga 25 Apr 2026 — data bertarikh).

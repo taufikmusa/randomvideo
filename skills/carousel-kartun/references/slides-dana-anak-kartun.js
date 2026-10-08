@@ -24,7 +24,7 @@ var SLIDES = [
     chara(IMG.kPoint, x + 300, 1215, 470);
     goldBar(x + 690, 1040, 300, -.12, '1g');
     sparkle(x + 870, 920, 30); sparkle(x + 560, 900, 20);
-    bubble(['Abah, bila', 'nak mula?'], x + 720, 790, 380, 190, x + 450, 880, 50);
+    bubble(['Baba, bila', 'nak mula?'], x + 720, 790, 380, 190, x + 450, 880, 50);
   },
   // 1. 10 tahun lalu
   function (x) {
