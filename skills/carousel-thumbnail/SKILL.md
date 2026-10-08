@@ -9,7 +9,7 @@ Gaya ni ikut thumbnail Taufik sendiri (`assets/rujukan-gaya/thumb-*.jpg`). Dah d
 
 - **Panorama bersambung**: semua slaid dilukis atas satu kanvas 5400px (garis putus kuning di bawah, bokeh merentas sambungan) kemudian dipotong.
 - **Tajuk**: `head()` = Anton + bayang hitam keras; `brushHead()` = Anton atas blok berus kasar (merah/kuning/hitam).
-- **Potret**: cutout outline putih (`assets/sticker.sh`) di kanan, x≈+860, tinggi 700–960. Pilih pose ikut babak (lihat `assets/README.md`).
+- **Potret**: cutout outline putih (`assets/sticker.sh`) di kanan, x≈+860, tinggi 700–960. Pilih pose ikut babak (lihat `assets/README.md`). **Slaid cover TANPA potret** (Taufik: nampak macam iklan) — guna foto emas/visual; potret dari slaid 2 ke atas, wajib di CTA.
 - **Bukti**: foto emas sebenar `photo()` bertape kuning; `stamp()` untuk cop; `pill()` untuk label bab.
 - **Chrome**: pil @taufik.pg kiri atas, `0i / 05` + SWIPE → bawah, CTA Like/Share/Follow pada slaid akhir.
 - Susunan latar biasa: `['red','navy','yel','navy','red']` (atau `dark`). Slaid kuning guna teks hitam.

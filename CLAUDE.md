@@ -20,4 +20,5 @@ Render: `python3 music.py && node render.js` dalam folder projek.
 ## Skill carousel (dalam skills/)
 - `carousel-thumbnail` = DEFAULT bila Taufik minta "carousel" tanpa sebut gaya (latar gelap, Anton + blok berus, potret outline putih).
 - `carousel-editorial` = gaya putih majalah, nombor oren gergasi, tulisan tangan (rujukan "9 Money Milestones").
+- Slaid COVER carousel: jangan guna potret/selfie Taufik (nampak macam iklan). Potret di slaid CTA.
 - Baca SKILL.md skill tu dahulu; mula dengan `sh skills/<skill>/scripts/new_carousel.sh carousel-<topik> <pose...>`.
