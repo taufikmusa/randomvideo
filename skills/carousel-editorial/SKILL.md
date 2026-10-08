@@ -36,7 +36,7 @@ scripts/new_carousel.sh              salin template + jana potret sticker
 
 ## Struktur slaid (ikut copywriting)
 
-- **Cover**: TANPA potret Taufik (nampak macam iklan). Guna hook + foto emas / line-art: `bigNum(...)` atau brushTitle + blockTitle + nota + photoBox kanan bawah. Potret hanya di slaid CTA (dan slaid isi jika benar-benar perlu).
+- **Potret Taufik HANYA di slaid TERAKHIR (CTA).** Cover dan slaid isi TANPA potret (Taufik: nampak macam iklan). Cover guna hook + line-art / foto emas: brushTitle + blockTitle + bigNum + photoBox.
 - **Slaid isi (1..n)**: `counter(x,i,n)`, `sticky([...], x+760, 50)`, `bigNum('1', x+10, 620, 520)`, tajuk mula x+380, body x+385 lebar ≈650, visual di separuh bawah (y 850–1230), satu nota/checklist kecil.
 - **CTA terakhir**: soalan komen (dari copywriting) + kata punchline besar oren (contoh `EMAS!`) + potret thumbs-up. Tiada "swipe".
 - Ruang selamat: jangan letak apa-apa di bawah y=1230 (footer) atau kanan atas (sticky).
