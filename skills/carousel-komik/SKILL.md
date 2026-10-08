@@ -22,7 +22,7 @@ scripts/new_carousel.sh     salin template (abaikan argumen pose — kartun disa
 
 ## Aliran kerja
 1. `sh skills/carousel-komik/scripts/new_carousel.sh carousel-<topik>`
-2. `cp assets/kartun/kartun-taufik-<pose>.png assets/emas/<foto>.jpg carousel-<topik>/img/`
+2. `cp assets/kartun/taufik/taufik-<pose>.png assets/emas/<foto>.jpg carousel-<topik>/img/`
 3. Tulis slides.js → `node render.js` → semak `out/panorama.png` → betulkan tindihan (belon vs footer y>1230, bulatan merah vs teks, kartun vs teks).
 4. Hantar `out/0*.jpg` TERUS dalam chat. Commit kod sahaja.
 

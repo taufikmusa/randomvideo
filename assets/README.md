@@ -53,8 +53,12 @@ Tajuk Anton besar huruf besar, blok berus merah/kuning/hitam, potret outline put
 ## fonts/
 Anton (tajuk gaya thumbnail), Playfair Display 900/700i, Inter 500/800/900, JetBrains Mono 700.
 
-## kartun/ (watak kartun Taufik — PNG lutsinar dengan outline putih)
-kartun-taufik-jongkong-250g · kartun-taufik-buku-guru · kartun-taufik-{alhamdulillah,hahaha,siap-tabik,terima-kasih}[-tanpa-teks]
-sheet-kartun-taufik-pelbagai-baju / sheet-kartun-lelaki-pejabat-site / sheet-kartun-wanita-hijab = helaian sticker penuh (belum dipotong) — potong bila perlu.
-Guna untuk gaya `carousel-komik`. Kartun BOLEH di mana-mana slaid (bukan selfie).
-`rujukan-gaya/komik-popart-turun-rm180.jpg` = rujukan gaya komik (harga dalam poster bertarikh 29 Jan & 8 Okt 2026 — jangan guna semula).
+## kartun/ (watak kartun keluarga — PNG lutsinar, outline putih)
+- `taufik/` (19): tabik, lambai, kenyit-tunjuk, tunjuk-atas, peluk-tubuh-senyum/batik, thumb-polo-kelabu, teruja-polo-hitam, jongkong-250g, buku-guru, semi-realistik-buku-guru, alhamdulillah/hahaha/siap-tabik/terima-kasih (+ -tanpa-teks)
+- `isteri/` (15) = ISTERI Taufik (tudung pink, cermin mata): doa, doa-senyum, lambai, teruja, ok, hadiah, semangat, thumb-gelak, duduk-minum-thumb, headphone-*, 3d-*
+- `anak/` (36) = ANAK PEREMPUAN Taufik (rambut bob): lambai-*, lompat-*, peace-*, doa-*, semangat-*, pipi-*, overall, hadiah-topi-party, 3d-*
+- `sheets/` helaian asal (ADA NAMA anak/isteri — jangan guna terus dalam post). Potong baru: `python3 assets/potong_sticker.py`.
+- Privasi: jangan tulis nama sebenar anak/isteri dalam output.
+Guna untuk `carousel-kartun` (pastel keluarga) dan `carousel-komik` (pop-art). Kartun BOLEH di mana-mana slaid.
+`rujukan-gaya/komik-popart-turun-rm180.jpg` = rujukan komik (harga bertarikh — jangan guna semula).
+`rujukan-gaya/poster-matlamat-10-gram.jpg`, `poster-fungsi-aplikasi-public-gold.jpg` = poster premium gelap-emas Taufik (app: baki 27.4071g, harga 25 Apr 2026 — data bertarikh).
