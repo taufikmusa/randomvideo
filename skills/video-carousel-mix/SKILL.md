@@ -1,0 +1,49 @@
+---
+name: video-carousel-mix
+description: 'Video menegak 1080x1920 (TikTok/Reels) dari FOOTAGE TAUFIK BERCAKAP (talking head) di mana carousel jadi B-ROLL: setiap poin/bab dipotong ke slaid animasi dalam gaya carousel yang BERLAINAN (mix carousel-pastel kartun keluarga Baba/Mami/Amani/Aileen, carousel-red komik pop-art, carousel-editorial putih majalah, carousel-maroon impian, carousel-thumbnail gelap Anton), dengan kapsyen Poppins ExtraBold Italic (kata kunci emas), transisi wipe berwarna ikut gaya, SFX whoosh/pop SAHAJA (TANPA muzik latar). Guna bila Taufik upload video dia bercakap (copywriting 5 poin) dan minta "buat jadi video", "carousel jadi b-roll", "mix semua skill carousel", "gaya video ibu tunggal / video kahwin tu". Suara asal Taufik dikekalkan. BERBEZA daripada video-timeline (motion graphics tanpa suara) dan carousel-* (gambar statik).'
+---
+
+# video-carousel-mix — talking head + B-roll carousel mix (1080x1920, 30fps)
+
+Taufik suka gaya ni (video "5 Benteng Kewangan Ibu Tunggal" & "5 Keputusan Kewangan Tahun Pertama Kahwin"). Formula yang berjaya:
+
+- **Footage Taufik = asas.** Setiap poin: ayat tajuk ("Pertama, tabung kecemasan") kekal atas footage dengan **chapter overlay** (pil/label ikut gaya), kemudian **potong ke B-roll** slaid animasi semasa isi poin diceritakan, kemudian balik ke footage. ±50% masa = B-roll.
+- **Setiap bab guna gaya carousel lain** (mix): pastel → red → editorial → maroon → thumbnail → pastel… Kapsyen bawah SENTIASA Poppins ExtraBold Italic putih, outline maroon gelap, kata kunci emas — lapisan jenama yang menyatukan semua gaya. Wipe transisi tukar warna ikut gaya adegan seterusnya.
+- **Audio = suara asal (loudnorm) + SFX sahaja.** Whoosh pada setiap wipe, pop pada setiap elemen muncul. **TIADA muzik latar** (Taufik minta buang).
+- Kartun keluarga di B-roll pastel/red/CTA. Topik ibu tunggal: Mami sebagai "ibu" + Amani & Aileen (laporkan pilihan ni). Topik suami-isteri: Baba + Mami. Topik anak: Amani + Aileen. CTA: `baba-semi-realistik-jom`. Potret/selfie sebenar TIDAK digunakan (footage dah ada Taufik).
+- **Struktur 5 poin (≈80–100s):** hook (H, thumbnail) → intro/konteks (B) → [chapter H → isi B] ×5 → "ibu/hakikat" B → H penutup ayat → CTA B (maroon + Baba "Jom!" + "Rujuk Pin Video") → H akhir "Dulu Ragu, Kini Tahu!" (red komik).
+
+## Fail
+```
+assets/template/engine.js   JANGAN EDIT: 5 modul gaya (MA PA RD ED TH), anim(), kapsyen, head(), pembantu adegan (B, Hh, WC, mamiY, bob)
+assets/template/scenes.js   FAIL YANG DITULIS: DUR, HEADN, ASSETS, SEG (kapsyen), SCENES[], bakeAll()  (contoh = ibu tunggal)
+assets/template/run.js      JANGAN EDIT: wipe, hud (@taufik.pg + progress), render(t), ready
+assets/template/render.js   node render.js [stills t1 t2…] — 4 page selari, ffmpeg gabung suara+SFX
+assets/template/sfx.py      jana sfx.wav dari sfx.json (TIADA muzik)
+fonts/                       Poppins, Fredoka, Nunito, Anton, Bangers, Inter, Caveat, PermanentMarker, Mono
+scripts/new_video.sh         salin template + ekstrak frame src/ + voice.wav + cetak DUR/HEADN
+scripts/transcribe.py        transkrip Whisper-small (sherpa-onnx, offline) ikut jeda senyap
+references/scenes-ibu-tunggal.js, scenes-kahwin.js   dua contoh lengkap
+```
+
+## Aliran kerja
+1. `sh skills/video-carousel-mix/scripts/new_video.sh video-<topik> <upload.mp4>` → cetak `DUR`/`HEADN`.
+2. **Transkrip**: `python3 skills/video-carousel-mix/scripts/transcribe.py video-<topik>/voice.wav <model>` (setup model dalam header skrip; `pip install sherpa-onnx`; model dari GitHub release k2-fsa/sherpa-onnx, HuggingFace disekat). Output ada ejaan salah → **betulkan ikut konteks** (kewangan bukan keuangan, nafkah, maruah…). Ayat yang kabur: cuba semula chunk dengan bahasa `ms`/`id`, kalau masih ragu tanya Taufik / laporkan.
+3. `cp assets/emas/*.jpg assets/kartun/<watak>/*.png video-<topik>/img/` (guna `assets/README.md`).
+4. Tulis `scenes.js`: `SEG` = [mula, tamat, 'teks *kata *kunci'] ikut jeda; `SCENES` = `Hh(a,b,overlay,dir,WC.x)` (footage + overlay) dan `B(a,b,bgKey,WC.x,draw,pops)` (B-roll). Masa reveal dalam `draw` (`anim(lt, at, cx, cy, fn)`) ikut masa perkataan dituturkan (`at` = saat sejak mula adegan). `pops` = senarai `at` yang sama (untuk SFX). `bakeAll()` bake latar.
+5. `node render.js stills <masa…>` → contact sheet (`montage … -tile 5x`) → semak: pil/doodle bertindih, teks keluar tepi, ruang kapsyen (y>1530 mesti kosong), aksara kartun vs teks.
+6. `node render.js` (~3 min, 4 worker). Semak `ffprobe` duration == DUR (loudnorm pernah potong ekor → dah diatasi `apad` + `-t`).
+7. Hantar: commit + push MP4, beri link GitHub raw sahaja (peraturan CLAUDE.md). Laporkan dialog/teks rekaan.
+
+## API ringkas (dalam scenes.js)
+- Struktur: `Hh(a,b,ov,dir,wc)` footage+overlay (dir ±1 = zum masuk/keluar), `B(a,b,bg,wc,draw,pops)`. `WC.pa|rd|ed|ma|th` = warna wipe.
+- Latar B: `pa1/pa2/pa3` (pastel krim/mint/pink), `rd` (kertas komik), `ed` (putih), `th` (navy bokeh), `ma1/ma2` (foto kabur — set `BGS.ma1 = MA.bgPhoto('<kunciAset>', 16, .45)` dalam `bakeAll`).
+- **PA** pastel: `bg title pill bubble card chara goldBar coin photoCard sparkle heart` · **RD** red: `paper panel burst pow bubble label circleMark ticks img photoPanel` · **ED** editorial: `swoosh bigNum brushTitle note sticky photoBox arrow burst` · **TH** thumbnail: `head brushHead pill photo stamp` · **MA** maroon: `headline pillTitle side sub whiteCard rowPill tierCard badge photoCard chapter(lt,n,l1,l2,sub,tag)`. Alias: `mPill mHead mWhite mRow mSub`.
+- Pembantu: `anim clamp easeOut back bob(lt,amp,speed,phase) shadow rr fitSize`, `mamiY=1500` (garis kaki kartun), `IMG.<kunci>` dari `ASSETS`.
+
+## Peraturan
+- Bahasa Melayu Malaysia; angka hanya dari skrip Taufik (RM100 sebulan dsb). Jangan reka harga/pulangan. Screenshot app bertarikh: jangan paparkan baki/angka.
+- Dialog/teks rekaan pendek (belon, nota) dibenarkan — SENARAIKAN dalam laporan.
+- Maksimum 1 gaya per bab; jangan ulang gaya yang sama dua bab berturut-turut.
+- Kapsyen & wipe & hud tidak diedit — itu yang menyatukan mix.
+- Kandungan sensitif (ibu tunggal): nada hormat, jangan label negatif; Mami sebagai wakil "ibu" — beritahu Taufik.

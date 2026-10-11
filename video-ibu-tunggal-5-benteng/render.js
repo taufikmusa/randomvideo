@@ -1,6 +1,6 @@
-// Render 1080x1920 frame-by-frame (4 page selari) -> out/frames, kemudian ffmpeg gabung audio.
+// Render 1080x1920 frame-by-frame (4 page selari) -> out/frames, kemudian ffmpeg gabung audio (suara asal + SFX, TANPA muzik).
 // Guna: node render.js stills 3 9 20   -> stills/t*.jpg
-//       python3 music.py && node render.js   -> video-kahwin-5-keputusan.mp4
+//       node render.js                 -> <nama-folder>.mp4
 const http = require('http'), fs = require('fs'), path = require('path'), { execFileSync } = require('child_process');
 let pw; try { pw = require('playwright'); } catch (e) { pw = require('/opt/node22/lib/node_modules/playwright'); }
 const root = __dirname, FPS = 30, WORKERS = 4, OUT = path.basename(root) + '.mp4';
@@ -15,20 +15,21 @@ const server = http.createServer((req, res) => { const f = path.join(root, decod
   if (process.argv[2] === 'stills') {
     const p = await mk(); fs.mkdirSync(path.join(root, 'stills'), { recursive: true });
     for (const s of process.argv.slice(3).map(Number)) fs.writeFileSync(path.join(root, 'stills', `t${s.toFixed(2)}.jpg`), Buffer.from((await grab(p, s)).split(',')[1], 'base64'));
-  } else {
-    const sfx = await (await mk()).evaluate(() => window.SFX); fs.writeFileSync(path.join(root, 'sfx.json'), JSON.stringify(sfx));
-    const DUR = await (await mk()).evaluate(() => DUR), total = Math.round(DUR * FPS), fr = path.join(root, 'out', 'frames'); fs.mkdirSync(fr, { recursive: true });
-    let next = 0;
-    await Promise.all(Array.from({ length: WORKERS }, async () => {
-      const p = await mk();
-      for (;;) { const f = next++; if (f >= total) break; const d = await grab(p, f / FPS); fs.writeFileSync(path.join(fr, String(f).padStart(5, '0') + '.jpg'), Buffer.from(d.split(',')[1], 'base64')); if (f % 150 === 0) console.log(`frame ${f}/${total}`); }
-    }));
-    await browser.close(); server.close();
-    execFileSync('python3', ['music.py'], { cwd: root, stdio: 'inherit' });
-    execFileSync('ffmpeg', ['-y', '-hide_banner', '-loglevel', 'error', '-framerate', String(FPS), '-i', path.join(fr, '%05d.jpg'), '-i', path.join(root, 'voice.wav'), '-i', path.join(root, 'music.wav'),
-      '-filter_complex', '[1:a]loudnorm=I=-16:TP=-1.5:LRA=9,apad=pad_dur=5[v];[2:a]volume=1.0[m0];[m0][1:a]sidechaincompress=threshold=0.04:ratio=9:attack=15:release=350[m];[v][m]amix=inputs=2:duration=first:normalize=0,alimiter=limit=0.95[a]',
-      '-map', '0:v', '-map', '[a]', '-c:v', 'libx264', '-preset', 'slow', '-crf', '20', '-pix_fmt', 'yuv420p', '-profile:v', 'high', '-c:a', 'aac', '-b:a', '192k', '-t', '97.7', '-movflags', '+faststart', path.join(root, OUT)], { stdio: 'inherit' });
-    console.log('done -> ' + OUT); return;
+    await browser.close(); server.close(); console.log('stills done'); return;
   }
-  await browser.close(); server.close(); console.log('stills done');
+  const p0 = await mk(), DUR = await p0.evaluate(() => DUR), sfx = await p0.evaluate(() => window.SFX); sfx.dur = DUR;
+  fs.writeFileSync(path.join(root, 'sfx.json'), JSON.stringify(sfx));
+  const total = Math.round(DUR * FPS), fr = path.join(root, 'out', 'frames'); fs.mkdirSync(fr, { recursive: true });
+  let next = 0;
+  await Promise.all(Array.from({ length: WORKERS }, async (_, w) => {
+    const p = w ? await mk() : p0;
+    for (;;) { const f = next++; if (f >= total) break; const d = await grab(p, f / FPS); fs.writeFileSync(path.join(fr, String(f).padStart(5, '0') + '.jpg'), Buffer.from(d.split(',')[1], 'base64')); if (f % 150 === 0) console.log(`frame ${f}/${total}`); }
+  }));
+  await browser.close(); server.close();
+  execFileSync('python3', ['sfx.py'], { cwd: root, stdio: 'inherit' });
+  // loudnorm kadang potong ekor audio → apad + -t DUR
+  execFileSync('ffmpeg', ['-y', '-hide_banner', '-loglevel', 'error', '-framerate', String(FPS), '-i', path.join(root, 'out', 'frames', '%05d.jpg'), '-i', path.join(root, 'voice.wav'), '-i', path.join(root, 'sfx.wav'),
+    '-filter_complex', '[1:a]loudnorm=I=-16:TP=-1.5:LRA=9,apad=pad_dur=5[v];[2:a]volume=.55[s];[v][s]amix=inputs=2:duration=first:normalize=0,alimiter=limit=0.95[a]',
+    '-map', '0:v', '-map', '[a]', '-c:v', 'libx264', '-preset', 'slow', '-crf', '20', '-pix_fmt', 'yuv420p', '-profile:v', 'high', '-c:a', 'aac', '-b:a', '192k', '-t', String(DUR), '-movflags', '+faststart', path.join(root, OUT)], { stdio: 'inherit' });
+  console.log('done -> ' + OUT);
 })();
