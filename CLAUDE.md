@@ -25,3 +25,6 @@ Render: `python3 music.py && node render.js` dalam folder projek.
 - `carousel-editorial` = gaya putih majalah, nombor oren gergasi, tulisan tangan (rujukan "9 Money Milestones").
 - Potret/selfie Taufik HANYA di slaid TERAKHIR (CTA). Cover & slaid isi tanpa potret (nampak macam iklan).
 - Baca SKILL.md skill tu dahulu; mula dengan `sh skills/<skill>/scripts/new_carousel.sh carousel-<topik> <pose...>`.
+
+## Skill video (dalam skills/)
+- `video-carousel-mix` = footage Taufik bercakap (upload mp4) + carousel jadi B-ROLL, mix 5 gaya carousel, kapsyen Poppins italic, SFX sahaja (TANPA muzik). Contoh: video-ibu-tunggal-5-benteng, video-kahwin-5-keputusan. Baca SKILL.md; mula dengan `sh skills/video-carousel-mix/scripts/new_video.sh video-<topik> <upload.mp4>`.
