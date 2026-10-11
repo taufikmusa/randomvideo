@@ -5,7 +5,7 @@ description: 'Video menegak 1080x1920 (TikTok/Reels) dari FOOTAGE TAUFIK BERCAKA
 
 # video-carousel-mix — talking head + B-roll carousel mix (1080x1920, 30fps)
 
-Taufik suka gaya ni (video "5 Benteng Kewangan Ibu Tunggal" & "5 Keputusan Kewangan Tahun Pertama Kahwin"). Formula yang berjaya:
+Taufik suka gaya ni (4 video siap: ibu tunggal, kahwin, bayar hutang, beli rumah — lihat `references/`). Formula yang berjaya:
 
 - **Footage Taufik = asas.** Setiap poin: ayat tajuk ("Pertama, tabung kecemasan") kekal atas footage dengan **chapter overlay** (pil/label ikut gaya), kemudian **potong ke B-roll** slaid animasi semasa isi poin diceritakan, kemudian balik ke footage. ±50% masa = B-roll.
 - **Setiap bab guna gaya carousel lain** (mix): pastel → red → editorial → maroon → thumbnail → pastel… Kapsyen bawah SENTIASA Poppins ExtraBold Italic putih, outline maroon gelap, kata kunci emas — lapisan jenama yang menyatukan semua gaya. Wipe transisi tukar warna ikut gaya adegan seterusnya.
@@ -23,7 +23,8 @@ assets/template/sfx.py      jana sfx.wav dari sfx.json (TIADA muzik)
 fonts/                       Poppins, Fredoka, Nunito, Anton, Bangers, Inter, Caveat, PermanentMarker, Mono
 scripts/new_video.sh         salin template + ekstrak frame src/ + voice.wav + cetak DUR/HEADN
 scripts/transcribe.py        transkrip Whisper-small (sherpa-onnx, offline) ikut jeda senyap
-references/scenes-ibu-tunggal.js, scenes-kahwin.js   dua contoh lengkap
+references/scenes-ibu-tunggal.js, scenes-kahwin.js, scenes-bayar-hutang.js, scenes-beli-rumah.js   empat contoh lengkap
+  (bayar-hutang & beli-rumah: Baba kartun sebagai watak utama; ada `fadeOut(lt,t0)`, ikon `bankIcon`/`house`, graf animasi editorial, syiling hilang satu-satu — salin snippet dari situ)
 ```
 
 ## Aliran kerja
@@ -34,6 +35,13 @@ references/scenes-ibu-tunggal.js, scenes-kahwin.js   dua contoh lengkap
 5. `node render.js stills <masa…>` → contact sheet (`montage … -tile 5x`) → semak: pil/doodle bertindih, teks keluar tepi, ruang kapsyen (y>1530 mesti kosong), aksara kartun vs teks.
 6. `node render.js` (~3 min, 4 worker). Semak `ffprobe` duration == DUR (loudnorm pernah potong ekor → dah diatasi `apad` + `-t`).
 7. Hantar: commit + push MP4, beri link GitHub raw sahaja (peraturan CLAUDE.md). Laporkan dialog/teks rekaan.
+
+## Petua tambahan (dari video 3 & 4)
+- Transkrip kabur: ulang chunk sempit (±3s) dengan `language='ms'` dan `'id'`, bandingkan; "di bozik" = deposit, "ekon bank" = akaun bank. Guna `silencedetect` (d=0.12) untuk cari sempadan tajuk bab ("Kedua,") yang Whisper tak tangkap. Ayat yang masih ragu → senaraikan dalam laporan.
+- Satu footage `Hh` boleh tukar overlay ikut `lt` (cth amaran → chapter) tanpa wipe.
+- Elemen B-roll yang perlu hilang sebelum elemen baru: `X.globalAlpha *= 1 - clamp((lt - t0)/.3)` di awal fungsi `anim` (helper `fadeOut`).
+- Watak utama topik hutang/rumah/duit = Baba (alhamdulillah = lega, berfikir-polo = godaan, sorak-polo = bebas, jongkong-250g = emas, tangan-terbuka = impian). Jangan sebut "Public Gold" kecuali Taufik sebut dalam audio.
+- Nama folder = nama MP4 (`video-<topik>/video-<topik>.mp4`) — beri nama sebenar SEBELUM render.
 
 ## API ringkas (dalam scenes.js)
 - Struktur: `Hh(a,b,ov,dir,wc)` footage+overlay (dir ±1 = zum masuk/keluar), `B(a,b,bg,wc,draw,pops)`. `WC.pa|rd|ed|ma|th` = warna wipe.
