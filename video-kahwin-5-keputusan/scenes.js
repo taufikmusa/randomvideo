@@ -7,6 +7,7 @@ const ASSETS = {
   bPeluk: 'baba-peluk-hati.png', bTubuh: 'baba-peluk-tubuh-senyum.png', bBuka: 'baba-tangan-terbuka.png', baba: 'baba-semi-realistik-jom.png',
   aPeluk: 'amani-peluk-hati.png', aGembira: 'amani-tangan-atas-gembira.png', lPeluk: 'aileen-peluk-hati.png', lDepa: 'aileen-depa-tangan.png',
 };
+Object.assign(ASSETS, { sHook: 'stk-hook.png', sTahun: 'stk-tahun-pertama.png', sSimpanan: 'stk-simpanan-kecemasan.png', sBincang: 'stk-bincang-telus.png', sPendidikan: 'stk-pendidikan-anak.png', sInflasi: 'stk-kawal-inflasi.png', sEmas: 'stk-emas-bersama.png', sMasa: 'stk-masa-depan-stabil.png', sKukuh: 'stk-kukuhkan.png' });
 const SEG = [
   [0, 3.87, '*5 *Keputusan *Kewangan Wajib Tahun Pertama Kahwin'],
   [3.87, 6.32, 'Tahun pertama kahwin penuh *kemanisan,'],
@@ -35,28 +36,28 @@ const SCENES = [
   // 1 hook (thumbnail)
   Hh(0, 3.87, (lt) => {
     const out = clamp((lt - 3.4) / .3); X.save(); X.globalAlpha = 1 - out;
-    anim(lt, .1, 540, 280, () => TH.head('5 KEPUTUSAN', 540, 310, 140, '#fff', TH.C.ink, 'center'));
-    anim(lt, .35, 540, 440, () => TH.brushHead('KEWANGAN WAJIB', 540, 460, 130, TH.C.y, TH.C.red, 5));
-    anim(lt, .8, 540, 560, () => TH.pill('TAHUN PERTAMA KAHWIN', 540, 520, TH.C.y, TH.C.ink, 30));
+    hookTitle(lt, { tag: 'WAJIB TAHU', lines: ['5 KEPUTUSAN', 'KEWANGAN'], sub: 'TAHUN PERTAMA KAHWIN' });
+
+
     X.restore();
   }, 1, WC.th),
   // 2 penuh kemanisan (pastel)
   B(3.87, 6.32, 'pa1', WC.pa, (lt) => {
     anim(lt, .05, 540, 300, () => PA.title('Penuh *Kemanisan*', 540, 320, 108, 980, 'center'));
-    anim(lt, .2, 330, 1300, () => PA.chara(IMG.bPeluk, 340, mamiY + bob(lt, 6), 640));
-    anim(lt, .35, 750, 1300, () => PA.chara(IMG.mPeluk, 760, mamiY + bob(lt, 6, 2.2, 1), 600, true));
+    anim(lt, .2, 540, 1300, () => PA.chara(IMG.sHook, 540, mamiY + bob(lt, 7), 760));
+
     [[130, 800], [940, 760], [540, 880]].forEach(([x, y], i) => anim(lt, .3 + i * .15, x, y, () => PA.heart(x, y + bob(lt, 10, 2.4, i), 34 + i * 8)));
     PA.sparkle(160, 1000, 28); PA.sparkle(930, 1060, 24);
   }, [.05, .2, .35]),
   // 3 silap urus duit (red komik)
   B(6.32, 12.96, 'rd', WC.rd, (lt) => {
     anim(lt, .05, 540, 230, () => RD.label('TAPI...', 540, 230, 64));
-    anim(lt, .3, 540, 560, () => { RD.burst(540, 560, 400, 240, RD.K.red, 18, 3, true); RD.pow('SILAP URUS', 540, 545, 112, RD.K.yel, 'center', -.04); RD.pow('DUIT!', 540, 665, 112, '#fff', 'center', -.04); });
-    anim(lt, 2.6, 540, 1000, () => { RD.burst(540, 1000, 340, 180, RD.K.yel, 16, 9, true); RD.pow('MENGHANTUI', 540, 1010, 96, RD.K.red, 'center', .04); });
-    anim(lt, 4.8, 540, 1210, () => RD.label('BERTAHUN-TAHUN', 540, 1215, 60, RD.K.red, '#fff', .03));
-    anim(lt, 3.4, 160, 1300, () => RD.img(IMG.bBuka, 150, mamiY, 340));
-    anim(lt, 3.6, 930, 1300, () => RD.img(IMG.mOk, 930, mamiY, 360));
-    anim(lt, 4.2, 540, 1400, () => RD.bubble(['ALAMAK!'], 540, 1400, 260, 120, 640, 1440, 56));
+    anim(lt, .3, 540, 560, () => { RD.burst(540, 520, 400, 220, RD.K.red, 18, 3, true); RD.pow('SILAP URUS', 540, 505, 112, RD.K.yel, 'center', -.04); RD.pow('DUIT!', 540, 625, 112, '#fff', 'center', -.04); });
+    anim(lt, 2.6, 540, 1000, () => { RD.burst(540, 820, 330, 150, RD.K.yel, 16, 9, true); RD.pow('MENGHANTUI', 540, 832, 96, RD.K.red, 'center', .04); });
+
+    anim(lt, 3.4, 540, 1300, () => RD.img(IMG.sTahun, 540, mamiY, 552));
+
+    anim(lt, 4.2, 540, 1400, () => RD.bubble(['ALAMAK!'], 850, 1200, 260, 120, 700, 1290, 56));
   }, [.05, .3, 2.6, 3.4, 3.6, 4.2, 4.8]),
   // 4 ch1 pastel
   Hh(12.96, 18.49, (lt) => {
@@ -71,7 +72,7 @@ const SCENES = [
     anim(lt, 3.0, 800, 640, () => { ED.note(['Kereta', 'baru'], 590, 640, 96, .03, false); });
     anim(lt, 3.9, 800, 640, () => ED.swoosh(570, 700, 960, ED.K.red, 14, 6, easeOut(clamp((lt - 3.9) / .4))));
     anim(lt, 4.4, 800, 1000, () => ED.sticky(['tabung', 'kecemasan', 'dulu!'], 620, 960, 360, -.05, 62));
-    anim(lt, 5.0, 300, 1100, () => ED.photoBox(IMG.wallet, 60, 930, 480, 400, 26, .5, .5, -.03));
+    anim(lt, 5.0, 300, 1100, () => PA.chara(IMG.sSimpanan, 300, mamiY, 644));
   }, [.05, .15, 1.5, 2.4, 3.0, 3.9, 4.4, 5.0]),
   // 6 ch2 red
   Hh(24.31, 27.54, (lt) => {
@@ -83,7 +84,7 @@ const SCENES = [
     anim(lt, .05, 540, 270, () => mPill(['Suami & Isteri'], 540, 270, 92)); anim(lt, .05, 540, 270, () => MA.side(300));
     anim(lt, .35, 290, 800, () => MA.tierCard(50, 480, 480, 560, 'TEKANAN', 'GADUH', 'punca utama pergaduhan suami & isteri'));
     anim(lt, 4.3, 790, 800, () => MA.tierCard(550, 480, 480, 560, 'MATLAMAT', 'TENANG', 'bersama, hati lebih tenang'));
-    anim(lt, 6.0, 540, 1230, () => mWhite(90, 1130, 900, ['Satu matlamat bersama,', '*dua hati tenang.'], 52));
+    anim(lt, 6.0, 540, 1300, () => PA.chara(IMG.sBincang, 540, mamiY, 483));
   }, [.05, .35, 4.3, 6.0]),
   // 8 ch3 editorial
   Hh(35.28, 39.21, (lt) => {
@@ -97,9 +98,9 @@ const SCENES = [
     anim(lt, .35, 290, 640, () => { PA.card(60, 420, 450, 360, PA.K.white); PA.txt('HARI INI', 285, 500, PA.F.t(46), PA.K.brown, 'center'); PA.txt('RM100', 285, 625, PA.F.t(100), PA.K.red, 'center'); PA.txt('sebulan, jauh lebih mudah', 285, 710, PA.F.b(34), PA.K.ink, 'center'); });
     anim(lt, 4.2, 790, 640, () => { PA.card(570, 420, 450, 360, PA.K.white); PA.txt('UNIVERSITI', 795, 500, PA.F.t(46), PA.K.brown, 'center'); PA.txt('PULUHAN', 795, 600, PA.F.t(70), PA.K.red, 'center'); PA.txt('RIBU', 795, 680, PA.F.t(70), PA.K.red, 'center'); PA.txt('waktu anak nak masuk', 795, 745, PA.F.b(32), PA.K.ink, 'center'); });
     anim(lt, 3.6, 540, 420, () => PA.coin(540, 430, 46, 'vs'));
-    anim(lt, .8, 260, 1300, () => PA.chara(IMG.aGembira, 250, mamiY + bob(lt, 6), 560));
-    anim(lt, 1.0, 830, 1300, () => PA.chara(IMG.lDepa, 830, mamiY + bob(lt, 6, 2.4, 1), 500));
-    anim(lt, 6.2, 540, 1060, () => PA.bubble(['Mula awal,', '*lagi ringan!'], 540, 1010, 480, 220, 420, 1120, 54));
+    anim(lt, .8, 540, 1300, () => PA.chara(IMG.sPendidikan, 540, mamiY + bob(lt, 7), 640));
+
+
     PA.sparkle(540, 1200, 26);
   }, [.05, .35, .8, 1.0, 3.6, 4.2, 6.2]),
   // 10 ch4 thumbnail
@@ -118,8 +119,8 @@ const SCENES = [
       const [ex, ey] = pts[n]; X.beginPath(); X.arc(ex, ey, 22, 0, 7); X.fillStyle = RD.K.yel; X.fill(); X.lineWidth = 7; X.strokeStyle = RD.K.ink; X.stroke(); X.restore();
     }
     anim(lt, 3.0, 760, 1050, () => { RD.burst(760, 1030, 230, 150, RD.K.red, 14, 5, true); RD.pow('SUSUT!', 760, 1055, 100, RD.K.yel, 'center', .05); });
-    anim(lt, .9, 240, 1300, () => RD.img(IMG.mJari, 240, mamiY, 520));
-    anim(lt, 1.6, 460, 1100, () => RD.bubble(['DUIT DIAM', 'DALAM BANK?'], 330, 1000, 380, 170, 250, 1100, 50, { 1: RD.K.red }));
+    anim(lt, .9, 240, 1300, () => RD.img(IMG.sInflasi, 250, mamiY, 667));
+
   }, [.05, .3, .9, 1.6, 3.0]),
   // 12 ch5 maroon
   Hh(56.32, 59.97, (lt) => MA.chapter(lt, 5, 'Simpan Emas', 'Rapatkan Hubungan', null, 'KEPUTUSAN'), -1, WC.ma),
@@ -129,8 +130,8 @@ const SCENES = [
     anim(lt, .6, 540, 520, () => PA.pill('Setiap bulan', 540, 470, 56, PA.K.ink, PA.K.butter, -.02));
     anim(lt, 2.4, 540, 640, () => PA.pill('Bina disiplin', 540, 620, 56, PA.K.ink, PA.K.mint, .02));
     anim(lt, 3.9, 540, 770, () => PA.pill('Persefahaman', 540, 770, 56, PA.K.ink, PA.K.lilac, -.02));
-    anim(lt, 1.0, 340, 1300, () => PA.chara(IMG.bPeluk, 340, mamiY + bob(lt, 6), 600));
-    anim(lt, 1.2, 760, 1300, () => PA.chara(IMG.mPeluk, 760, mamiY + bob(lt, 6, 2.2, 1), 560, true));
+    anim(lt, 1.0, 540, 1300, () => PA.chara(IMG.sEmas, 540, mamiY + bob(lt, 7), 700));
+
     [[130, 1000], [950, 960]].forEach(([x, y], i) => anim(lt, 1.4 + i * .2, x, y, () => PA.heart(x, y + bob(lt, 10, 2.4, i), 40 + i * 8)));
   }, [.05, .6, 1.0, 1.2, 2.4, 3.9]),
   // 14 bukan sekadar cinta (thumbnail)
@@ -139,7 +140,7 @@ const SCENES = [
     anim(lt, .45, 540, 500, () => TH.brushHead('CINTA', 540, 540, 200, TH.C.y, TH.C.red, 5));
     anim(lt, 2.6, 540, 780, () => TH.head('MASA DEPAN', 540, 780, 150, TH.C.y, TH.C.ink, 'center'));
     anim(lt, 3.0, 540, 930, () => TH.brushHead('YANG STABIL', 540, 930, 110, '#fff', TH.C.red, 8));
-    anim(lt, 3.8, 540, 1230, () => TH.photo(IMG.tiers, 540, 1230, 330, -.04));
+    anim(lt, 3.8, 540, 1230, () => PA.chara(IMG.sMasa, 540, 1490, 598));
   }, [.1, .45, 2.6, 3.0, 3.8]),
   // 15 kukuhkan (maroon overlay)
   Hh(71.93, 74.21, (lt) => { anim(lt, .05, 540, 360, () => mPill(['Kukuhkan Kewangan', 'Bersama'], 540, 330, 82)); anim(lt, .05, 540, 360, () => MA.side(390)); }, 1, WC.ma),
@@ -148,7 +149,7 @@ const SCENES = [
     anim(lt, .05, 540, 250, () => mHead('Dah Ready Nak Mula?', 540, 260, 84));
     anim(lt, .5, 540, 430, () => mPill(['Simpan Emas', 'di Public Gold'], 540, 380, 104)); anim(lt, .5, 540, 430, () => MA.side(450));
     anim(lt, 1.4, 380, 960, () => MA.photoCard(IMG.ipad, 380, 960, 560, 400, -.03, .5, .45));
-    anim(lt, 1.8, 860, 1300, () => PA.chara(IMG.baba, 800, mamiY - 20 + bob(lt, 6), 560));
+    anim(lt, 1.8, 860, 1300, () => PA.chara(IMG.sKukuh, 800, mamiY - 20 + bob(lt, 7), 600));
     anim(lt, 3.0, 370, 1300, () => { shadow(() => { rr(50, 1250, 640, 120, 60); X.fillStyle = MA.K.maroon; X.fill(); }, 22, .45, 10); MA.txt('Rujuk Pin Video', 370, 1330, MA.F.h(54), '#fff', 'center'); });
     MA.sparkle(160, 780, 28); MA.sparkle(930, 700, 24);
   }, [.05, .5, 1.4, 1.8, 3.0]),

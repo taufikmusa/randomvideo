@@ -67,3 +67,11 @@ Guna untuk `carousel-pastel` (pastel keluarga) dan `carousel-red` (pop-art merah
 `rujukan-gaya/poster-matlamat-10-gram.jpg`, `poster-fungsi-aplikasi-public-gold.jpg` = poster premium gelap-emas Taufik (app: baki 27.4071g, harga 25 Apr 2026 — data bertarikh).
 
 `rujukan-gaya/maroon-impian-01..04.jpg` = rujukan gaya `carousel-maroon` (orang dalam poster BUKAN Taufik — rujukan gaya sahaja; angka dana haji/kahwin dalam poster bukan data kita).
+
+## kartun/stiker/ (sticker Taufik 3x3 per video — teks tertulis dalam sticker, wanita bertudung berjaket hijau / pasangan)
+Helaian asal: `kartun/sheets/stiker-{ibu-tunggal,kahwin,bayar-hutang,beli-rumah}.jpg`. Dipotong ke `kartun/stiker/<topik>/<topik>-<nama>.png`.
+- **ibu-tunggal**: hook · nafkah-anak · tabung-kecemasan · aset-sendiri · dana-pendidikan · emas-digital · langkah-kecil · ibu-kuat · bina-benteng
+- **kahwin** (pasangan): hook · tahun-pertama · simpanan-kecemasan · bincang-telus · pendidikan-anak · kawal-inflasi · emas-bersama · masa-depan-stabil · kukuhkan
+- **bayar-hutang**: bebas-rantai · gaya-hidup · dana-kecemasan · alih-aset · perit-hutang · bayar-diri · mula-kekayaan · bebas-beban · kunci-kebebasan
+- **beli-rumah**: kos-tersembunyi · lawan-inflasi · sold(hook) · jangan-licin · komitmen-30 · dana-kecemasan · emas-sekali · posisi-kukuh · rumah-tenang
+Resolusi kecil (~240x310) → naikkan 2x Lanczos sebelum guna dalam video. Tertib hasil `potong_sticker.py` TIDAK ikut tertib baca — semak visual.

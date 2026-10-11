@@ -27,4 +27,4 @@ Render: `python3 music.py && node render.js` dalam folder projek.
 - Baca SKILL.md skill tu dahulu; mula dengan `sh skills/<skill>/scripts/new_carousel.sh carousel-<topik> <pose...>`.
 
 ## Skill video (dalam skills/)
-- `video-carousel-mix` = footage Taufik bercakap (upload mp4) + carousel jadi B-ROLL, mix 5 gaya carousel, kapsyen Poppins italic, SFX sahaja (TANPA muzik). Contoh: video-ibu-tunggal-5-benteng, video-kahwin-5-keputusan. Baca SKILL.md; mula dengan `sh skills/video-carousel-mix/scripts/new_video.sh video-<topik> <upload.mp4>`.
+- `video-carousel-mix` = footage Taufik bercakap (upload mp4) + carousel jadi B-ROLL, mix 5 gaya carousel, kapsyen Poppins italic, transisi api, audio suara asal SAHAJA (TANPA muzik & TANPA SFX), sticker Taufik dari assets/kartun/stiker/. Contoh: video-ibu-tunggal-5-benteng, video-kahwin-5-keputusan. Baca SKILL.md; mula dengan `sh skills/video-carousel-mix/scripts/new_video.sh video-<topik> <upload.mp4>`.

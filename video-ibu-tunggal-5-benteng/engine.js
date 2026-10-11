@@ -76,7 +76,16 @@ const MA = (() => {
     if (subtxt) anim(lt, .5, 540, 560, () => sub(subtxt, 540, 566 + (l2 ? 70 : 0), 860, 38));
     anim(lt, .22, 540, 420, () => side(400));
   }
-  return { K, F, txt, headline, pillTitle, side, sub, strokes, sparkle, curlyArrow, photoCard, whiteCard, rowPill, bgPhoto, chapter };
+  function tierCard(x, y, w, h, head, big, small) {
+    shadow(() => { rr(x, y, w, h, 28); X.fillStyle = K.cream; X.fill(); }, 26, .45, 12);
+    txt(head, x + w / 2, y + 78, F.h(fitSize([head], 54, w - 40, F.h)), K.ink, 'center');
+    rr(x + 20, y + 110, w - 40, h - 130, 22); X.fillStyle = K.maroon; X.fill();
+    let bs = Math.min(100, w * .3); while (tw(big, F.hh(bs)) > w - 70 && bs > 30) bs -= 2;
+    txt(big, x + w / 2, y + h * .58, F.hh(bs), goldGrad(y + h * .4, y + h * .62), 'center');
+    wrap(small, F.b(32), w - 80).forEach((l, i) => txt(l, x + w / 2, y + h * .58 + 62 + i * 40, F.b(32), K.white, 'center'));
+  }
+  function badge(cx, cy, r, fn) { shadow(() => { X.beginPath(); X.arc(cx, cy, r, 0, 7); X.fillStyle = K.white; X.fill(); }, 16, .35, 6); X.beginPath(); X.arc(cx, cy, r - 6, 0, 7); X.fillStyle = K.maroon; X.fill(); X.save(); X.translate(cx, cy); X.scale(r / 80, r / 80); X.strokeStyle = K.white; X.fillStyle = K.white; X.lineWidth = 6; X.lineCap = 'round'; X.lineJoin = 'round'; fn(r); X.restore(); }
+  return { K, F, txt, headline, pillTitle, side, sub, strokes, sparkle, curlyArrow, photoCard, whiteCard, rowPill, tierCard, badge, bgPhoto, chapter };
 })();
 
 // ======================= PASTEL (carousel-pastel) =======================
@@ -296,7 +305,7 @@ function buildCaps() {
 }
 function caption(t) {
   const c = CAPS.find(c => t >= c.a && t < c.b); if (!c) return;
-  const lt = t - c.a, p = back(lt / .16), y = 1640;
+  const lt = t - c.a, p = back(lt / .16), y = 1390;  // dinaikkan ±90% dari jarak bawah asal (1640 → 1390)
   const full = c.w.map(w => w.t).join(' '), size = fitSize([full], 68, 960, CF);
   X.save(); X.font = CF(size); X.letterSpacing = '0px';
   const widths = c.w.map(w => X.measureText(w.t).width), sp = X.measureText(' ').width, total = widths.reduce((a, b) => a + b, 0) + sp * (c.w.length - 1);
@@ -313,7 +322,34 @@ function head(lt, d, dir = 1) {
   const s = dir > 0 ? 1.02 + .07 * (lt / d) : 1.09 - .07 * (lt / d);
   if (curHead) { X.save(); X.translate(540, 820); X.scale(s, s); X.translate(-540, -820); X.drawImage(curHead, 0, 0, 720, 1280, 0, 0, W, H); X.restore(); }
   let g = X.createLinearGradient(0, 0, 0, 700); g.addColorStop(0, 'rgba(24,8,12,.72)'); g.addColorStop(1, 'rgba(24,8,12,0)'); X.fillStyle = g; X.fillRect(0, 0, W, 700);
-  g = X.createLinearGradient(0, 1250, 0, H); g.addColorStop(0, 'rgba(24,8,12,0)'); g.addColorStop(1, 'rgba(24,8,12,.78)'); X.fillStyle = g; X.fillRect(0, 1250, W, H - 1250);
+  g = X.createLinearGradient(0, 1080, 0, 1500); g.addColorStop(0, 'rgba(24,8,12,0)'); g.addColorStop(1, 'rgba(24,8,12,.72)'); X.fillStyle = g; X.fillRect(0, 1080, W, 420); X.fillStyle = 'rgba(24,8,12,.72)'; X.fillRect(0, 1500, W, H - 1500);
+}
+
+
+// ---------- HOOK TITLE (adegan pertama): Playfair 900 emas berkilau + pil tag + pil maroon ----------
+function hookTitle(lt, o) {
+  const K = MA.K, goldV = (y0, y1) => { const g = X.createLinearGradient(0, y0, 0, y1); [[0, '#FFF6C8'], [.3, '#FFD95A'], [.62, '#F5C542'], [1, '#B97A12']].forEach(([a, c]) => g.addColorStop(a, c)); return g; };
+  anim(lt, .05, 540, 200, () => {  // tag
+    const f = `italic 800 34px PP`; X.save(); X.font = f; X.letterSpacing = '8px'; const w = X.measureText(o.tag).width + 90; X.restore();
+    shadow(() => { rr(540 - w / 2, 170, w, 66, 33); const g = X.createLinearGradient(0, 170, 0, 236); g.addColorStop(0, '#FFE79A'); g.addColorStop(1, K.gold2); X.fillStyle = g; X.fill(); }, 22, .5, 8);
+    MA.txt(o.tag, 540 + 4, 215, f, K.maroon2, 'center', 8);
+  });
+  o.lines.forEach((ln, i) => anim(lt, .25 + i * .22, 540, 360 + i * 125, () => {
+    const size = fitSize([ln], 128, 960, s => `900 ${s}px PF`), by = 345 + i * 125, f = `900 ${size}px PF`;
+    X.save(); X.font = f; X.textAlign = 'center'; X.lineJoin = 'round'; X.miterLimit = 2;
+    X.shadowColor = 'rgba(0,0,0,.6)'; X.shadowBlur = 26; X.shadowOffsetY = 12; X.lineWidth = size * .17; X.strokeStyle = K.maroon2; X.strokeText(ln, 540, by);
+    X.shadowColor = 'rgba(245,197,66,.55)'; X.shadowBlur = 34; X.shadowOffsetY = 0; X.lineWidth = size * .05; X.strokeStyle = '#FFE79A'; X.strokeText(ln, 540, by);
+    X.shadowColor = 'transparent'; X.fillStyle = goldV(by - size * .78, by + size * .12); X.fillText(ln, 540, by);
+    const bp = ((lt * .55 + i * .18) % 1.7 - .35) * 1200, hg = X.createLinearGradient(bp - 130, 0, bp + 130, 0); hg.addColorStop(0, 'rgba(255,255,235,0)'); hg.addColorStop(.5, 'rgba(255,255,235,.9)'); hg.addColorStop(1, 'rgba(255,255,235,0)');
+    X.fillStyle = hg; X.fillText(ln, 540, by); X.restore();
+  }));
+  anim(lt, .75, 540, 560, () => {  // sub
+    const f = `italic 900 50px PP`; X.save(); X.font = f; X.letterSpacing = '3px'; const sz = fitSize([o.sub], 50, 840, s => `italic 900 ${s}px PP`), ff = `italic 900 ${sz}px PP`; X.font = ff; const w = X.measureText(o.sub).width + 110; X.restore();
+    shadow(() => { rr(540 - w / 2, 520, w, 86, 43); X.fillStyle = K.maroon; X.fill(); }, 26, .5, 10); rr(540 - w / 2 + 5, 525, w - 10, 76, 38); X.lineWidth = 3; X.strokeStyle = K.gold; X.stroke();
+    MA.txt(o.sub, 540, 520 + 58, ff, '#fff', 'center', 3); MA.sparkle(540 - w / 2 - 6, 520, 22, K.gold); MA.sparkle(540 + w / 2 + 6, 606, 18, K.gold);
+  });
+  anim(lt, 1.0, 540, 500, () => { X.save(); X.strokeStyle = K.gold; X.lineWidth = 7; X.lineCap = 'round'; const p = easeOut(clamp((lt - 1.0) / .5)); X.beginPath(); X.moveTo(220, 488); X.quadraticCurveTo(540, 470, 220 + 640 * p, 490); X.stroke(); X.restore(); });
+  [[120, 330], [960, 270], [90, 470], [990, 440]].forEach(([x, y], i) => { const a = .5 + .5 * Math.sin(lt * 4 + i * 1.7); if (lt > .5) MA.sparkle(x, y, 14 + 12 * a, i % 2 ? '#fff' : K.gold); });
 }
 
 // ---------- pembantu adegan ----------
