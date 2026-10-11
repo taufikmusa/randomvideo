@@ -331,29 +331,28 @@ function head(lt, d, dir = 1) {
 }
 
 
-// ---------- HOOK TITLE (adegan pertama): Playfair 900 emas berkilau + pil tag + pil maroon ----------
+// ---------- HOOK TITLE (adegan pertama): Anton MERAH + stroke PUTIH tebal + pil tag emas + pil maroon ----------
 function hookTitle(lt, o) {
   const K = MA.K, goldV = (y0, y1) => { const g = X.createLinearGradient(0, y0, 0, y1); [[0, '#FFF6C8'], [.3, '#FFD95A'], [.62, '#F5C542'], [1, '#B97A12']].forEach(([a, c]) => g.addColorStop(a, c)); return g; };
-  anim(lt, .05, 540, 200, () => {  // tag
+  anim(lt, .05, 540, 155, () => {  // tag
     const f = `italic 800 34px PP`; X.save(); X.font = f; X.letterSpacing = '8px'; const w = X.measureText(o.tag).width + 90; X.restore();
-    shadow(() => { rr(540 - w / 2, 170, w, 66, 33); const g = X.createLinearGradient(0, 170, 0, 236); g.addColorStop(0, '#FFE79A'); g.addColorStop(1, K.gold2); X.fillStyle = g; X.fill(); }, 22, .5, 8);
-    MA.txt(o.tag, 540 + 4, 215, f, K.maroon2, 'center', 8);
+    shadow(() => { rr(540 - w / 2, 120, w, 66, 33); const g = X.createLinearGradient(0, 120, 0, 186); g.addColorStop(0, '#FFE79A'); g.addColorStop(1, K.gold2); X.fillStyle = g; X.fill(); }, 22, .5, 8);
+    MA.txt(o.tag, 540 + 4, 165, f, K.maroon2, 'center', 8);
   });
-  o.lines.forEach((ln, i) => anim(lt, .25 + i * .22, 540, 360 + i * 125, () => {
-    const size = fitSize([ln], 128, 960, s => `900 ${s}px PF`), by = 345 + i * 125, f = `900 ${size}px PF`;
-    X.save(); X.font = f; X.textAlign = 'center'; X.lineJoin = 'round'; X.miterLimit = 2;
-    X.shadowColor = 'rgba(0,0,0,.6)'; X.shadowBlur = 26; X.shadowOffsetY = 12; X.lineWidth = size * .17; X.strokeStyle = K.maroon2; X.strokeText(ln, 540, by);
-    X.shadowColor = 'rgba(245,197,66,.55)'; X.shadowBlur = 34; X.shadowOffsetY = 0; X.lineWidth = size * .05; X.strokeStyle = '#FFE79A'; X.strokeText(ln, 540, by);
-    X.shadowColor = 'transparent'; X.fillStyle = goldV(by - size * .78, by + size * .12); X.fillText(ln, 540, by);
-    const bp = ((lt * .55 + i * .18) % 1.7 - .35) * 1200, hg = X.createLinearGradient(bp - 130, 0, bp + 130, 0); hg.addColorStop(0, 'rgba(255,255,235,0)'); hg.addColorStop(.5, 'rgba(255,255,235,.9)'); hg.addColorStop(1, 'rgba(255,255,235,0)');
+  o.lines.forEach((ln, i) => anim(lt, .25 + i * .22, 540, 360 + i * 140, () => {   // judul besar: Anton MERAH + stroke PUTIH tebal (jelas dibaca)
+    const size = fitSize([ln], 150, 960, s => `${s}px AN`), by = 362 + i * 132, f = `${size}px AN`;
+    X.save(); X.font = f; X.textAlign = 'center'; X.lineJoin = 'round'; X.miterLimit = 2; X.letterSpacing = '2px';
+    X.shadowColor = 'rgba(0,0,0,.65)'; X.shadowBlur = 22; X.shadowOffsetY = 14; X.lineWidth = size * .26; X.strokeStyle = '#1a0408'; X.strokeText(ln, 540, by);
+    X.shadowColor = 'transparent'; X.lineWidth = size * .2; X.strokeStyle = '#fff'; X.strokeText(ln, 540, by);
+    const rg = X.createLinearGradient(0, by - size * .8, 0, by + size * .05); rg.addColorStop(0, '#FF4D4D'); rg.addColorStop(.55, '#E3262E'); rg.addColorStop(1, '#B30E18'); X.fillStyle = rg; X.fillText(ln, 540, by);
+    const bp = ((lt * .55 + i * .18) % 1.7 - .35) * 1200, hg = X.createLinearGradient(bp - 120, 0, bp + 120, 0); hg.addColorStop(0, 'rgba(255,255,255,0)'); hg.addColorStop(.5, 'rgba(255,255,255,.55)'); hg.addColorStop(1, 'rgba(255,255,255,0)');
     X.fillStyle = hg; X.fillText(ln, 540, by); X.restore();
   }));
-  anim(lt, .75, 540, 560, () => {  // sub
+  anim(lt, .75, 540, 575, () => {  // sub
     const f = `italic 900 50px PP`; X.save(); X.font = f; X.letterSpacing = '3px'; const sz = fitSize([o.sub], 50, 840, s => `italic 900 ${s}px PP`), ff = `italic 900 ${sz}px PP`; X.font = ff; const w = X.measureText(o.sub).width + 110; X.restore();
-    shadow(() => { rr(540 - w / 2, 520, w, 86, 43); X.fillStyle = K.maroon; X.fill(); }, 26, .5, 10); rr(540 - w / 2 + 5, 525, w - 10, 76, 38); X.lineWidth = 3; X.strokeStyle = K.gold; X.stroke();
-    MA.txt(o.sub, 540, 520 + 58, ff, '#fff', 'center', 3); MA.sparkle(540 - w / 2 - 6, 520, 22, K.gold); MA.sparkle(540 + w / 2 + 6, 606, 18, K.gold);
+    shadow(() => { rr(540 - w / 2, 535, w, 86, 43); X.fillStyle = K.maroon; X.fill(); }, 26, .5, 10); rr(540 - w / 2 + 5, 540, w - 10, 76, 38); X.lineWidth = 3; X.strokeStyle = K.gold; X.stroke();
+    MA.txt(o.sub, 540, 535 + 58, ff, '#fff', 'center', 3); MA.sparkle(540 - w / 2 - 6, 535, 22, K.gold); MA.sparkle(540 + w / 2 + 6, 621, 18, K.gold);
   });
-  anim(lt, 1.0, 540, 500, () => { X.save(); X.strokeStyle = K.gold; X.lineWidth = 7; X.lineCap = 'round'; const p = easeOut(clamp((lt - 1.0) / .5)); X.beginPath(); X.moveTo(220, 488); X.quadraticCurveTo(540, 470, 220 + 640 * p, 490); X.stroke(); X.restore(); });
   [[120, 330], [960, 270], [90, 470], [990, 440]].forEach(([x, y], i) => { const a = .5 + .5 * Math.sin(lt * 4 + i * 1.7); if (lt > .5) MA.sparkle(x, y, 14 + 12 * a, i % 2 ? '#fff' : K.gold); });
 }
 
@@ -365,6 +364,16 @@ function stk(lt, at, im, cx, by, h, o = {}) {   // im, tengah-bawah (cx,by), tin
   X.save(); X.globalAlpha = clamp(t / .1); X.translate(cx, by + fl); X.rotate(-.2 * (1 - elasticOut(clamp(t / .8)))); X.scale(sc * (o.flip ? -1 : 1), sc); X.translate(0, 0);
   shadow(() => X.drawImage(im, -w / 2, -h, w, h), 30, .5, 14); X.restore();
   if (t < .65) { const q = easeOut(t / .65); for (let i = 0; i < 7; i++) { const a = -Math.PI * (.1 + .8 * i / 6), r = h * (.42 + .22 * q), x = cx + Math.cos(a) * r * 1.1, y = by - h * .5 + Math.sin(a) * r * .9; X.save(); X.globalAlpha = 1 - q; MA.sparkle(x, y, 10 + 16 * (1 - q), i % 2 ? '#fff' : MA.K.gold); X.restore(); } }
+}
+
+
+// ---------- OUTRO: semua sticker pop-up berturut-turut + CTA (Tahniah / Like | Share | Follow / @taufik.pg) ----------
+function outroScene(lt, imgs) {
+  const K = MA.K;
+  anim(lt, .05, 540, 250, () => MA.headline('Tahniah tonton sampai habis!', 540, 270, 66, K.gold));
+  imgs.forEach((im, i) => stk(lt, .3 + i * .22, im, 205 + (i % 3) * 335, 650 + Math.floor(i / 3) * 370, 355));
+  anim(lt, 2.8, 540, 1590, () => { const f = `italic 900 70px PP`; X.save(); X.font = f; const w = X.measureText('Like  |  Share  |  Follow').width + 100; X.restore(); shadow(() => { rr(540 - w / 2, 1530, w, 112, 56); X.fillStyle = K.maroon; X.fill(); }, 24, .5, 10); rr(540 - w / 2 + 5, 1535, w - 10, 102, 51); X.lineWidth = 3; X.strokeStyle = K.gold; X.stroke(); MA.txt('Like  |  Share  |  Follow', 540, 1608, f, '#fff', 'center'); });
+  anim(lt, 3.3, 540, 1730, () => { const f = `italic 800 52px PP`; X.save(); X.font = f; const w = X.measureText('@taufik.pg').width + 90; X.restore(); shadow(() => { rr(540 - w / 2, 1685, w, 86, 43); X.fillStyle = 'rgba(0,0,0,.6)'; X.fill(); }, 20, .4, 8); X.beginPath(); X.arc(540 - w / 2 + 38, 1728, 11, 0, 7); X.fillStyle = K.gold; X.fill(); MA.txt('@taufik.pg', 540 + 16, 1745, f, K.gold, 'center'); });
 }
 
 // ---------- pembantu adegan ----------

@@ -76,3 +76,6 @@ Helaian asal: `kartun/sheets/stiker-{ibu-tunggal,kahwin,bayar-hutang,beli-rumah}
 - **beli-rumah**: kos-tersembunyi · lawan-inflasi · sold(hook) · jangan-licin · komitmen-30 · dana-kecemasan · emas-sekali · posisi-kukuh · rumah-tenang
 Resolusi kecil (~240x310) → naikkan 2x Lanczos sebelum guna dalam video. Tertib hasil `potong_sticker.py` TIDAK ikut tertib baca — semak visual.
 - **duit-terpijak**: belanja-emosi · skim-cepat-kaya · hook · duit-tunai-terbiar · pelaburan-lebur · lupa-masa-depan · urus-bijak · tukar-aset · kunci-kebebasan  (helaian: `kartun/sheets/stiker-duit-terpijak.jpg`)
+- **warisan-nenek** (nenek bertudung bunga, untuk cucu): warisan-bernilai · duit-susut · emas-lebih-kukuh · simpan-seawal-bayi · cepat-mudah · kasih-sayang-abadi · baju-mainan-rosak · emas-kekal-berharga · legasi-terbaik  (helaian: `kartun/sheets/stiker-warisan-nenek.jpg`)
+- **tips-berilmu** (wanita bertudung mauve berkaca mata, topik skim tipu): jangan-putus-asa · rasa-takut-normal · janji-bulan-bintang · emas-fizikal-nyata · syarikat-kukuh · tiada-kontrak · guru-paling-mahal · biar-berilmu · pilih-selamat  (helaian: `kartun/sheets/stiker-tips-berilmu.jpg`)
+  Nota: dalam kedua-dua helaian 2 sticker bercantum — dipisah dengan potongan lajur minimum (bukan ERO, kerana ERO buang teks & garis putih).

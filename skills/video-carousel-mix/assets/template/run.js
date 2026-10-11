@@ -6,6 +6,7 @@ function drawScene(s, t) {
   const lt = Math.max(0, t - s.a), d = s.b - s.a;
   if (s.k === 'H') { head(lt, d, s.dir); s.ov(lt, d); return; }
   const c = BGS[s.bg]; if (c.width > W) { const p = lt / d - .5; X.drawImage(c, -110 - p * 50, -195 - p * 40); } else X.drawImage(c, 0, 0);
+  if (s.nobk) { s.draw(lt, d); return; }   // nobk: guna kanvas penuh (cth outro)
   X.save(); X.translate(540, 110); X.scale(BK, BK); X.translate(-540, -110); s.draw(lt, d); X.restore();
 }
 function hud(t) {

@@ -5,6 +5,8 @@ description: 'Video menegak 1080x1920 (TikTok/Reels) dari FOOTAGE TAUFIK BERCAKA
 
 # video-carousel-mix — talking head + B-roll carousel (1080x1920, 30fps)
 
+> **HOOK TERKINI**: judul besar `hookTitle` = Anton MERAH + stroke PUTIH tebal (+ bayang gelap, kilauan) dengan pil tag emas di atas & pil maroon di bawah. **OUTRO WAJIB** (Taufik minta): selepas suara tamat tambah ±6s adegan `Object.assign(B(VOICE, DUR, bg, WC.ma, lt => outroScene(lt, [9 sticker])), { nobk: true })` — semua sticker pop-up berturut-turut + "Tahniah tonton sampai habis! / Like | Share | Follow / @taufik.pg". `DUR = VOICE + 6` dalam scenes.js.
+>
 > **GAYA TERKINI (video duit-terpijak, disahkan Taufik): SATU design konsisten = MAROON-EMAS** (latar foto emas kabur, `ttl()` pil maroon + `row()`/`tierCard`/`chip`/`whiteCard`, chapter `MA.chapter`, hook `hookTitle`) + sticker kartun sebagai wira dengan **pop-up elastik `stk(lt, at, img, cx, by, h)`** (bounce + putaran + percikan emas + bayang). Tujuan: nampak PRO walaupun guna sticker kartun. Mix 5 gaya (di bawah) hanya jika Taufik minta; lalai sekarang = maroon konsisten. Rujukan: `references/scenes-duit-terpijak.js`.
 
 Taufik suka gaya ni (4 video siap: ibu tunggal, kahwin, bayar hutang, beli rumah — lihat `references/`). Formula yang berjaya:
@@ -28,8 +30,8 @@ fonts/                       Poppins, Fredoka, Nunito, Anton, Bangers, Inter, Ca
 scripts/new_video.sh         salin template + ekstrak frame src/ + voice.wav + cetak DUR/HEADN
 scripts/prep_src.sh          ekstrak frame/suara sahaja (tanpa timpa scenes.js) — guna bila re-render projek lama
 scripts/transcribe.py        transkrip Whisper-small (sherpa-onnx, offline) ikut jeda senyap
-references/scenes-ibu-tunggal.js, scenes-kahwin.js, scenes-bayar-hutang.js, scenes-beli-rumah.js, scenes-duit-terpijak.js   lima contoh lengkap
-  (bayar-hutang & beli-rumah: Baba kartun sebagai watak utama; ada `fadeOut(lt,t0)`, ikon `bankIcon`/`house`, graf animasi editorial, syiling hilang satu-satu — salin snippet dari situ)
+references/scenes-*.js   tujuh contoh lengkap (ibu-tunggal, kahwin, bayar-hutang, beli-rumah, duit-terpijak, warisan-nenek, mangsa-tipu)
+  (warisan-nenek & mangsa-tipu = TERKINI: maroon konsisten + sticker + outro; bayar-hutang & beli-rumah: Baba kartun sebagai watak utama; ada `fadeOut(lt,t0)`, ikon `bankIcon`/`house`, graf animasi editorial, syiling hilang satu-satu — salin snippet dari situ)
 ```
 
 ## Aliran kerja
