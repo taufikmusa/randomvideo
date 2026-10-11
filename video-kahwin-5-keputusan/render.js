@@ -26,8 +26,8 @@ const server = http.createServer((req, res) => { const f = path.join(root, decod
     await browser.close(); server.close();
     execFileSync('python3', ['music.py'], { cwd: root, stdio: 'inherit' });
     execFileSync('ffmpeg', ['-y', '-hide_banner', '-loglevel', 'error', '-framerate', String(FPS), '-i', path.join(fr, '%05d.jpg'), '-i', path.join(root, 'voice.wav'), '-i', path.join(root, 'music.wav'),
-      '-filter_complex', '[1:a]loudnorm=I=-16:TP=-1.5:LRA=9[v];[2:a]volume=1.0[m0];[m0][1:a]sidechaincompress=threshold=0.04:ratio=9:attack=15:release=350[m];[v][m]amix=inputs=2:duration=first:normalize=0,alimiter=limit=0.95[a]',
-      '-map', '0:v', '-map', '[a]', '-c:v', 'libx264', '-preset', 'slow', '-crf', '20', '-pix_fmt', 'yuv420p', '-profile:v', 'high', '-c:a', 'aac', '-b:a', '192k', '-shortest', '-movflags', '+faststart', path.join(root, OUT)], { stdio: 'inherit' });
+      '-filter_complex', '[1:a]loudnorm=I=-16:TP=-1.5:LRA=9,apad=pad_dur=5[v];[2:a]volume=1.0[m0];[m0][1:a]sidechaincompress=threshold=0.04:ratio=9:attack=15:release=350[m];[v][m]amix=inputs=2:duration=first:normalize=0,alimiter=limit=0.95[a]',
+      '-map', '0:v', '-map', '[a]', '-c:v', 'libx264', '-preset', 'slow', '-crf', '20', '-pix_fmt', 'yuv420p', '-profile:v', 'high', '-c:a', 'aac', '-b:a', '192k', '-t', '83.04', '-movflags', '+faststart', path.join(root, OUT)], { stdio: 'inherit' });
     console.log('done -> ' + OUT); return;
   }
   await browser.close(); server.close(); console.log('stills done');
