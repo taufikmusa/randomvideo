@@ -62,6 +62,11 @@ const MA = (() => {
     txt('›››', x + lw + 26, y + 74, F.hh(40), K.gold, 'left');
     const rx = x + lw + 100, rs = fitSize([right], 46, x + w - rx - 20, F.hh); txt(right, rx, y + 72, F.hh(rs), K.gold);
   }
+  function chip(label, cx, cy, size = 40) {   // pil maroon kecil bergaris emas
+    const f = F.h(size); X.save(); X.font = f; const w = X.measureText(label).width + size * 1.4, h = size * 1.7; X.restore();
+    shadow(() => { rr(cx - w / 2, cy - h / 2, w, h, h / 2); X.fillStyle = K.maroon; X.fill(); }, 20, .45, 8); rr(cx - w / 2 + 4, cy - h / 2 + 4, w - 8, h - 8, h / 2 - 4); X.lineWidth = 3; X.strokeStyle = K.gold; X.stroke();
+    txt(label, cx, cy + size * .36, f, K.white, 'center');
+  }
   function bgPhoto(imKey, blur = 16, dark = .45) {
     const im = IMG[imKey], c = document.createElement('canvas'); c.width = 1300; c.height = 2310; const g = c.getContext('2d');
     const s = Math.max(1300 / im.width, 2310 / im.height) * 1.1, w = im.width * s, h = im.height * s;
@@ -85,7 +90,7 @@ const MA = (() => {
     wrap(small, F.b(32), w - 80).forEach((l, i) => txt(l, x + w / 2, y + h * .58 + 62 + i * 40, F.b(32), K.white, 'center'));
   }
   function badge(cx, cy, r, fn) { shadow(() => { X.beginPath(); X.arc(cx, cy, r, 0, 7); X.fillStyle = K.white; X.fill(); }, 16, .35, 6); X.beginPath(); X.arc(cx, cy, r - 6, 0, 7); X.fillStyle = K.maroon; X.fill(); X.save(); X.translate(cx, cy); X.scale(r / 80, r / 80); X.strokeStyle = K.white; X.fillStyle = K.white; X.lineWidth = 6; X.lineCap = 'round'; X.lineJoin = 'round'; fn(r); X.restore(); }
-  return { K, F, txt, headline, pillTitle, side, sub, strokes, sparkle, curlyArrow, photoCard, whiteCard, rowPill, tierCard, badge, bgPhoto, chapter };
+  return { K, F, txt, headline, pillTitle, side, sub, strokes, sparkle, curlyArrow, photoCard, whiteCard, rowPill, tierCard, badge, chip, bgPhoto, chapter };
 })();
 
 // ======================= PASTEL (carousel-pastel) =======================
@@ -350,6 +355,16 @@ function hookTitle(lt, o) {
   });
   anim(lt, 1.0, 540, 500, () => { X.save(); X.strokeStyle = K.gold; X.lineWidth = 7; X.lineCap = 'round'; const p = easeOut(clamp((lt - 1.0) / .5)); X.beginPath(); X.moveTo(220, 488); X.quadraticCurveTo(540, 470, 220 + 640 * p, 490); X.stroke(); X.restore(); });
   [[120, 330], [960, 270], [90, 470], [990, 440]].forEach(([x, y], i) => { const a = .5 + .5 * Math.sin(lt * 4 + i * 1.7); if (lt > .5) MA.sparkle(x, y, 14 + 12 * a, i % 2 ? '#fff' : K.gold); });
+}
+
+
+// ---------- STICKER POP-UP (elastik + percikan emas + bayang) — animasi utama sticker kartun ----------
+const elasticOut = p => p <= 0 ? 0 : p >= 1 ? 1 : Math.pow(2, -10 * p) * Math.sin((p * 10 - .75) * (2 * Math.PI) / 3) + 1;
+function stk(lt, at, im, cx, by, h, o = {}) {   // im, tengah-bawah (cx,by), tinggi h; o.flip, o.float
+  if (lt < at) return; const t = lt - at, p = clamp(t / .7), sc = elasticOut(p), w = h * im.width / im.height, fl = o.float === false ? 0 : Math.sin(t * 2.2) * 7 * clamp((t - .7) / .5);
+  X.save(); X.globalAlpha = clamp(t / .1); X.translate(cx, by + fl); X.rotate(-.2 * (1 - elasticOut(clamp(t / .8)))); X.scale(sc * (o.flip ? -1 : 1), sc); X.translate(0, 0);
+  shadow(() => X.drawImage(im, -w / 2, -h, w, h), 30, .5, 14); X.restore();
+  if (t < .65) { const q = easeOut(t / .65); for (let i = 0; i < 7; i++) { const a = -Math.PI * (.1 + .8 * i / 6), r = h * (.42 + .22 * q), x = cx + Math.cos(a) * r * 1.1, y = by - h * .5 + Math.sin(a) * r * .9; X.save(); X.globalAlpha = 1 - q; MA.sparkle(x, y, 10 + 16 * (1 - q), i % 2 ? '#fff' : MA.K.gold); X.restore(); } }
 }
 
 // ---------- pembantu adegan ----------
