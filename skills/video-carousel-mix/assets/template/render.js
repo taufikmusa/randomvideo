@@ -1,4 +1,4 @@
-// Render 1080x1920 frame-by-frame (4 page selari) -> out/frames, kemudian ffmpeg gabung audio (suara asal SAHAJA — tiada muzik, tiada SFX).
+// Render 1080x1920 frame-by-frame (4 page selari) -> out/frames, kemudian ffmpeg gabung audio (suara asal; SFX lembut hanya jika projek ada sfx.py — tiada muzik).
 // Guna: node render.js stills 3 9 20   -> stills/t*.jpg
 //       node render.js                 -> <nama-folder>.mp4
 const http = require('http'), fs = require('fs'), path = require('path'), { execFileSync } = require('child_process');
@@ -17,7 +17,8 @@ const server = http.createServer((req, res) => { const f = path.join(root, decod
     for (const s of process.argv.slice(3).map(Number)) fs.writeFileSync(path.join(root, 'stills', `t${s.toFixed(2)}.jpg`), Buffer.from((await grab(p, s)).split(',')[1], 'base64'));
     await browser.close(); server.close(); console.log('stills done'); return;
   }
-  const p0 = await mk(), DUR = await p0.evaluate(() => DUR);
+  const p0 = await mk(), DUR = await p0.evaluate(() => DUR), useSfx = fs.existsSync(path.join(root, 'sfx.py'));
+  if (useSfx) { const sfx = await p0.evaluate(() => window.SFX); sfx.dur = DUR; fs.writeFileSync(path.join(root, 'sfx.json'), JSON.stringify(sfx)); }
   const total = Math.round(DUR * FPS), fr = path.join(root, 'out', 'frames'); fs.mkdirSync(fr, { recursive: true });
   let next = 0;
   await Promise.all(Array.from({ length: WORKERS }, async (_, w) => {
@@ -25,9 +26,10 @@ const server = http.createServer((req, res) => { const f = path.join(root, decod
     for (;;) { const f = next++; if (f >= total) break; const d = await grab(p, f / FPS); fs.writeFileSync(path.join(fr, String(f).padStart(5, '0') + '.jpg'), Buffer.from(d.split(',')[1], 'base64')); if (f % 150 === 0) console.log(`frame ${f}/${total}`); }
   }));
   await browser.close(); server.close();
+  if (useSfx) execFileSync('python3', ['sfx.py'], { cwd: root, stdio: 'inherit' });
   // loudnorm kadang potong ekor audio → apad + -t DUR
-  execFileSync('ffmpeg', ['-y', '-hide_banner', '-loglevel', 'error', '-framerate', String(FPS), '-i', path.join(root, 'out', 'frames', '%05d.jpg'), '-i', path.join(root, 'voice.wav'),
-    '-filter_complex', '[1:a]loudnorm=I=-16:TP=-1.5:LRA=9,apad=pad_dur=5[a]',
+  execFileSync('ffmpeg', ['-y', '-hide_banner', '-loglevel', 'error', '-framerate', String(FPS), '-i', path.join(root, 'out', 'frames', '%05d.jpg'), '-i', path.join(root, 'voice.wav'), ...(useSfx ? ['-i', path.join(root, 'sfx.wav')] : []),
+    '-filter_complex', useSfx ? '[1:a]loudnorm=I=-16:TP=-1.5:LRA=9,apad=pad_dur=5[v];[2:a]volume=.4[s];[v][s]amix=inputs=2:duration=first:normalize=0,alimiter=limit=0.95[a]' : '[1:a]loudnorm=I=-16:TP=-1.5:LRA=9,apad=pad_dur=5[a]',
     '-map', '0:v', '-map', '[a]', '-c:v', 'libx264', '-preset', 'slow', '-crf', '20', '-pix_fmt', 'yuv420p', '-profile:v', 'high', '-c:a', 'aac', '-b:a', '192k', '-t', String(DUR), '-movflags', '+faststart', path.join(root, OUT)], { stdio: 'inherit' });
   console.log('done -> ' + OUT);
 })();

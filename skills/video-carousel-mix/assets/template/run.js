@@ -1,4 +1,4 @@
-// run.js — transisi API (burn), hud, render(t), ready. JANGAN EDIT per video. TIADA SFX/muzik.
+// run.js — transisi KERTAS TERKOYAK, hud, render(t), ready. JANGAN EDIT per video. Tiada muzik; SFX hanya jika projek ada sfx.py.
 buildCaps();
 const BK = .885, FIRE_PRE = .25, FIRE_POST = .35;   // B-roll dimampatkan (BK) supaya kandungan tak masuk zon kapsyen (y≈1390)
 function sceneAt(t) { return SCENES.find(s => t >= s.a && t < s.b) || SCENES[SCENES.length - 1]; }
@@ -8,20 +8,28 @@ function drawScene(s, t) {
   const c = BGS[s.bg]; if (c.width > W) { const p = lt / d - .5; X.drawImage(c, -110 - p * 50, -195 - p * 40); } else X.drawImage(c, 0, 0);
   X.save(); X.translate(540, 110); X.scale(BK, BK); X.translate(-540, -110); s.draw(lt, d); X.restore();
 }
-function edgeY(x, p, seed) { return H + 170 - p * (H + 380) + Math.sin(x * .013 + p * 8 + seed) * 34 + Math.sin(x * .034 - p * 14 + seed * 2) * 20 + Math.sin(x * .081 + p * 23) * 9; }
-function fireOverlay(p, seed) {
-  X.save(); X.globalCompositeOperation = 'lighter';
-  for (let x = -10; x <= W + 10; x += 9) {   // lidah api
-    const y = edgeY(x, p, seed), n = (Math.sin(x * .21 + p * 40 + seed) + Math.sin(x * .09 - p * 27) * .7 + 1.7) / 3.4, h = 100 + n * 230, lean = Math.sin(x * .05 + p * 30) * 20;
-    const g = X.createLinearGradient(0, y, 0, y - h); g.addColorStop(0, 'rgba(255,245,180,.95)'); g.addColorStop(.25, 'rgba(255,170,40,.85)'); g.addColorStop(.65, 'rgba(235,70,20,.5)'); g.addColorStop(1, 'rgba(150,20,0,0)');
-    X.fillStyle = g; X.beginPath(); X.moveTo(x - 10, y + 16); X.quadraticCurveTo(x - 6 + lean * .3, y - h * .55, x + lean, y - h); X.quadraticCurveTo(x + 6 + lean * .3, y - h * .55, x + 10, y + 16); X.closePath(); X.fill();
-  }
-  const R = rng(seed * 7 + 3);   // bara api
-  for (let i = 0; i < 52; i++) { const x = R() * W, ph = R(), sp = .6 + R() * .8, r = 2 + R() * 4.5, u = (p * sp * 3 + ph) % 1, y = edgeY(x, p, seed) - u * 560 + 30; X.fillStyle = `rgba(255,${150 + R() * 80 | 0},50,${(1 - u) * .9})`; X.beginPath(); X.arc(x + Math.sin(u * 9 + ph * 6) * 28, y, r * (1 - u * .5), 0, 7); X.fill(); }
-  X.fillStyle = `rgba(255,120,20,${.2 * Math.sin(Math.PI * p)})`; X.fillRect(0, 0, W, H); X.restore();
+// ---- transisi KERTAS TERKOYAK: adegan lama koyak ikut garis bergerigi (hinge di kanan), dua kepingan terbuka & terbang keluar, dedah adegan baru ----
+const TEAR_PRE = .2, TEAR_POST = .35, TEARS = {};
+function mkCanvas() { const c = document.createElement('canvas'); c.width = W; c.height = H; return c; }
+const TC_A = mkCanvas(), TC_P = mkCanvas();
+function tearLine(seed) {
+  if (TEARS[seed]) return TEARS[seed]; const R = rng(seed * 13 + 5), pts = []; let j = 0, base = H * (.42 + R() * .16);
+  for (let x = -40; x <= W + 40; x += 7) { j = (j + (R() - .5) * 16) * .9; pts.push([x, base + (x - W / 2) * .05 * (R() > .5 ? 1 : -1) + Math.sin(x * .011 + seed) * 36 + Math.sin(x * .043 + seed * 2) * 9 + j]); }
+  return TEARS[seed] = pts;
 }
-function charGlow(p, seed) {   // kawasan baru yang baru "terbakar": bara + arang
-  for (let x = 0; x < W; x += 10) { const y = edgeY(x, p, seed), g = X.createLinearGradient(0, y, 0, y + 130); g.addColorStop(0, 'rgba(255,150,30,.65)'); g.addColorStop(.25, 'rgba(70,14,0,.55)'); g.addColorStop(1, 'rgba(0,0,0,0)'); X.fillStyle = g; X.fillRect(x, y, 10, 130); }
+function drawTear(oldS, newS, t, p, seed) {
+  drawScene(newS, t);
+  const keep = X, ca = TC_A.getContext('2d'); ca.clearRect(0, 0, W, H); X = ca; drawScene(oldS, t); X = keep;
+  const L = tearLine(seed), hy = L[Math.floor(L.length / 2)][1], ease = q => q * q, th = .36 * ease(clamp(p / .75)), sl = H * .8 * Math.pow(clamp((p - .12) / .88), 2);
+  [['top', -1], ['bot', 1]].forEach(([k, dir]) => {
+    const cp = TC_P.getContext('2d'); cp.setTransform(1, 0, 0, 1, 0, 0); cp.clearRect(0, 0, W, H); cp.save(); cp.beginPath();
+    if (k === 'top') { cp.moveTo(-60, -60); cp.lineTo(W + 60, -60); for (let i = L.length - 1; i >= 0; i--) cp.lineTo(L[i][0], L[i][1]); }
+    else { L.forEach(([x, y], i) => i ? cp.lineTo(x, y) : cp.moveTo(x, y)); cp.lineTo(W + 60, H + 60); cp.lineTo(-60, H + 60); }
+    cp.closePath(); cp.clip(); cp.drawImage(TC_A, 0, 0);
+    cp.lineJoin = 'round'; cp.beginPath(); L.forEach(([x, y], i) => i ? cp.lineTo(x, y) : cp.moveTo(x, y)); cp.strokeStyle = '#fbf7ef'; cp.lineWidth = 26; cp.stroke();   // tepi kertas putih
+    cp.beginPath(); L.forEach(([x, y], i) => { const yy = y + dir * 12 + Math.sin(i * 1.7) * 3; i ? cp.lineTo(x, yy) : cp.moveTo(x, yy); }); cp.strokeStyle = 'rgba(220,208,185,.8)'; cp.lineWidth = 5; cp.stroke(); cp.restore();   // serat
+    X.save(); X.translate(W, hy); X.rotate(dir * th); X.translate(-W, -hy); X.translate(0, dir * sl); X.filter = 'drop-shadow(0px ' + (dir * 10) + 'px 16px rgba(0,0,0,.55))'; X.drawImage(TC_P, 0, 0); X.restore();
+  });
 }
 function hud(t) {
   X.fillStyle = CK.gold; X.fillRect(0, 0, W * t / DUR, 8);
@@ -30,16 +38,11 @@ function hud(t) {
 }
 window.render = t => {
   X.clearRect(0, 0, W, H);
-  let tr = null; for (let k = 1; k < SCENES.length; k++) { const T = SCENES[k].a; if (t >= T - FIRE_PRE && t < T + FIRE_POST) { const q = (t - (T - FIRE_PRE)) / (FIRE_PRE + FIRE_POST); tr = { k, p: q * q * (3 - 2 * q), seed: k * 3.7 }; break; } }
-  if (!tr) drawScene(sceneAt(t), t);
-  else {
-    drawScene(SCENES[tr.k - 1], t);
-    X.save(); X.beginPath(); X.moveTo(-10, H + 500); for (let x = -10; x <= W + 10; x += 12) X.lineTo(x, edgeY(x, tr.p, tr.seed)); X.lineTo(W + 10, H + 500); X.closePath(); X.clip();
-    drawScene(SCENES[tr.k], t); charGlow(tr.p, tr.seed); X.restore();
-    fireOverlay(tr.p, tr.seed);
-  }
+  let tr = null; for (let k = 1; k < SCENES.length; k++) { const T = SCENES[k].a; if (t >= T - TEAR_PRE && t < T + TEAR_POST) { tr = { k, p: (t - (T - TEAR_PRE)) / (TEAR_PRE + TEAR_POST) }; break; } }
+  if (!tr) drawScene(sceneAt(t), t); else drawTear(SCENES[tr.k - 1], SCENES[tr.k], t, tr.p, tr.k * 3.7);
   caption(t); hud(t);
 };
+window.SFX = { tears: SCENES.slice(1).map(s => +(s.a - TEAR_PRE + .06).toFixed(2)), pops: SCENES.filter(s => s.k === 'B').flatMap(s => s.pops.map(p => +(s.a + p).toFixed(2))) };   // dipakai hanya bila projek ada sfx.py
 window.ready = Promise.all([
   ...['italic 800 40px PP', 'italic 900 40px PP', '700 40px PP', '600 40px PP', '900 40px PF', '700 40px FR', '600 40px FR', '700 40px NU', '900 40px NU', '40px AN', '40px BG', '800 40px IN', '900 40px IN', '500 40px IN', '700 40px CV', '40px PM', '700 40px MO'].map(f => document.fonts.load(f)),
   ...Object.entries(ASSETS).map(([k, f]) => new Promise((res, rej) => { const i = new Image(); i.onload = () => { IMG[k] = i; res(); }; i.onerror = () => rej(new Error('missing img/' + f)); i.src = 'img/' + f; })),

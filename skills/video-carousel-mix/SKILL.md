@@ -1,6 +1,6 @@
 ---
 name: video-carousel-mix
-description: 'Video menegak 1080x1920 (TikTok/Reels) dari FOOTAGE TAUFIK BERCAKAP (talking head) di mana carousel jadi B-ROLL: setiap poin/bab dipotong ke slaid animasi dalam gaya carousel yang BERLAINAN (mix carousel-pastel kartun keluarga Baba/Mami/Amani/Aileen, carousel-red komik pop-art, carousel-editorial putih majalah, carousel-maroon impian, carousel-thumbnail gelap Anton), dengan kapsyen Poppins ExtraBold Italic (kata kunci emas) dinaikkan ke y≈1390, hook title Playfair emas berkilau, transisi API (burn) antara adegan, audio = suara asal SAHAJA (TANPA muzik, TANPA SFX), sticker kartun Taufik sebagai watak. Guna bila Taufik upload video dia bercakap (copywriting 5 poin) dan minta "buat jadi video", "carousel jadi b-roll", "mix semua skill carousel", "gaya video ibu tunggal / video kahwin tu". Suara asal Taufik dikekalkan. BERBEZA daripada video-timeline (motion graphics tanpa suara) dan carousel-* (gambar statik).'
+description: 'Video menegak 1080x1920 (TikTok/Reels) dari FOOTAGE TAUFIK BERCAKAP (talking head) di mana carousel jadi B-ROLL: setiap poin/bab dipotong ke slaid animasi dalam gaya carousel yang BERLAINAN (mix carousel-pastel kartun keluarga Baba/Mami/Amani/Aileen, carousel-red komik pop-art, carousel-editorial putih majalah, carousel-maroon impian, carousel-thumbnail gelap Anton), dengan kapsyen Poppins ExtraBold Italic (kata kunci emas) dinaikkan ke y≈1390, hook title Playfair emas berkilau, transisi KERTAS TERKOYAK antara adegan (dua kepingan koyak & terbang), audio = suara asal SAHAJA (TANPA muzik, TANPA SFX), sticker kartun Taufik sebagai watak. Guna bila Taufik upload video dia bercakap (copywriting 5 poin) dan minta "buat jadi video", "carousel jadi b-roll", "mix semua skill carousel", "gaya video ibu tunggal / video kahwin tu". Suara asal Taufik dikekalkan. BERBEZA daripada video-timeline (motion graphics tanpa suara) dan carousel-* (gambar statik).'
 ---
 
 # video-carousel-mix — talking head + B-roll carousel mix (1080x1920, 30fps)
@@ -8,8 +8,8 @@ description: 'Video menegak 1080x1920 (TikTok/Reels) dari FOOTAGE TAUFIK BERCAKA
 Taufik suka gaya ni (4 video siap: ibu tunggal, kahwin, bayar hutang, beli rumah — lihat `references/`). Formula yang berjaya:
 
 - **Footage Taufik = asas.** Setiap poin: ayat tajuk ("Pertama, tabung kecemasan") kekal atas footage dengan **chapter overlay** (pil/label ikut gaya), kemudian **potong ke B-roll** slaid animasi semasa isi poin diceritakan, kemudian balik ke footage. ±50% masa = B-roll.
-- **Setiap bab guna gaya carousel lain** (mix): pastel → red → editorial → maroon → thumbnail → pastel… Kapsyen bawah SENTIASA Poppins ExtraBold Italic putih, outline maroon gelap, kata kunci emas — lapisan jenama yang menyatukan semua gaya. **Transisi = efek API**: adegan lama terbakar dari bawah ke atas (lidah api, bara, arang) mendedahkan adegan baru (±0.6s, `run.js`).
-- **Audio = suara asal (loudnorm) SAHAJA.** TIADA muzik, TIADA SFX (Taufik minta buang semua — bunyi whoosh/pop mengganggu).
+- **Setiap bab guna gaya carousel lain** (mix): pastel → red → editorial → maroon → thumbnail → pastel… Kapsyen bawah SENTIASA Poppins ExtraBold Italic putih, outline maroon gelap, kata kunci emas — lapisan jenama yang menyatukan semua gaya. **Transisi = KERTAS TERKOYAK** (menggantikan efek api): adegan lama koyak ikut garis bergerigi (tepi kertas putih + bayang), dua kepingan terbuka dari hinge kanan & terbang keluar mendedahkan adegan baru (±0.55s, `run.js`).
+- **Audio = suara asal (loudnorm).** TIADA muzik. SFX DEFAULT tiada (Taufik: whoosh/pop mengganggu); SFX lembut (kertas koyak) hanya jika Taufik minta — salin `sfx.py.optional` → `sfx.py`.
 - Kartun keluarga di B-roll pastel/red/CTA. Topik ibu tunggal: Mami sebagai "ibu" + Amani & Aileen (laporkan pilihan ni). Topik suami-isteri: Baba + Mami. Topik anak: Amani + Aileen. CTA: `baba-semi-realistik-jom`. Potret/selfie sebenar TIDAK digunakan (footage dah ada Taufik).
 - **Sticker Taufik (assets/kartun/stiker/<topik>/)**: Taufik beri helaian sticker 3x3 per video (teks dalam sticker). Guna sebagai watak utama di B-roll yang sepadan (`PA.chara(IMG.sX, cx, mamiY, h)`; `new` helper: `convert … -filter Lanczos -resize 200% -unsharp 0x.8` ke `img/stk-*.png`). Potong dengan `assets/potong_sticker.py` dan SEMAK susunan sebenar (tertib baca TIDAK dijamin) sebelum namakan.
 - **Hook (adegan pertama)**: `hookTitle(lt,{tag,lines:[l1,l2],sub})` — pil tag emas + 2 baris Playfair 900 emas berkilau + pil maroon sub + sparkle. Fade-out dengan `X.globalAlpha`.
@@ -19,13 +19,14 @@ Taufik suka gaya ni (4 video siap: ibu tunggal, kahwin, bayar hutang, beli rumah
 ```
 assets/template/engine.js   JANGAN EDIT: 5 modul gaya (MA PA RD ED TH), anim(), kapsyen, head(), pembantu adegan (B, Hh, WC, mamiY, bob)
 assets/template/scenes.js   FAIL YANG DITULIS: DUR, HEADN, ASSETS, SEG (kapsyen), SCENES[], bakeAll()  (contoh = ibu tunggal)
-assets/template/run.js      JANGAN EDIT: transisi api, hud (@taufik.pg + progress), render(t) (B-roll dimampatkan BK=.885 supaya kandungan tak masuk zon kapsyen), ready
-assets/template/render.js   node render.js [stills t1 t2…] — 4 page selari, ffmpeg + suara asal sahaja
+assets/template/run.js      JANGAN EDIT: transisi kertas terkoyak, hud (@taufik.pg + progress), render(t) (B-roll dimampatkan BK=.885 supaya kandungan tak masuk zon kapsyen), ready
+assets/template/render.js   node render.js [stills t1 t2…] — 4 page selari, ffmpeg + suara asal (+ SFX jika projek ada sfx.py)
+assets/template/sfx.py.optional   SFX LEMBUT pilihan: salin ke <projek>/sfx.py → bunyi kertas koyak pada setiap transisi + pop halus (volume .4). DEFAULT: TIADA SFX; aktifkan hanya bila Taufik minta (video duit-terpijak sahaja).
 fonts/                       Poppins, Fredoka, Nunito, Anton, Bangers, Inter, Caveat, PermanentMarker, Mono
 scripts/new_video.sh         salin template + ekstrak frame src/ + voice.wav + cetak DUR/HEADN
 scripts/prep_src.sh          ekstrak frame/suara sahaja (tanpa timpa scenes.js) — guna bila re-render projek lama
 scripts/transcribe.py        transkrip Whisper-small (sherpa-onnx, offline) ikut jeda senyap
-references/scenes-ibu-tunggal.js, scenes-kahwin.js, scenes-bayar-hutang.js, scenes-beli-rumah.js   empat contoh lengkap
+references/scenes-ibu-tunggal.js, scenes-kahwin.js, scenes-bayar-hutang.js, scenes-beli-rumah.js, scenes-duit-terpijak.js   lima contoh lengkap
   (bayar-hutang & beli-rumah: Baba kartun sebagai watak utama; ada `fadeOut(lt,t0)`, ikon `bankIcon`/`house`, graf animasi editorial, syiling hilang satu-satu — salin snippet dari situ)
 ```
 

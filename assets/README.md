@@ -75,3 +75,4 @@ Helaian asal: `kartun/sheets/stiker-{ibu-tunggal,kahwin,bayar-hutang,beli-rumah}
 - **bayar-hutang**: bebas-rantai · gaya-hidup · dana-kecemasan · alih-aset · perit-hutang · bayar-diri · mula-kekayaan · bebas-beban · kunci-kebebasan
 - **beli-rumah**: kos-tersembunyi · lawan-inflasi · sold(hook) · jangan-licin · komitmen-30 · dana-kecemasan · emas-sekali · posisi-kukuh · rumah-tenang
 Resolusi kecil (~240x310) → naikkan 2x Lanczos sebelum guna dalam video. Tertib hasil `potong_sticker.py` TIDAK ikut tertib baca — semak visual.
+- **duit-terpijak**: belanja-emosi · skim-cepat-kaya · hook · duit-tunai-terbiar · pelaburan-lebur · lupa-masa-depan · urus-bijak · tukar-aset · kunci-kebebasan  (helaian: `kartun/sheets/stiker-duit-terpijak.jpg`)
