@@ -30,8 +30,8 @@ fonts/                       Poppins, Fredoka, Nunito, Anton, Bangers, Inter, Ca
 scripts/new_video.sh         salin template + ekstrak frame src/ + voice.wav + cetak DUR/HEADN
 scripts/prep_src.sh          ekstrak frame/suara sahaja (tanpa timpa scenes.js) — guna bila re-render projek lama
 scripts/transcribe.py        transkrip Whisper-small (sherpa-onnx, offline) ikut jeda senyap
-references/scenes-*.js   dua puluh contoh lengkap (ibu-tunggal, kahwin, bayar-hutang, beli-rumah, duit-terpijak, warisan-nenek, mangsa-tipu, retrenchment, haji, kampung, berniaga, gaji-kecil, anak, fd-asb, sandwich, shopping, usia40, perhiasan, pasif, skeptik)
-  (warisan-nenek, mangsa-tipu, retrenchment, haji, kampung, berniaga, gaji-kecil, anak, fd-asb, sandwich, shopping, usia40, perhiasan, pasif & skeptik = TERKINI (guna helper `ttl/row/CTA/SB` & `bakeAll`, mWhite: `*` hanya berfungsi di AWAL baris): maroon konsisten + sticker + outro; bayar-hutang & beli-rumah: Baba kartun sebagai watak utama; ada `fadeOut(lt,t0)`, ikon `bankIcon`/`house`, graf animasi editorial, syiling hilang satu-satu — salin snippet dari situ)
+references/scenes-*.js   dua puluh satu contoh lengkap (ibu-tunggal, kahwin, bayar-hutang, beli-rumah, duit-terpijak, warisan-nenek, mangsa-tipu, retrenchment, haji, kampung, berniaga, gaji-kecil, anak, fd-asb, sandwich, shopping, usia40, perhiasan, pasif, skeptik, nelayan)
+  (warisan-nenek, mangsa-tipu, retrenchment, haji, kampung, berniaga, gaji-kecil, anak, fd-asb, sandwich, shopping, usia40, perhiasan, pasif, skeptik & nelayan = TERKINI (guna helper `ttl/row/CTA/SB` & `bakeAll`, mWhite: `*` hanya berfungsi di AWAL baris): maroon konsisten + sticker + outro; bayar-hutang & beli-rumah: Baba kartun sebagai watak utama; ada `fadeOut(lt,t0)`, ikon `bankIcon`/`house`, graf animasi editorial, syiling hilang satu-satu — salin snippet dari situ)
 ```
 
 ## Aliran kerja
@@ -62,3 +62,7 @@ references/scenes-*.js   dua puluh contoh lengkap (ibu-tunggal, kahwin, bayar-hu
 - Maksimum 1 gaya per bab; jangan ulang gaya yang sama dua bab berturut-turut.
 - Kapsyen, transisi api & hud tidak diedit — itu yang menyatukan mix. Kapsyen y=1390 (Taufik: "tinggikan 90%" dari jarak bawah asal 1640); B-roll jangan letak apa-apa di y>1330 (selepas BK).
 - Kandungan sensitif (ibu tunggal): nada hormat, jangan label negatif; Mami sebagai wakil "ibu" — beritahu Taufik.
+
+
+## Nota input .mov iPhone
+Upload boleh datang sebagai beberapa klip .mov (HEVC, fps/resolusi bercampur 60/30fps, 720p/1080p). Susun ikut `creation_time` (ffprobe), skala semua ke 720x1280, fps=30, audio 44100 stereo, `concat` filter dengan satu `-filter_complex`, kemudian `new_video.sh` pada fail gabungan.
