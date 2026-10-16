@@ -30,7 +30,7 @@ fonts/                       Poppins, Fredoka, Nunito, Anton, Bangers, Inter, Ca
 scripts/new_video.sh         salin template + ekstrak frame src/ + voice.wav + cetak DUR/HEADN
 scripts/prep_src.sh          ekstrak frame/suara sahaja (tanpa timpa scenes.js) — guna bila re-render projek lama
 scripts/transcribe.py        transkrip Whisper-small (sherpa-onnx, offline) ikut jeda senyap
-references/scenes-*.js   dua puluh dua contoh lengkap (ibu-tunggal, kahwin, bayar-hutang, beli-rumah, duit-terpijak, warisan-nenek, mangsa-tipu, retrenchment, haji, kampung, berniaga, gaji-kecil, anak, fd-asb, sandwich, shopping, usia40, perhiasan, pasif, skeptik, nelayan, emas-online)
+references/scenes-*.js   dua puluh tiga contoh lengkap (ibu-tunggal, kahwin, bayar-hutang, beli-rumah, duit-terpijak, warisan-nenek, mangsa-tipu, retrenchment, haji, kampung, berniaga, gaji-kecil, anak, fd-asb, sandwich, shopping, usia40, perhiasan, pasif, skeptik, nelayan, emas-online, tempoh)
   (warisan-nenek, mangsa-tipu, retrenchment, haji, kampung, berniaga, gaji-kecil, anak, fd-asb, sandwich, shopping, usia40, perhiasan, pasif, skeptik & nelayan = TERKINI (guna helper `ttl/row/CTA/SB` & `bakeAll`, mWhite: `*` hanya berfungsi di AWAL baris): maroon konsisten + sticker + outro; bayar-hutang & beli-rumah: Baba kartun sebagai watak utama; ada `fadeOut(lt,t0)`, ikon `bankIcon`/`house`, graf animasi editorial, syiling hilang satu-satu — salin snippet dari situ)
 ```
 
