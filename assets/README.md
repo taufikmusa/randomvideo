@@ -54,7 +54,7 @@ Guna sebagai B-roll / klip "cara guna app" dalam video (letak dalam `new_video.s
 | app-03-login.mp4 | Skrin login app: Username, Password, Login Now (taip username + kata laluan) | 6.3s |
 | app-04-topup-simpanan.mp4 | Home (GAP Price RM571/g, RM100 = 0.1751g) -> Top Up -> Buy GAP/SAP, pilih Gold, taip RM100 -> Pay Now RM100.00 (juga contoh isi kuantiti gram) | 7.8s |
 | app-05-withdraw.mp4 | Physical Product -> GSAP Withdrawal: senarai produk, tapis (Gold/Silver, Dinar, BungaMas, Aurora, Tai Fook, Disney...) dengan caj GIT | 9.6s |
-- ⚠️ `app-01-daftar` papar e-mel Taufik (cadangan autofill papan kekunci) dan PG code **PG00359605**. `app-03-login` papar **username yang ditaip (nampak seperti no. IC)** — BLUR/CROP kawasan itu sebelum guna dalam video awam.
+- ✅ `app-01-daftar` (e-mel dalam bar autofill papan kekunci) dan `app-03-login` (username/no. IC yang ditaip) dah DIBLUR (pixelate+blur). PG code PG00359605 dan nama Taufik masih nampak (kod rujukan awam). Kalau ada rakaman baru, blur dulu sebelum simpan.
 - Susunan tutorial penuh: 01 -> 02 -> 03 -> 04 -> 05 (daftar, pasang app, login, topup simpanan, keluarkan fizikal).
 
 ## rujukan-gaya/ (contoh thumbnail Taufik — RUJUKAN gaya sahaja)
