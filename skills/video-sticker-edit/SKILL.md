@@ -92,3 +92,15 @@ scripts/           check_env.sh setup.sh join_clips.sh new_video.sh make_sticker
                    retranscribe.py silence_segments.py contact_sheet.py retheme.py
 references/        scenes-maroon-azam.js (terkini) + scenes-skeleton.js + contoh lain
 ```
+
+## 8. Glow body effect (bila Taufik minta "glow body")
+Glow emas di luar siluet badan, dibakar terus ke frame `src/` (engine tak perlu diubah). Hanya untuk adegan footage `Hh(...)` (hook + chapter).
+```
+# model (sekali, ~170MB; GitHub boleh, HuggingFace disekat): /root/seg/u2net_human_seg.onnx
+curl -sSL -o /root/seg/u2net_human_seg.onnx https://github.com/danielgatis/rembg/releases/download/v0.0.0/u2net_human_seg.onnx
+python3 -I $SK/scripts/glow.py video-<topik>/src <out_dir> /root/seg/u2net_human_seg.onnx 0-5.9 21.9-25.6 ...   # julat saat = semua Hh(mula,tamat) +/- 0.1
+cp <out_dir>/*.jpg video-<topik>/src/        # kemudian render stills/penuh seperti biasa
+```
+- ~1 saat/frame (CPU). Jalankan di background (`run_in_background`), 750 frame ≈ 12 min. Proses HANYA julat Hh, bukan semua frame.
+- Skrip isi lubang mask (mic di depan badan), gelapkan latar 30% supaya glow nampak pada dinding putih, dan lembutkan mask antara frame. Glow berdenyut halus.
+- Selepas projek siap & dihantar, fail `src/` dibuang seperti biasa.
