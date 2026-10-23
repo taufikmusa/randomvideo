@@ -45,6 +45,18 @@ dinar-10-belon-udara-panas / dinar-10-atas-hutan-belon (gaya hidup, percutian) �
 | app-withdraw-aurora-kartun.jpg | Aurora 1g edisi Upin Ipin, Hello Kitty, Spiderman (sesuai topik anak) |
 | app-pg-jewel-cincin-999.jpg / app-pg-jewel-rantai-916.jpg | Katalog PG Jewel (harga perhiasan) |
 
+## video/ (screen recording app Public Gold — tutorial langkah demi langkah, 720x1280 @30fps, pendek 6-10s)
+Guna sebagai B-roll / klip "cara guna app" dalam video (letak dalam `new_video.sh`/scenes sebagai klip, atau sambung dengan `join_clips.sh`). Data BERTARIKH 23 Okt 2026 — sahkan sebelum guna angka.
+| Fail | Isi | Durasi |
+|---|---|---|
+| app-01-daftar.mp4 | Laman G100 "Hi, Saya Taufik Bin Musa" (Verified Dealer) -> pilih Daftar Percuma (18 tahun ke atas / bawah 18) -> borang Customer Registration: nama ikut IC, ID type, tarikh lahir, no telefon, Introducer PG Code + nama (Taufik Musa) | 7.5s |
+| app-02-install.mp4 | App Store: cari "Public Gold" -> halaman app (v3.14.11) -> Update/Get | 8.0s |
+| app-03-login.mp4 | Skrin login app: Username, Password, Login Now (taip username + kata laluan) | 6.3s |
+| app-04-topup-simpanan.mp4 | Home (GAP Price RM571/g, RM100 = 0.1751g) -> Top Up -> Buy GAP/SAP, pilih Gold, taip RM100 -> Pay Now RM100.00 (juga contoh isi kuantiti gram) | 7.8s |
+| app-05-withdraw.mp4 | Physical Product -> GSAP Withdrawal: senarai produk, tapis (Gold/Silver, Dinar, BungaMas, Aurora, Tai Fook, Disney...) dengan caj GIT | 9.6s |
+- ⚠️ `app-01-daftar` papar e-mel Taufik (cadangan autofill papan kekunci) dan PG code **PG00359605**. `app-03-login` papar **username yang ditaip (nampak seperti no. IC)** — BLUR/CROP kawasan itu sebelum guna dalam video awam.
+- Susunan tutorial penuh: 01 -> 02 -> 03 -> 04 -> 05 (daftar, pasang app, login, topup simpanan, keluarkan fizikal).
+
 ## rujukan-gaya/ (contoh thumbnail Taufik — RUJUKAN gaya sahaja)
 Tajuk Anton besar huruf besar, blok berus merah/kuning/hitam, potret outline putih di kanan, pil @taufik.pg bawah kanan.
 `thumb-simpan-emas-jadi-kaya-AI.jpg` ada tanda "Ai" — jangan guna terus dalam output.
