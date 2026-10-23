@@ -66,6 +66,9 @@ Guna bila Taufik minta SFX dalam video (lalai video-sticker-edit = suara asal sa
 | sfx-bell.wav | 1.79s | -6.4 dB | loceng (dominan ~3.1kHz), bunyi perlahan-lahan reda; agak perlahan (purata -29 dB) — naikkan volume ~+6-10 dB |
 | sfx-click-mouse.wav | 0.88s | -2.1 dB | klik tetikus; sangat perlahan purata (-31 dB), ekor panjang senyap — boleh dipotong `atrim=0:0.3` |
 | sfx-punch-damage.wav | 0.60s | -0.3 dB | pukulan/"damage" (bass ~50Hz, puncak 0.15s); PALING KUAT, hampir clipping — turunkan ~-6 dB bila mix dengan suara |
+| sfx-swish.wav | 1.11s | -4.2 dB | swish/sapuan (serangan ~0.14s, reda perlahan); agak perlahan (RMS -26 dB) |
+| sfx-woosh.wav | 0.42s | -8.2 dB | woosh pendek untuk transisi/pop-up; perlahan — naikkan ~+6 dB |
+| sfx-typing.wav | 5.92s | -1.3 dB | menaip papan kekunci (~33 ketukan), panjang; potong dengan `atrim` ikut keperluan; RMS rendah (-31 dB) |
 - Penerangan "ciri bunyi" datang daripada analisis isyarat, bukan dengar sendiri. Kalau Taufik bagi nama/kegunaan sebenar (cth sfx-1 = "pop", sfx-2 = "thud"), kemas kini jadual ni.
 
 ## rujukan-gaya/ (contoh thumbnail Taufik — RUJUKAN gaya sahaja)
