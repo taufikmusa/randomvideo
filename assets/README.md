@@ -57,6 +57,17 @@ Guna sebagai B-roll / klip "cara guna app" dalam video (letak dalam `new_video.s
 - ✅ `app-01-daftar` (e-mel dalam bar autofill papan kekunci) dan `app-03-login` (username/no. IC yang ditaip) dah DIBLUR (pixelate+blur). PG code PG00359605 dan nama Taufik masih nampak (kod rujukan awam). Kalau ada rakaman baru, blur dulu sebelum simpan.
 - Susunan tutorial penuh: 01 -> 02 -> 03 -> 04 -> 05 (daftar, pasang app, login, topup simpanan, keluarkan fizikal).
 
+## sfx/ (sound effect — WAV 44.1kHz stereo, diekstrak daripada MP4 Taufik; video asal cuma gambar Taufik atas latar hitam)
+Guna bila Taufik minta SFX dalam video (lalai video-sticker-edit = suara asal sahaja, tiada SFX). Mix dengan `adelay` (ms) + `amix`/`volume`; dan jangan lupa `alimiter`.
+| Fail | Durasi | Puncak | Ciri bunyi (dari analisis isyarat; nama ikut fail Taufik) |
+|---|---|---|---|
+| sfx-1.wav | 0.65s | -0.9 dB | terang/tajam (tenaga frekuensi tinggi ~7-9kHz), serangan serta-merta di 0.00s |
+| sfx-2.wav | 0.51s | -1.6 dB | berat, ada bahagian bass (~160Hz), puncak di 0.13s |
+| sfx-bell.wav | 1.79s | -6.4 dB | loceng (dominan ~3.1kHz), bunyi perlahan-lahan reda; agak perlahan (purata -29 dB) — naikkan volume ~+6-10 dB |
+| sfx-click-mouse.wav | 0.88s | -2.1 dB | klik tetikus; sangat perlahan purata (-31 dB), ekor panjang senyap — boleh dipotong `atrim=0:0.3` |
+| sfx-punch-damage.wav | 0.60s | -0.3 dB | pukulan/"damage" (bass ~50Hz, puncak 0.15s); PALING KUAT, hampir clipping — turunkan ~-6 dB bila mix dengan suara |
+- Penerangan "ciri bunyi" datang daripada analisis isyarat, bukan dengar sendiri. Kalau Taufik bagi nama/kegunaan sebenar (cth sfx-1 = "pop", sfx-2 = "thud"), kemas kini jadual ni.
+
 ## rujukan-gaya/ (contoh thumbnail Taufik — RUJUKAN gaya sahaja)
 Tajuk Anton besar huruf besar, blok berus merah/kuning/hitam, potret outline putih di kanan, pil @taufik.pg bawah kanan.
 `thumb-simpan-emas-jadi-kaya-AI.jpg` ada tanda "Ai" — jangan guna terus dalam output.

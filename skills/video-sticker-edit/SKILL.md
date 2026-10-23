@@ -45,7 +45,7 @@ Semak stills: teks keluar tepi? pil bertindih? baris hook terlalu rapat tepi? ka
 
 ## 4. Peraturan reka bentuk (disahkan Taufik)
 - **Satu design konsisten.** **Hard cut sahaja** (tiada transisi). Animasi = sticker pop-up `stk()`.
-- **Audio = suara asal sahaja** (loudnorm, apad, `-t DUR`). TIADA muzik/SFX. Enjin dah uruskan.
+- **Audio = suara asal sahaja** (loudnorm, apad, `-t DUR`). TIADA muzik/SFX. Enjin dah uruskan. Pengecualian: bila Taufik MINTA SFX, guna `assets/sfx/*.wav` (lihat `assets/README.md`: bell, click-mouse, punch-damage, sfx-1/2) dan mix selepas render dengan `adelay`+`amix`+`alimiter`.
 - **Struktur**: hook → B konteks (1-2 slaid) → [chapter H (footage) → B isi] × 5 → B penutup (sticker pendek 2-4s) → B CTA → **outro 6s WAJIB** (`DUR = VOICE + 6`).
 - **Chapter** `Hh(mula, tamat, CH(n,'Baris1','Baris2',null), dir, WC.ma)`: mula pada awal ayat yang ada "Pertama/Kedua/...", biasanya 3-5s; `dir` selang `-1`/`1`. Tag chapter ikut topik (`SEBAB`, `CARA`, `AZAM`, `MITOS`...). Teks chapter ringkas (≤ ~20 aksara/baris).
 - **B-roll** `B(mula, tamat, 'foto', WC.ma, lt => {...})`: `ttl(lt,'Tajuk',size)` (size 80-110, kecil bila tajuk panjang), max 3 baris `row(lt, at, y, 'label', 'NILAI')` pada y **440/590/740**, atau `mWhite` kad (tanda `*` emas hanya di AWAL baris), + `stk(lt, .4, IMG.sX, 540, SB, 600-680)` di bawah. `at` = saat ayat itu dituturkan − mula adegan. Tukar foto latar antara adegan (kunci `PH`: tiers kg dulang merak100 bunga50 syiling g250 dinarPantai shop ipad binder bungamas wallet merak5). **Jangan letak apa-apa di y>1330** pada B-roll (kapsyen).
