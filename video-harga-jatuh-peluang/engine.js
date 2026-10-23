@@ -326,8 +326,8 @@ window.loadHead = i => new Promise(res => { i = Math.max(1, Math.min(HEADN, i));
 function head(lt, d, dir = 1) {
   const s = dir > 0 ? 1.02 + .07 * (lt / d) : 1.09 - .07 * (lt / d);
   if (curHead) { X.save(); X.translate(540, 820); X.scale(s, s); X.translate(-540, -820); X.drawImage(curHead, 0, 0, curHead.naturalWidth, curHead.naturalHeight, 0, 0, W, H); X.restore(); }
-  let g = X.createLinearGradient(0, 0, 0, 700); g.addColorStop(0, 'rgba(24,8,12,.72)'); g.addColorStop(1, 'rgba(24,8,12,0)'); X.fillStyle = g; X.fillRect(0, 0, W, 700);
-  g = X.createLinearGradient(0, 1080, 0, 1500); g.addColorStop(0, 'rgba(24,8,12,0)'); g.addColorStop(1, 'rgba(24,8,12,.72)'); X.fillStyle = g; X.fillRect(0, 1080, W, 420); X.fillStyle = 'rgba(24,8,12,.72)'; X.fillRect(0, 1500, W, H - 1500);
+  let g = X.createLinearGradient(0, 0, 0, 560); g.addColorStop(0, 'rgba(24,8,12,.5)'); g.addColorStop(1, 'rgba(24,8,12,0)'); X.fillStyle = g; X.fillRect(0, 0, W, 560);   // lebih nipis supaya footage jelas
+  g = X.createLinearGradient(0, 1200, 0, 1500); g.addColorStop(0, 'rgba(24,8,12,0)'); g.addColorStop(1, 'rgba(24,8,12,.6)'); X.fillStyle = g; X.fillRect(0, 1200, W, 300); X.fillStyle = 'rgba(24,8,12,.6)'; X.fillRect(0, 1500, W, H - 1500);
 }
 
 
