@@ -19,12 +19,12 @@ function bakeAll() { BAKE.forEach(k => { BGS[k] = MA.bgPhoto(k, 16, .45); }); }
 const ASSETS = { ...PH, sGatal: 'stk-gatal.png', sJom: 'stk-jom.png', sDaftar: 'stk-daftar.png', sInstall: 'stk-install.png', sLogin: 'stk-login.png', sTopup: 'stk-topup.png', sTambah: 'stk-tambah.png', sTebus: 'stk-tebus.png', sRumah: 'stk-rumah.png' };
 
 // ---------- klip app (frame jpg dalam clip/<kunci>/%04d.jpg @30fps) ----------
-const CLIPN = { daftar: 223, install: 241, login: 189, topup: 233, withdraw: 289, cut: 201 };
+const CLIPN = { daftar: 223, install: 241, login: 189, topup: 233, withdraw: 289, cut: 2200 };
 const CLIPS = [];   // [{a, b, key, rate}] diisi oleh Cl()
 let curClipImg = null;
 window.loadClip = (t) => new Promise(res => {
   const c = CLIPS.find(c => t >= c.a && t < c.b); if (!c) { curClipImg = null; return res(); }
-  const i = Math.max(1, Math.min(CLIPN[c.key], Math.floor((t - c.a) * c.rate * 30) + 1)); const im = new Image();
+  const i = Math.max(1, Math.min(CLIPN[c.key], Math.floor((t - c.a) * c.rate * 30) + 1 + (c.off || 0))); const im = new Image();
   im.onload = () => { curClipImg = im; res(); }; im.onerror = () => res(); im.src = 'clip/' + c.key + '/' + String(i).padStart(4, '0') + '.' + (c.ext || 'jpg');
 });
 const phone = (lt, at) => anim(lt, at, 540, 712, () => {
@@ -36,7 +36,6 @@ const phone = (lt, at) => anim(lt, at, 540, 712, () => {
 const Cl = (a, b, bg, title, sticker, key, rate, size = 100, h = 360) => { CLIPS.push({ a, b, key, rate }); return B(a, b, bg, WC.ma, (lt) => { ttl(lt, title, size); phone(lt, .2); stk(lt, .5, IMG['s' + sticker[0].toUpperCase() + sticker.slice(1)], 540, SB, h); }); };
 
 // ---------- OPENING: headline wall + badan paper-cut (garis putih) + pil glass di depan ----------
-const WALL = ['TANGAN GATAL?', 'SIMPAN EMAS'];
 const glassPill = (label, cx, cy, size, tint = 'rgba(255,255,255,.16)') => {
   X.save(); X.font = `italic 800 ${size}px PP`; X.letterSpacing = '4px'; const tw_ = X.measureText(label).width, w = tw_ + size * 2.1, h = size * 2.1, x = cx - w / 2, y = cy - h / 2; X.restore();
   X.save(); rr(x, y, w, h, h / 2); X.clip(); X.filter = 'blur(18px) brightness(1.12) saturate(1.35)'; X.drawImage(X.canvas, 0, 0); X.filter = 'none';
@@ -45,7 +44,8 @@ const glassPill = (label, cx, cy, size, tint = 'rgba(255,255,255,.16)') => {
   X.save(); rr(x + 1, y + 1, w - 2, h - 2, h / 2 - 1); X.lineWidth = 2.5; X.strokeStyle = 'rgba(255,255,255,.65)'; X.stroke(); X.restore();
   X.save(); X.font = `italic 800 ${size}px PP`; X.letterSpacing = '4px'; X.textAlign = 'center'; X.shadowColor = 'rgba(40,0,10,.55)'; X.shadowBlur = 10; X.shadowOffsetY = 3; X.fillStyle = '#fff'; X.fillText(label, cx + 2, cy + size * .36); X.restore();
 };
-const openingScene = (lt) => {
+const talkScene = (cfg) => (lt) => {
+  const WALL = cfg.wall;
   const rg = X.createRadialGradient(540, 760, 120, 540, 960, 1250); rg.addColorStop(0, '#8E1B30'); rg.addColorStop(.6, '#661225'); rg.addColorStop(1, '#3A0914'); X.fillStyle = rg; X.fillRect(0, 0, W, H);
   // headline wall: baris tajuk berulang memenuhi dinding; 2 baris atas pepejal, selebihnya garis (makin pudar ke bawah)
   const SZ = 150, PITCH = 165;
@@ -67,8 +67,8 @@ const openingScene = (lt) => {
     X.shadowColor = 'rgba(20,0,6,.6)'; X.shadowBlur = 34; X.shadowOffsetY = 18; X.drawImage(curClipImg, 0, 0, W, H); X.restore();
   }
   // tajuk kecil: kaca (glass) di depan
-  anim(lt, .45, 540, 120, () => glassPill('5  LANGKAH', 540, 62, 38));
-  anim(lt, .8, 540, 1230, () => glassPill('RAWAT DENGAN 5 LANGKAH', 540, 1235, 40));
+  anim(lt, .45, 540, 120, () => glassPill(cfg.tag, 540, 62, 38));
+  anim(lt, .8, 540, 1230, () => glassPill(cfg.sub, 540, 1235, 40));
 };
 const CH = (n, l1, l2, sub) => (lt) => MA.chapter(lt, n, l1, l2, sub, 'CARA');
 const SEG = [
@@ -103,7 +103,7 @@ const SEG = [
   [81.68, 84.85, '*Dulu *ragu, *kini *tahu. Jom mulakan *simpan *emas.'],
 ];
 const SCENES = [
-  (CLIPS.push({ a: 0, b: 6.63, key: 'cut', rate: 1, ext: 'webp' }), Object.assign(B(0, 6.63, 'tiers', WC.ma, openingScene), { nobk: true })),
+  (CLIPS.push({ a: 0, b: 6.63, key: 'cut', rate: 1, ext: 'webp' }), Object.assign(B(0, 6.63, 'tiers', WC.ma, talkScene({ wall: ['TANGAN GATAL?', 'SIMPAN EMAS'], tag: '5  LANGKAH', sub: 'RAWAT DENGAN 5 LANGKAH' })), { nobk: true })),
   B(6.63, 11.33, 'tiers', WC.ma, (lt) => {
     ttl(lt, 'Tangan Gatal?', 96);
     row(lt, 0.3, 440, 'Tangan mula gatal', 'NAK BELI BARANG'); row(lt, 2.6, 590, 'Pesan guru emas', 'RAWAT TANGAN GATAL');
@@ -129,7 +129,7 @@ const SCENES = [
     
     stk(lt, .4, IMG.sRumah, 540, SB, 680);
   }),
-  Hh(65.81, 69.92, (lt) => MA.chapter(lt, '', 'Kunci Duit', 'Tangan Gatal', null, 'KESIMPULAN'), -1, WC.ma),
+  (CLIPS.push({ a: 65.81, b: 69.92, key: 'cut', rate: 1, ext: 'webp', off: 1974 }), Object.assign(B(65.81, 69.92, 'tiers', WC.ma, talkScene({ wall: ['KUNCI DUIT', 'TANGAN GATAL'], tag: 'KESIMPULAN', sub: 'DARIPADA TERUS TERBELANJA' })), { nobk: true })),
   B(69.92, 77.48, 'g250', WC.ma, (lt) => {
     ttl(lt, 'Mudah Untuk Semua', 92);
     row(lt, 0.5, 440, 'Simpan emas', 'SANGAT MUDAH'); row(lt, 2.7, 590, 'Selamat', 'PATUH SYARIAH');
