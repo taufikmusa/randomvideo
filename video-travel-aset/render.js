@@ -11,7 +11,7 @@ const server = http.createServer((req, res) => { const f = path.join(root, decod
   const url = `http://127.0.0.1:${server.address().port}/index.html`;
   const browser = await pw.chromium.launch({ args: ['--disable-gpu-vsync'] });
   const mk = async () => { const p = await browser.newPage({ viewport: { width: 540, height: 960 } }); p.on('pageerror', e => { console.error(e); process.exit(1); }); await p.goto(url); await p.evaluate(() => window.ready); return p; };
-  const grab = (p, t) => p.evaluate(async t => { await loadHead(Math.round(t * 30) + 1); render(t); return document.getElementById('c').toDataURL('image/jpeg', 0.93); }, t);
+  const grab = (p, t) => p.evaluate(async t => { await loadHead(Math.round(t * 30) + 1); if (window.loadClip) await loadClip(t); render(t); return document.getElementById('c').toDataURL('image/jpeg', 0.97); }, t);
   if (process.argv[2] === 'stills') {
     const p = await mk(); fs.mkdirSync(path.join(root, 'stills'), { recursive: true });
     for (const s of process.argv.slice(3).map(Number)) fs.writeFileSync(path.join(root, 'stills', `t${s.toFixed(2)}.jpg`), Buffer.from((await grab(p, s)).split(',')[1], 'base64'));
@@ -30,6 +30,6 @@ const server = http.createServer((req, res) => { const f = path.join(root, decod
   // loudnorm kadang potong ekor audio → apad + -t DUR
   execFileSync('ffmpeg', ['-y', '-hide_banner', '-loglevel', 'error', '-framerate', String(FPS), '-i', path.join(root, 'out', 'frames', '%05d.jpg'), '-i', path.join(root, 'voice.wav'), ...(useSfx ? ['-i', path.join(root, 'sfx.wav')] : []),
     '-filter_complex', useSfx ? '[1:a]loudnorm=I=-16:TP=-1.5:LRA=9,apad=pad_dur=5[v];[2:a]volume=.4[s];[v][s]amix=inputs=2:duration=first:normalize=0,alimiter=limit=0.95[a]' : '[1:a]loudnorm=I=-16:TP=-1.5:LRA=9,apad=pad_dur=5[a]',
-    '-map', '0:v', '-map', '[a]', '-c:v', 'libx264', '-preset', 'slow', '-crf', '20', '-pix_fmt', 'yuv420p', '-profile:v', 'high', '-c:a', 'aac', '-b:a', '192k', '-t', String(DUR), '-movflags', '+faststart', path.join(root, OUT)], { stdio: 'inherit' });
+    '-map', '0:v', '-map', '[a]', '-c:v', 'libx264', '-preset', 'slow', '-crf', '16', '-pix_fmt', 'yuv420p', '-profile:v', 'high', '-c:a', 'aac', '-b:a', '192k', '-t', String(DUR), '-movflags', '+faststart', path.join(root, OUT)], { stdio: 'inherit' });
   console.log('done -> ' + OUT);
 })();
