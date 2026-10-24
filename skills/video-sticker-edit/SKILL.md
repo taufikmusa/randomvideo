@@ -5,6 +5,8 @@ description: 'Edit video talking-head Taufik (@taufik.pg, Public Gold G100) jadi
 
 # video-sticker-edit — talking head + B-roll + sticker pop-up
 
+> **NOTA (24 Okt 2026):** gaya lalai SEKARANG ialah `skills/video-papercut/` (paper-cut + headline wall + glass + klip app + SFX minimum). Skill ni kekal sebagai asas (skrip, enjin, laporan) dan untuk gaya lama bila diminta.
+
 Enjin kanvas HTML (Playwright) → frame JPEG → ffmpeg. Semua fail dalam folder skill ni (`SK=skills/video-sticker-edit`). Salinan skill akaun `taufik-video-edit` pun ada, tapi yang dalam repo ni lebih lengkap (tema warna, nota Whisper, aliran hantar/cleanup). **Jangan edit `assets/template/` ni**; tema warna dibuat pada SALINAN `engine.js` dalam folder projek.
 
 ## 1. Bila Taufik hantar bahan

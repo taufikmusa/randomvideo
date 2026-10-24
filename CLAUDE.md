@@ -25,3 +25,9 @@ Render: `python3 music.py && node render.js` dalam folder projek.
 - `carousel-editorial` = gaya putih majalah, nombor oren gergasi, tulisan tangan (rujukan "9 Money Milestones").
 - Potret/selfie Taufik HANYA di slaid TERAKHIR (CTA). Cover & slaid isi tanpa potret (nampak macam iklan).
 - Baca SKILL.md skill tu dahulu; mula dengan `sh skills/<skill>/scripts/new_carousel.sh carousel-<topik> <pose...>`.
+
+## Skill video (dalam skills/)
+- `video-papercut` = **DEFAULT** bila Taufik attach klip video talking-head + helaian sticker dan minta "edit ni" (atau sebut "paper cut", "headline wall", "glass", "macam video 5 langkah"). Adegan dia bercakap = badan paper-cut garis putih atas maroon + headline wall + pil glass; sticker pop-up; klip app (`assets/video/`); footage HD; SFX minimum woosh -> pop -> ding (`assets/sfx/`), tiada muzik. Baca `skills/video-papercut/SKILL.md` dahulu; ia bina atas `video-sticker-edit` (baca juga).
+- `video-sticker-edit` = gaya lama (footage penuh + sticker maroon/honey/acid); guna hanya bila Taufik minta gaya lama atau warna lain.
+- `video-timeline` = neon timeline sejarah (tanpa suara asal).
+- Aset video: `assets/video/` (tutorial app Public Gold, e-mel/IC dah diblur), `assets/sfx/` (woosh, pop=sfx-1, bell, swish, click, punch, typing).
