@@ -11,7 +11,7 @@ const server = http.createServer((req, res) => { const f = path.join(root, decod
   const url = `http://127.0.0.1:${server.address().port}/index.html`;
   const browser = await pw.chromium.launch({ args: ['--disable-gpu-vsync'] });
   const mk = async () => { const p = await browser.newPage({ viewport: { width: 540, height: 960 } }); p.on('pageerror', e => { console.error(e); process.exit(1); }); await p.goto(url); await p.evaluate(() => window.ready); return p; };
-  const grab = (p, t) => p.evaluate(async t => { await loadHead(Math.round(t * 30) + 1); render(t); return document.getElementById('c').toDataURL('image/jpeg', 0.97); }, t);
+  const grab = (p, t) => p.evaluate(async t => { await loadHead(Math.round(t * 30) + 1); if (window.loadClip) await loadClip(t); render(t); return document.getElementById('c').toDataURL('image/jpeg', 0.97); }, t);
   if (process.argv[2] === 'stills') {
     const p = await mk(); fs.mkdirSync(path.join(root, 'stills'), { recursive: true });
     for (const s of process.argv.slice(3).map(Number)) fs.writeFileSync(path.join(root, 'stills', `t${s.toFixed(2)}.jpg`), Buffer.from((await grab(p, s)).split(',')[1], 'base64'));
