@@ -104,3 +104,8 @@ cp <out_dir>/*.jpg video-<topik>/src/        # kemudian render stills/penuh sepe
 - ~1 saat/frame (CPU). Jalankan di background (`run_in_background`), 750 frame ≈ 12 min. Proses HANYA julat Hh, bukan semua frame.
 - Skrip isi lubang mask (mic di depan badan), gelapkan latar 30% supaya glow nampak pada dinding putih, dan lembutkan mask antara frame. Glow berdenyut halus.
 - Selepas projek siap & dihantar, fail `src/` dibuang seperti biasa.
+
+## 9. Klip app + SFX minimum (rujukan: `video-5-langkah-app/`)
+- **Klip app sebagai B-roll**: ekstrak frame `assets/video/app-*.mp4` ke `clip/<kunci>/%04d.jpg` (`ffmpeg -vf fps=30,scale=540:-1 -q:v 2`, SEMENTARA, jangan commit). `scenes.js` ada pembantu `Cl(a,b,bg,tajuk,sticker,kunci,rate)` + `phone()` (telefon di tengah, sticker di bawah) dan `window.loadClip(t)`; `render.js` projek memanggil `loadClip(t)` selepas `loadHead`. `rate` = kelajuan klip (1.0 = asal; klip lebih pendek daripada adegan akan berhenti pada frame akhir). Salin `scenes.js`/`render.js`/`engine.js` dari projek tu.
+- **Footage HD**: `engine.js` projek itu guna `curHead.naturalWidth/Height` dan gradient lebih nipis; frame H diekstrak terus 1080x1920 (`scale=1080:1920:flags=lanczos+accurate_rnd,unsharp=5:5:0.9:3:3:0.35 -q:v 1`) hanya untuk julat `Hh`.
+- **SFX minimum** (bila Taufik minta "sound effect minimal, tiada muzik"): woosh pada awal setiap langkah + loceng pada CTA, dicampur SELEPAS render dengan `mix_sfx.sh` (simpan `voice-only.mp4`, boleh diulang). Wajib `alimiter=...:level=0` (auto-level menaikkan bunyi) dan `-ar 44100` / `aresample=44100`; semak peak (`< -1 dB`). Jangan commit `voice-only.mp4`.
