@@ -7,6 +7,17 @@ description: 'Edit video talking-head Taufik (@taufik.pg) LANDSCAPE 1920x1080 ga
 
 Projek rujukan (kod kekal dalam repo): **`video-cut01-pg/`** (`main.js` = semua adegan/overlay/3D, `render.js`, `index.html`, `tools/`). Salin folder tu sebagai titik mula; ganti garis masa teks, kad B-roll dan ikon 3D mengikut skrip baru.
 
+
+## 0. ENJIN BERKONFIG (guna ini untuk video baru — `explainer/`)
+Sejak Cut-02..17, semua video guna enjin kongsi **`explainer/`** (main.js, props.js, render.js, tools/). Setiap video hanya perlukan folder `video-cutNN-pg/` dengan **`config.js`** (+ `keyed` = symlink frame cutout, `audio.mp4` = klip asal). Projek lama `video-cut01-pg/`/`video-cut06-pg/` = versi tulis-tangan (rujukan).
+- **Aliran**: muat turun klip (curl) → `ffmpeg` wav 16k → `/tmp/transcribe_m.py` (Whisper medium) → betulkan `segs.json` → `python3 -I explainer/tools/words.py segs.json voice.wav` (anggar masa perkataan dgn paksi masa-bersuara) → tulis `config.js` → `python3 -I explainer/tools/key_frames.py <klip> <keyedNN> 370` → `node explainer/render.js video-cutNN-pg stills t1 t2 ...` (semak) → `node explainer/tools/thumb.js video-cutNN-pg` → `WORKERS=3 node explainer/render.js video-cutNN-pg` → `sh skills/video-explainer-3d/scripts/embed_thumb.sh <mp4> thumb/thumbnail.jpg`. `explainer/tools/queue.sh` + `keyjob.sh` automasikan giliran render/key/commit.
+- **B-roll**: `tools/prep_broll.py` / `tools/fetch_broll.py` (muat turun dari Drive ikut nama, `_` ganti ruang) -> `explainer/assets/broll/<nama>/%04d.jpg` + `index.json`.
+- **config.js** (export default): `VOICE` (saat suara), `TAU_N` (bil. frame keyed), `THUMB {l1,big,l3,pill,broll,bf,pose}`, `SIDES [[0,'L'],[t,'R'],...]` (t = mula glide 1.1s; jarak >= ~15s; elak teks/kad dalam tetingkap glide), `STAGES [{type,at,...}]` (kamera dolly ke stage pada `at`), `CARDS [{n,t0,t1,sp?}]` (sisi auto ikut SIDES), `TEXT` (b = blok baris `*emas`, n = counter {from,to,fmt:'int'|'sep',pre,suf,label}, s = stamp, x = strike), `TAGS [{s:stage,a:anchor,txt,sub,t0,t1,dx,dy}]`.
+- **Prop stage** (`explainer/props.js`): hero, faucet, house, text3d, infinity, pyramid, steps(+nombor), growth, shield, coins, clock, globe, chart(up/down).
+- Enjin auto: kecilkan baris > 600px, fade teks lama sebelum teks baru bertindih ruang. Nota: teks `t1` = mula fade-out.
+- Ketepatan masa perkataan ±0.3-0.5s (anggaran). Untuk angka kritikal guna `align_words.py`.
+- Cuaca prestasi: ~0.7 fps bila CPU dikongsi, ~1.5 fps solo (3 worker). Cakera: keyed ~1.4 GB/video, padam selepas render.
+
 ## 1. Bahan dari Google Drive
 - Taufik beri 3 folder: **Reference** (1 MP4 gaya yang ditiru), **Cut-NN** (video yang diedit; biasanya `Cut-01.mp4`), **B-roll** (ratusan klip menegak 720x1280).
 - Senarai fail: `mcp__Google_Drive__search_files` dengan `parentId = '<folderId>'` (ID dalam URL folder). Hasil besar disimpan ke fail `tool-results/*.json` → ekstrak `id`/`title` dengan `python3 -I` (jangan baca terus). Halaman seterusnya: `pageToken`.
