@@ -2,7 +2,7 @@
 const b = (t0, t1, y, ...lines) => ({ k: 'b', t0, t1, y, lines: lines.map(([t, s, w]) => ({ t, s, w: w || (s >= 60 ? 900 : 800) })) });
 const n = (t0, t1, y, o) => ({ k: 'n', t0, t1, y, ...o });
 export default {
-  VOICE: 96.18, TAU_N: 2886,
+  VOICE: 96.18, TAU_N: 2885,
   THUMB: { l1: 'Nak jual emas?', big: '8 SEBAB', l3: 'pilih Public Gold', pill: 'HARGA BALIK COMPETITIVE', broll: 'Emas-timbang', bf: 40, pose: 1500 },
   SIDES: [[0, 'L'], [20.3, 'R'], [42.6, 'L'], [61.5, 'R'], [76.5, 'L']],
   STAGES: [

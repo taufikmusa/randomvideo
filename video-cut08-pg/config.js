@@ -2,7 +2,7 @@
 const b = (t0, t1, y, ...lines) => ({ k: 'b', t0, t1, y, lines: lines.map(([t, s, w]) => ({ t, s, w: w || (s >= 60 ? 900 : 800) })) });
 const n = (t0, t1, y, o) => ({ k: 'n', t0, t1, y, ...o });
 export default {
-  VOICE: 67.22, TAU_N: 2017,
+  VOICE: 67.22, TAU_N: 2016,
   THUMB: { l1: 'Jangan letak', big: '100%', l3: 'simpanan di satu tempat', pill: 'SEIMBANGKAN SIMPANAN ANDA', broll: 'Emas-1000gram', bf: 40, pose: 1500 },
   SIDES: [[0, 'L'], [15.4, 'R'], [35.2, 'L'], [50.9, 'R']],
   STAGES: [

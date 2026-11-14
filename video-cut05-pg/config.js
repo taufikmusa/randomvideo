@@ -2,7 +2,7 @@
 const b = (t0, t1, y, ...lines) => ({ k: 'b', t0, t1, y, lines: lines.map(([t, s, w]) => ({ t, s, w: w || (s >= 60 ? 900 : 800) })) });
 const n = (t0, t1, y, o) => ({ k: 'n', t0, t1, y, ...o });
 export default {
-  VOICE: 76.49, TAU_N: 2295,
+  VOICE: 76.49, TAU_N: 2294,
   THUMB: { l1: 'Bukan emas yang buat kaya', big: 'ILMU', l3: 'tentang emas', pill: 'PESAN GURU EMAS SAYA', broll: 'Ilmu-1', bf: 50, pose: 1500 },
   SIDES: [[0, 'L'], [17.4, 'R'], [33.6, 'L'], [50.4, 'R'], [65.9, 'L']],
   STAGES: [

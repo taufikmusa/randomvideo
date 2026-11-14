@@ -2,7 +2,7 @@
 const b = (t0, t1, y, ...lines) => ({ k: 'b', t0, t1, y, lines: lines.map(([t, s, w]) => ({ t, s, w: w || (s >= 60 ? 900 : 800) })) });
 const n = (t0, t1, y, o) => ({ k: 'n', t0, t1, y, ...o });
 export default {
-  VOICE: 88.05, TAU_N: 2642,
+  VOICE: 88.05, TAU_N: 2641,
   THUMB: { l1: 'Mana lebih baik?', big: 'EPP vs GAP', l3: 'guru saya syorkan GAP', pill: 'LOCK HARGA vs FLEKSIBEL', broll: 'Emas-1000gram', bf: 40, pose: 1500 },
   SIDES: [[0, 'L'], [15.4, 'R'], [38.6, 'L'], [57.0, 'R'], [77.0, 'L']],
   STAGES: [
