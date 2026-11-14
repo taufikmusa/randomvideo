@@ -21,7 +21,7 @@ const server = http.createServer((q, s) => { let u = decodeURIComponent(q.url.sp
   const p0 = await mk(), DUR = await p0.evaluate(() => window.DUR);
   const a = +(args[0] || 0), b = +(args[1] || Math.round(DUR * FPS)); const fr = path.join(VD, 'out', 'frames'); fs.mkdirSync(fr, { recursive: true });
   let next = a, done = 0;
-  await Promise.all(Array.from({ length: WORKERS }, async (_, w) => { const p = w ? await mk() : p0; for (;;) { const n = next++; if (n >= b) break; fs.writeFileSync(path.join(fr, `${String(n - a + 1).padStart(5, '0')}.jpg`), Buffer.from((await grab(p, n)).split(',')[1], 'base64')); if (++done % 100 === 0) console.log('frame', done + '/' + (b - a)); } }));
+  await Promise.all(Array.from({ length: WORKERS }, async (_, w) => { const p = w ? await mk() : p0; for (;;) { const n = next++; if (n >= b) break; const ff = path.join(fr, `${String(n - a + 1).padStart(5, '0')}.jpg`); if (fs.existsSync(ff) && fs.statSync(ff).size > 2000 && process.env.RESUME !== '0') { ++done; continue; } fs.writeFileSync(path.join(fr, `${String(n - a + 1).padStart(5, '0')}.jpg`), Buffer.from((await grab(p, n)).split(',')[1], 'base64')); if (++done % 100 === 0) console.log('frame', done + '/' + (b - a)); } }));
   await browser.close(); server.close();
   const t0 = a / FPS, d = (b - a) / FPS;
   execFileSync('ffmpeg', ['-v', 'error', '-y', '-framerate', String(FPS), '-i', path.join(fr, '%05d.jpg'), '-ss', String(t0), '-t', String(d), '-i', AUDIO, '-map', '0:v', '-map', '1:a', '-vf', 'format=yuv420p', '-af', 'loudnorm=I=-16:TP=-1.5:LRA=9,apad=pad_dur=2', '-c:v', 'libx264', '-crf', process.env.CRF || '17', '-preset', 'medium', '-c:a', 'aac', '-b:a', '192k', '-t', String(d), '-movflags', '+faststart', OUT], { stdio: 'inherit' });
