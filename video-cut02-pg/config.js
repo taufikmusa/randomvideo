@@ -1,0 +1,55 @@
+// Cut-02: "Gaji RM5,000? Kumpul 3 keping goldbar" — simpanan kecemasan 3 bulan (masa dalam saat, ikut sebutan).
+const b = (t0, t1, y, ...lines) => ({ k: 'b', t0, t1, y, lines: lines.map(([t, s, w]) => ({ t, s, w: w || (s >= 60 ? 900 : 800) })) });
+const n = (t0, t1, y, o) => ({ k: 'n', t0, t1, y, ...o });
+export default {
+  VOICE: 62.3, TAU_N: 1870,
+  THUMB: { l1: 'Gaji RM5,000?', big: 'KUMPUL', l3: '3 keping goldbar', pill: 'SIMPANAN KECEMASAN 3 BULAN', broll: 'Emas-goldbar-5gram', bf: 40, pose: 1400 },
+
+  SIDES: [[0, 'L'], [15.8, 'R'], [30.0, 'L'], [46.0, 'R']],
+  STAGES: [
+    { type: 'hero', at: 0, l1: '10 GRAM', l2: 'PUBLIC GOLD 999.9' },
+    { type: 'coins', at: 8.1, t0: 8.8, dt: .12, n: 22 },
+    { type: 'shield', at: 16.4, t0: 17.2 },
+    { type: 'clock', at: 26.3, t0: 27.0, speed: 2.5 },
+    { type: 'globe', at: 36.2 },
+    { type: 'pyramid', at: 51.7, t0: 53.4, dt: .3 },
+  ],
+  CARDS: [
+    { n: 'Emas-goldbar', t0: .3, t1: 4.4 }, { n: 'Emas-10gram', t0: 4.7, t1: 8.0 }, { n: 'Others-menabung', t0: 8.3, t1: 11.9 }, { n: 'Doodly-Gaji-1', t0: 12.2, t1: 15.6 },
+    { n: 'Emas-goldbar-5gram', t0: 17.2, t1: 20.2 }, { n: 'Emergency-1', t0: 20.5, t1: 24.2 }, { n: 'Emergency-2', t0: 24.5, t1: 26.2 }, { n: 'Others-tiap_bulan', t0: 26.5, t1: 29.8, sp: .65 },
+    { n: 'Emas-goldbar-5gram', t0: 31.3, t1: 35.9 }, { n: 'Emas-1gram-album', t0: 36.3, t1: 39.6 }, { n: 'Selfie-Emas-Small_Bar', t0: 39.9, t1: 43.2 }, { n: 'Selfie-Gold-ATM', t0: 43.5, t1: 45.9 },
+    { n: 'Emas-repair_emas', t0: 47.4, t1: 51.6 }, { n: 'Selfie-Public_Gold-Menara', t0: 51.9, t1: 55.7 }, { n: 'Website-Saya', t0: 56.0, t1: 62.0 },
+  ],
+  TEXT: [
+    b(.2, 4.5, 92, ['Jangan pandang remeh', 56, 800], ['pada mereka yang', 56, 800], ['berjaya *simpan emas', 80]),
+    b(4.6, 8.0, 92, ['sebab mereka yang ada', 50]), b(6.1, 8.0, 150, ['*10 gram emas', 110]),
+    b(8.1, 12.1, 92, ['mereka ada simpanan', 50]), b(9.9, 12.1, 150, ['sekurang-kurangnya', 56, 800]),
+    n(10.9, 12.1, 215, { from: 0, to: 5000, c0: 11.0, c1: 11.9, fmt: 'sep', pre: 'RM', s: 150 }),
+    b(12.2, 15.7, 92, ['Kalau tuan puan bergaji', 50]), b(14.3, 15.7, 150, ['sekitar *RM5,000', 100]), b(15.0, 15.7, 262, ['sebulan', 56, 800]),
+    b(16.5, 20.2, 92, ['Letak matlamat', 56, 800]), b(17.9, 20.2, 152, ['untuk kumpul', 56, 800]),
+    n(18.8, 20.3, 222, { from: 0, to: 3, c0: 18.9, c1: 19.5, fmt: 'int', suf: ' keping', s: 130, label: 'EMAS' }),
+    b(20.3, 21.9, 92, ['goldbar', 60, 800]), b(20.7, 21.9, 154, ['*5 gram', 130]),
+    b(21.9, 24.3, 92, ['sebagai', 50]), b(22.5, 24.3, 150, ['*simpanan', 100]), b(23.3, 24.3, 262, ['*kecemasan', 100]),
+    n(24.3, 26.3, 92, { from: 0, to: 3, c0: 24.3, c1: 24.8, fmt: 'int', suf: ' bulan', s: 150, label: 'PENDAPATAN' }),
+    b(26.4, 29.9, 92, ['Bagi pesara yang cukup', 50]), b(27.4, 29.9, 148, ['belanja bulanan sekitar', 50]),
+    n(29.0, 30.6, 205, { from: 0, to: 2000, c0: 29.2, c1: 29.9, fmt: 'sep', pre: 'RM', s: 150 }),
+    b(30.9, 36.1, 92, ['1 keping *goldbar 5g', 62]), b(33.0, 36.1, 175, ['cukup untuk', 50]), b(33.9, 36.1, 230, ['perbelanjaan', 56, 800]), b(35.1, 36.1, 296, ['*1 bulan', 120]),
+    b(36.3, 39.7, 92, ['Walaupun', 50]), b(36.6, 39.7, 150, ['kecil dan nipis', 90]),
+    b(38.0, 39.7, 250, ['emas ini tetap', 50]), b(38.6, 39.7, 308, ['*bernilai', 110]),
+    b(39.8, 43.3, 92, ['dijual di mana-mana tempat', 50]), b(41.8, 43.3, 150, ['di *seluruh dunia', 86]),
+    b(43.4, 46.0, 92, ['Dengan *Public Gold,', 62]), b(44.6, 46.0, 170, ['emas ini boleh', 50]), b(45.0, 46.0, 226, ['*dijual semula', 90]),
+    b(46.3, 48.7, 92, ['bila-bila masa', 86]), b(47.0, 48.7, 186, ['*tanpa sebarang syarat', 60]),
+    b(48.8, 51.6, 92, ['walaupun emas dah', 50]), b(49.5, 51.6, 150, ['*calar', 120]), b(50.3, 51.6, 290, ['ataupun *patah', 80]),
+    b(51.8, 55.7, 92, ['Nak', 50]), b(52.0, 55.7, 150, ['*peace of mind?', 100]), b(53.8, 55.7, 270, ['kumpul emas di', 50]), b(54.6, 55.7, 326, ['*Public Gold', 90]),
+    b(55.9, 59.3, 92, ['Mudah *beli', 110]), b(56.8, 59.3, 215, ['dan mudah *jual', 90]),
+    b(58.2, 62.3, 330, ['Nak mulakan simpanan emas?', 50]), b(60.0, 62.3, 390, ['Rujuk *pin video saya', 70]),
+  ],
+  TAGS: [
+    { s: 0, a: 'x', txt: 'Goldbar 10 gram', sub: 'Public Gold 999.9', t0: 5.0, t1: 8.0, dx: 160, dy: -80 },
+    { s: 1, a: 'top', txt: 'Simpanan', sub: 'sekurang-kurangnya RM5,000', t0: 10.3, t1: 15.6, dx: 160, dy: -60 },
+    { s: 2, a: 'shield', txt: 'Simpanan kecemasan', sub: '3 bulan pendapatan', t0: 21.0, t1: 26.2, dx: 170, dy: -60 },
+    { s: 3, a: 'clock', txt: '1 bulan', sub: 'cukup dengan 1 keping 5g', t0: 31.5, t1: 36.0, dx: 160, dy: -50 },
+    { s: 4, a: 'globe', txt: 'Dijual di mana-mana', sub: 'seluruh dunia', t0: 40.2, t1: 43.2, dx: 150, dy: -70 },
+    { s: 5, a: 'top', txt: 'Mudah beli, mudah jual', sub: 'Public Gold', t0: 55.9, t1: 59.3, dx: 150, dy: -80 },
+  ],
+};
