@@ -57,6 +57,13 @@ Projek rujukan (kod kekal dalam repo): **`video-cut01-pg/`** (`main.js` = semua 
 - `getContext('2d', { willReadFrequently: true })` (raster CPU) lebih laju daripada kanvas GPU perisian di sini.
 - Profil: `?prof=1` paksa `getImageData` selepas setiap peringkat (operasi kanvas ditangguh, kos muncul pada `toDataURL`), `?nogl=1`, `?noov=1`, `?gs=0.75`, `?aa=0` ialah suis ujian dalam `main.js`; bench: render 7 frame berturutan di satu page dan ukur ms/frame.
 
+## 6c. Thumbnail terbenam (WAJIB, setiap video)
+- Taufik mahu SETIAP video ada thumbnail (tajuk + topik) di **0.1s pertama** supaya masa upload (IG/FB/TikTok) pilihan cover nampak thumbnail + tajuk video.
+- Templat 16:9: `scripts/thumb.html` + `shot.js` (Playwright screenshot 1920x1080). Gaya: latar navy + bokeh emas, chip `@taufik.pg`, tajuk Poppins 800/900 italic (krim + emas), pil putih fon Mono (subtopik), polaroid B-roll emas condong, cutout Taufik besar di kanan (pilih frame `assets/keyed/NNNNN.png` mata terbuka, pegang gold bar; mask pudar tepi kiri sebab crop tangan). Warna ikut tema video (navy/emas); contoh rujukan Taufik = thumbnail menegak maroon/oren (Poppins italic, pil mono) — warna ditukar, fon sama.
+- Tajuk = soalan/hook video (cth "Kenapa ramai nak jadi DEALER Public Gold?"). Hantar JPG dalam chat (SendUserFile) supaya Taufik nampak.
+- Selepas render siap: `sh scripts/embed_thumb.sh <video.mp4> <thumbnail.jpg>` (tampal 0.1s + cover MP4). Video menegak 1080x1920 (video-sticker-edit): sama, buat thumbnail menegak ikut helaian rujukan; skrip skala automatik.
+- Thumbnail JPG disimpan dalam folder projek (`thumb/`) dan dicommit.
+
 ## 7. Hantar
 - MP4 1920x1080 ~60s (~40-60 MB): commit + push, link raw GitHub, durasi + saiz + max audio (peraturan CLAUDE.md). "dah download"/"cleanup" → `git rm` MP4 + buang `assets/broll`, `assets/keyed`, `out/`, `stills/`, `segs.json`.
 - Laporan: sumber Drive dipakai, susunan sisi Taufik (masa tukar), teks yang saya reka, angka yang Taufik sebut, transkrip yang ragu, B-roll dipilih per tier, lencana like (boleh buang).

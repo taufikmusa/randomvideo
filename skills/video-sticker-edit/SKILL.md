@@ -76,6 +76,9 @@ python3 -I $SK/scripts/retheme.py video-<topik>/engine.js --theme acid --title-f
 - Warna baru lain: tambah entri `T[...]` dalam `retheme.py`.
 - Projek rujukan (kod kekal dalam repo): `video-mitos` (honey), `video-pendidikan` (acid + Inter), `video-azam` (maroon).
 
+## 6b. Thumbnail terbenam (WAJIB)
+Setiap video ada thumbnail (tajuk + topik) di 0.1s pertama + cover MP4. Buat thumbnail menegak 1080x1920 (gaya rujukan Taufik: tajuk besar, pil mono, polaroid foto emas, potret Taufik; warna ikut tema video), hantar JPG dalam chat, kemudian `sh skills/video-explainer-3d/scripts/embed_thumb.sh <video.mp4> <thumbnail.jpg>`. Butiran: `skills/video-explainer-3d/SKILL.md` bahagian 6c.
+
 ## 7. Hantar, laporan, cleanup
 - **MP4 JANGAN hantar dalam chat.** Commit + push ke branch sesi, beri link raw: `https://github.com/taufikmusa/randomvideo/raw/<branch>/<projek>/<projek>.mp4` + durasi (suara + 6s) + saiz + max audio. (iPhone: buka link → Share → Save Video.)
 - Sebelum commit buang: `src/ src.mp4 out/ stills/ voice.wav sheet.jpg stickers-check.jpg segs.json work/`. Commit kekalkan `scenes.js`, `engine.js`, `fonts/`, `img/`, `index.html`, `render.js`, `run.js` + MP4.
