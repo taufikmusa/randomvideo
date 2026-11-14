@@ -73,7 +73,7 @@ export function makeProps(E) {
     const g = new TextGeometry(o.text || 'PGBO', { font: FONT, size: o.size || 1.0, depth: .42, curveSegments: 8, bevelEnabled: true, bevelThickness: .05, bevelSize: .035, bevelSegments: 3 });
     g.computeBoundingBox(); const bb = g.boundingBox; g.translate(-(bb.max.x + bb.min.x) / 2, 0, -.21);
     const m = new THREE.Mesh(g, goldM); m.position.set(x, .5 + .2, 0); scene.add(m);
-    const w = (bb.max.x - bb.min.x), ob = Math.max(1.7, w * .62);
+    const w0 = (bb.max.x - bb.min.x), sc = Math.min(1, 3.2 / w0), w = w0 * sc, ob = Math.max(1.7, w * .62); m.scale.setScalar(sc);
     const A = new THREE.Mesh(new THREE.TorusGeometry(ob, .025, 8, 80), new THREE.MeshBasicMaterial({ color: GOLDC, transparent: true, opacity: .8 })); A.position.set(x, 1.5, 0); A.rotation.x = Math.PI / 2.4; scene.add(A);
     const B = A.clone(); B.scale.setScalar(1.18); B.rotation.x = Math.PI / 2.1; B.rotation.y = .6; scene.add(B);
     return { ty: 1.5, update: t => { m.rotation.y = .4 * Math.sin(t * .6); A.rotation.z = t * .5; B.rotation.z = -t * .4; A.position.y = 1.5 + Math.sin(t) * .1; } };
