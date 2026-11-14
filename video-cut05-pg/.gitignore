@@ -1,0 +1,7 @@
+out/
+stills/
+keyed
+audio.mp4
+*.mp4
+!thumb/*.jpg
+.embedded

@@ -2,7 +2,7 @@
 const b = (t0, t1, y, ...lines) => ({ k: 'b', t0, t1, y, lines: lines.map(([t, s, w]) => ({ t, s, w: w || (s >= 60 ? 900 : 800) })) });
 const n = (t0, t1, y, o) => ({ k: 'n', t0, t1, y, ...o });
 export default {
-  VOICE: 62.3, TAU_N: 1870,
+  VOICE: 62.3, TAU_N: 1869,
   THUMB: { l1: 'Gaji RM5,000?', big: 'KUMPUL', l3: '3 keping goldbar', pill: 'SIMPANAN KECEMASAN 3 BULAN', broll: 'Emas-goldbar-5gram', bf: 40, pose: 1400 },
 
   SIDES: [[0, 'L'], [15.8, 'R'], [30.0, 'L'], [46.0, 'R']],
