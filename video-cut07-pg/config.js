@@ -1,0 +1,51 @@
+// Cut-07: budget RM100,000 (~200 gram) — 100g vs 50g vs 10g, spread & fleksibiliti.
+const b = (t0, t1, y, ...lines) => ({ k: 'b', t0, t1, y, lines: lines.map(([t, s, w]) => ({ t, s, w: w || (s >= 60 ? 900 : 800) })) });
+const n = (t0, t1, y, o) => ({ k: 'n', t0, t1, y, ...o });
+export default {
+  VOICE: 61.58, TAU_N: 1847,
+  THUMB: { l1: 'Budget RM100,000', big: '200 GRAM', l3: '100g, 50g atau 10g?', pill: 'PILIH BERAT EMAS YANG SESUAI', broll: 'Emas-250_dan_100_gram', bf: 40, pose: 1300 },
+  SIDES: [[0, 'L'], [21.6, 'R'], [44.5, 'L']],
+  STAGES: [
+    { type: 'hero', at: 0, l1: '200 GRAM', l2: 'BUDGET RM100,000' },
+    { type: 'pyramid', at: 10.66, t0: 11.4, dt: .45 },
+    { type: 'hero', at: 21.72, l1: '100 GRAM', l2: 'SPREAD RENDAH' },
+    { type: 'coins', at: 29.63, t0: 30.4, dt: .15, n: 24 },
+    { type: 'growth', at: 39.26, t0: 40.0, dt: .5, n: 6 },
+    { type: 'hero', at: 44.58, l1: 'RM100', l2: 'APPS GAP' },
+    { type: 'pyramid', at: 51.0, t0: 51.3, dt: .25 },
+  ],
+  CARDS: [
+    { n: 'Cashflow-1', t0: .3, t1: 2.4 }, { n: 'Emas-1000gram', t0: 2.7, t1: 5.3 }, { n: 'Emas-250_dan_100_gram', t0: 5.6, t1: 8.7 }, { n: 'Idea-1', t0: 9.0, t1: 10.6 }, { n: 'Emas-100gram', t0: 10.9, t1: 14.1 }, { n: 'Emas-goldbar_50_gram', t0: 14.4, t1: 16.4 }, { n: 'Emas-10gram', t0: 16.8, t1: 21.4 },
+    { n: 'Emas-100gram', t0: 22.8, t1: 25.0 }, { n: 'Graph-1', t0: 25.3, t1: 29.5 }, { n: 'Emas-10gramb', t0: 29.9, t1: 34.0 }, { n: 'Emas-20gram', t0: 34.3, t1: 39.0 }, { n: 'Others-menabung', t0: 39.5, t1: 44.3 },
+    { n: 'Apps-RM100', t0: 45.8, t1: 48.7 }, { n: 'Apps-Download', t0: 49.0, t1: 52.6 }, { n: 'Website-Saya', t0: 53.0, t1: 57.9 }, { n: 'Happy', t0: 58.2, t1: 61.4 },
+  ],
+  TEXT: [
+    b(.2, 2.4, 92, ['Ada budget sekitar', 56, 800]), n(1.4, 2.4, 150, { from: 0, to: 100000, c0: 1.6, c1: 2.2, fmt: 'sep', pre: 'RM', s: 120 }),
+    b(2.5, 5.4, 92, ['dan nak *simpan emas', 70]), b(3.9, 5.4, 175, ['berat emas tuan puan', 56, 800]),
+    b(5.5, 8.7, 92, ['boleh dapat sekitar', 56, 800]), n(7.2, 8.7, 150, { from: 0, to: 200, c0: 7.8, c1: 8.3, fmt: 'int', suf: ' gram', s: 150 }),
+    b(8.9, 10.6, 92, ['Tapi nak pilih', 56, 800]), b(9.6, 10.6, 150, ['yang *mana?', 120]),
+    b(10.8, 14.2, 92, ['Pilihan 1', 56, 800]), n(12.0, 14.2, 150, { from: 0, to: 2, c0: 12.2, c1: 12.6, fmt: 'int', suf: ' × 100g', s: 120, label: 'GOLDBAR' }),
+    b(14.3, 16.5, 92, ['Pilihan 2', 56, 800]), n(14.9, 16.5, 150, { from: 0, to: 4, c0: 15.0, c1: 15.4, fmt: 'int', suf: ' × 50g', s: 120, label: 'GOLDBAR' }),
+    b(16.6, 21.5, 92, ['Pilihan 3', 56, 800]), n(17.4, 21.5, 150, { from: 0, to: 20, c0: 17.6, c1: 18.2, fmt: 'int', suf: ' × 10g', s: 120, label: 'GOLDBAR' }), b(19.1, 21.5, 360, ['Nak jual *sekaligus?', 70]),
+    b(22.8, 25.0, 92, ['*100 gram', 120]), b(23.9, 25.0, 230, ['lebih sesuai', 62]),
+    b(25.1, 29.5, 92, ['Kadar *spread', 90]), b(26.8, 29.5, 190, ['lebih rendah', 62]), n(28.5, 29.5, 280, { from: 0, to: 7, c0: 28.8, c1: 29.3, fmt: 'int', pre: '≈ ', suf: '%', s: 130 }),
+    b(29.7, 32.2, 92, ['Nak lebih', 56, 800]), b(30.7, 32.2, 150, ['*fleksibel?', 110]),
+    b(32.4, 36.0, 92, ['Nak jual', 56, 800]), b(33.0, 36.0, 150, ['*sikit-sikit', 100]), b(34.3, 36.0, 270, ['goldbar *10 gram', 80]), b(35.4, 36.0, 350, ['lebih mudah dijual', 56, 800]),
+    b(39.4, 41.4, 92, ['Guna', 56, 800]), b(40.2, 41.4, 150, ['*sikit-sikit', 100]),
+    b(41.5, 44.4, 92, ['Pilih berat emas', 62]), b(42.4, 44.4, 170, ['ikut *keperluan', 86]), b(43.7, 44.4, 266, ['dan *matlamat', 86]),
+    b(45.7, 48.7, 92, ['Nak mulakan simpanan', 56, 800]), n(47.5, 48.7, 150, { from: 0, to: 100, c0: 47.7, c1: 48.3, fmt: 'int', pre: 'RM', s: 150, label: 'SERENDAH ITU' }),
+    b(48.9, 50.9, 92, ['Boleh guna', 56, 800]), b(49.5, 50.9, 150, ['*kemudahan', 100]),
+    b(51.0, 52.8, 92, ['*Kumpul', 120]), b(51.7, 52.8, 230, ['sikit-sikit', 80]),
+    b(52.9, 54.9, 92, ['di Akaun Emas *GAP', 70]), b(53.9, 54.9, 170, ['Public Gold', 86]),
+    b(55.0, 58.0, 92, ['Rujuk *pin video saya', 62]), b(56.4, 58.0, 170, ['untuk bermula *hari ini', 56]),
+    b(58.1, 61.4, 92, ['Dulu *ragu,', 100]), b(58.9, 61.4, 215, ['kini *tahu', 100]), b(59.7, 61.4, 340, ['jom mulakan', 56, 800]), b(60.5, 61.4, 400, ['*simpanan emas', 100]),
+  ],
+  TAGS: [
+    { s: 1, a: 'top', txt: '2 × 100g / 4 × 50g / 20 × 10g', sub: 'sama-sama ~200 gram', t0: 11.5, t1: 21.4, dx: 160, dy: -70 },
+    { s: 2, a: 'x', txt: 'Jual sekaligus', sub: '100 gram — spread lebih rendah', t0: 22.8, t1: 29.5, dx: 160, dy: -80 },
+    { s: 3, a: 'top', txt: 'Jual sikit-sikit', sub: 'goldbar 10 gram', t0: 31.0, t1: 39.0, dx: 150, dy: -70 },
+    { s: 4, a: 'top', txt: 'Ikut keperluan', sub: 'dan matlamat', t0: 40.6, t1: 44.4, dx: 150, dy: -70 },
+    { s: 5, a: 'x', txt: 'RM100 pun boleh', sub: 'Apps GAP', t0: 46.0, t1: 50.9, dx: 160, dy: -70 },
+    { s: 6, a: 'top', txt: 'Kumpul sikit-sikit', sub: 'Akaun Emas GAP', t0: 52.0, t1: 57.9, dx: 150, dy: -70 },
+  ],
+};
