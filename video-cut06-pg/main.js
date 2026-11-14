@@ -44,7 +44,7 @@ const SIDEK = [[20.3, 21.4, 0, 1], [41.1, 42.2, 1, 0], [63.8, 64.9, 0, 1]];
 const sideP = t => tween(SIDEK, t, 0);
 const TAU_X = p => lerp(-8, 1172, p), PED_SX = p => lerp(1090, 830, p);
 // masa kunci (saat) — ditala dengan sebutan
-const T_STOP = 18.4, T_FLOW0 = 8.7;
+const T_STOP = 17.9, T_FLOW0 = 8.7;
 
 // ---------------------------------------------------------------- Three.js
 const glc = document.getElementById('gl');
@@ -230,9 +230,9 @@ function counter(o, t) { // nombor emas besar + label (rujukan "23 TAHUN KEMUDIA
   if (t < o.t0 - .02 || t > o.tEx + .45) return;
   const p = eoc(clamp((t - o.t0) / .55)), out = clamp((t - o.tEx) / .35), a = p * (1 - out); if (a <= .01) return;
   const v = lerp(o.from, o.to, eio(clamp((t - o.c0) / (o.c1 - o.c0)))), txt = (o.fmt ? o.fmt(v) : String(Math.round(v))) + (o.suf || ''), bl = (1 - p) * 10 + out * 8, dy = (1 - p) * 30, by = o.y + o.s * .8;
-  if (bl > .8) { blurText(txt, o.x, by + dy, F(900, o.s), GOLD, -o.s * .035, bl, a); if (o.label) blurText(o.label, o.x + 4, by + o.s * .47 + dy, F(800, o.s * .3), '#fff', o.s * .02, bl, a); return; }
+  if (bl > .8) { blurText(txt, o.x, by + dy, F(900, o.s), GOLD, -o.s * .035, bl, a); if (o.label) blurText(o.label, o.x + 4, by + o.s * .47 + dy, F(800, o.s * (o.ls || .3)), '#fff', o.s * .02, bl, a); return; }
   X.save(); X.globalAlpha = a; X.font = F(900, o.s); setLS(-o.s * .035); X.fillStyle = 'rgba(0,0,0,.4)'; X.fillText(txt, o.x + 4, by + 7 + dy); X.fillStyle = GOLD; X.fillText(txt, o.x, by + dy);
-  if (o.label) { X.font = F(800, o.s * .3); setLS(o.s * .02); X.fillStyle = '#fff'; X.fillText(o.label, o.x + 4, by + o.s * .47 + dy); }
+  if (o.label) { X.font = F(800, o.s * (o.ls || .3)); setLS(o.s * .02); X.fillStyle = '#fff'; X.fillText(o.label, o.x + 4, by + o.s * .47 + dy); }
   X.restore();
 }
 function stamp(txt, cx, cy, s, t, t0, tEx, rot = -3) {
@@ -279,21 +279,21 @@ function strike(txt, x, y, s, t, t0, t1, tEx) {
 }
 
 // ---------------------------------------------------------------- garis masa teks (saat; mengikut sebutan, ditala dengan align_words)
-const AL = { pasif1: 6.7, aktif: 10.7, gaji: 14.3, gajiPunBerhenti: 19.6, pasif2: 22.7, sewa: 27.7, bulan: 29.9, pgbo: 40.6, royalti: 46.4, meninggal: 51.2, waris: 53.6, kunci: 60.2, kaya: 67.2, step5: 74.5 };
+const AL = { pasif1: 7.9, aktif: 12.0, gaji: 15.05, gajiPunBerhenti: 20.1, pasif2: 23.2, sewa: 28.4, bulan: 29.34, pgbo: 39.14, royalti: 45.65, meninggal: 51.2, waris: 53.27, kunci: 60.0, kaya: 66.5, step5: 74.92 };
 function textLayer(t) {
   const L = s => (s === 'L' ? 800 : 520);
   let x = L('L');
-  const num = (xx, y, from, to, t0, c0, c1, tEx, suf, label, fmt, s = 200) => counter({ x: xx, y, from, to, t0, c0, c1, tEx, suf, label, fmt, s }, t);
+  const num = (xx, y, from, to, t0, c0, c1, tEx, suf, label, fmt, s = 200) => counter({ x: xx, y, from, to, t0, c0, c1, tEx, suf, label, fmt, s, ls: label && label.length > 18 ? .165 : .3 }, t);
   // hook (L)
   block([{ t: 'Kenapa ramai orang', s: 50, w: 800 }, { t: 'nak jadi dealer', s: 80, w: 900 }, { t: '*Public Gold?', s: 100, w: 900 }], x, 92, t, .25, 3.55);
   // pasif (L)
-  block([{ t: 'Dealer Public Gold dapat', s: 50, w: 800 }], x, 92, t, 4.5, 8.0);
-  block([{ t: 'pendapatan', s: 86, w: 900 }], x, 150, t, 5.8, 8.0);
-  num(x, 240, 0, 1, AL.pasif1 - .7, 1, 1, 8.0, '', null, () => 'PASIF', 170);
+  block([{ t: 'Dealer Public Gold dapat', s: 50, w: 800 }], x, 92, t, 4.5, 8.4);
+  block([{ t: 'pendapatan', s: 86, w: 900 }], x, 150, t, 6.3, 8.4);
+  num(x, 240, 0, 1, AL.pasif1 - .8, 1, 1, 8.4, '', null, () => 'PASIF', 170);
   // aktif (L)
-  block([{ t: 'Majoriti kita yang bekerja', s: 50, w: 800 }], x, 92, t, 8.5, 12.3);
-  block([{ t: 'pendapatan', s: 86, w: 900 }], x, 150, t, 9.8, 12.3);
-  num(x, 240, 0, 1, AL.aktif - .7, 1, 1, 12.3, '', null, () => 'AKTIF', 170);
+  block([{ t: 'Majoriti kita yang bekerja', s: 50, w: 800 }], x, 92, t, 8.5, 12.5);
+  block([{ t: 'pendapatan', s: 86, w: 900 }], x, 150, t, 10.5, 12.5);
+  num(x, 240, 0, 1, AL.aktif - .8, 1, 1, 12.5, '', null, () => 'AKTIF', 170);
   // gaji (L)
   block([{ t: 'Kena kerja,', s: 86, w: 900 }], x, 92, t, 12.75, 15.45);
   block([{ t: 'baru ada *gaji', s: 86, w: 900 }], x, 186, t, 13.9, 15.45);
@@ -304,23 +304,23 @@ function textLayer(t) {
   stamp('GAJI PUN BERHENTI', x + 330, 360, 58, t, AL.gajiPunBerhenti - .75, 20.3);
   // pasif (R)
   x = L('R');
-  block([{ t: 'Berbeza dengan', s: 50, w: 800 }], x, 92, t, 21.5, 23.3);
-  block([{ t: 'pendapatan', s: 86, w: 900 }], x, 150, t, 21.9, 23.3);
-  num(x, 240, 0, 1, AL.pasif2 - .6, 1, 1, 23.3, '', null, () => 'PASIF', 170);
+  block([{ t: 'Berbeza dengan', s: 50, w: 800 }], x, 92, t, 21.5, 23.4);
+  block([{ t: 'pendapatan', s: 86, w: 900 }], x, 150, t, 22.1, 23.4);
+  num(x, 240, 0, 1, AL.pasif2 - .8, 1, 1, 23.4, '', null, () => 'PASIF', 170);
   block([{ t: 'Tetap ada', s: 86, w: 900 }], x, 92, t, 23.5, 26.7);
   block([{ t: 'walaupun kita tak mampu', s: 50, w: 800 }], x, 190, t, 24.4, 26.7);
   block([{ t: '*bekerja', s: 86, w: 900 }], x, 250, t, 25.6, 26.7);
   // rumah sewa (R)
-  block([{ t: 'Macam', s: 50, w: 800 }], x, 92, t, 26.95, 28.4);
-  block([{ t: 'rumah *sewa', s: 110, w: 900 }], x, 150, t, 27.0, 28.4);
+  block([{ t: 'Macam', s: 50, w: 800 }], x, 92, t, 26.95, 28.5);
+  block([{ t: 'rumah *sewa', s: 110, w: 900 }], x, 150, t, 27.3, 28.5);
   block([{ t: 'Setiap bulan', s: 50, w: 800 }], x, 92, t, 28.6, 32.9);
-  block([{ t: 'duit *masuk', s: 110, w: 900 }], x, 150, t, AL.bulan + .2, 32.9);
-  block([{ t: 'walaupun kita tak buat apa-apa', s: 50, w: 800 }], x, 290, t, 31.2, 32.9);
+  block([{ t: 'duit *masuk', s: 110, w: 900 }], x, 150, t, AL.bulan + .35, 32.9);
+  block([{ t: 'walaupun kita tak buat apa-apa', s: 50, w: 800 }], x, 290, t, 31.4, 32.9);
   // PGBO (R)
   block([{ t: 'Dealer Public Gold ni', s: 50, w: 800 }], x, 92, t, 33.2, 41.2);
   block([{ t: 'sebenarnya bukan', s: 50, w: 800 }], x, 150, t, 33.8, 36.0);
-  block([{ t: 'AGEN', s: 140, w: 900 }], x, 190, t, 34.3, 36.2);
-  strike('AGEN', x, 190 + 12, 140, t, 35.0, 35.5, 36.2);
+  block([{ t: 'AGEN', s: 140, w: 900 }], x, 190, t, 34.6, 36.2);
+  strike('AGEN', x, 190 + 12, 140, t, 35.45, 35.85, 36.2);
   block([{ t: 'tetapi adalah', s: 50, w: 800 }], x, 150, t, 36.3, 41.2);
   num(x, 195, 0, 1, AL.pgbo - .8, 1, 1, 41.2, '', 'PUBLIC GOLD BUSINESS OWNER', () => 'PGBO', 200);
   // royalti (L)
@@ -330,23 +330,23 @@ function textLayer(t) {
   block([{ t: 'dan kita dapat', s: 50, w: 800 }], x, 92, t, 44.0, 47.4);
   block([{ t: '*ROYALTI', s: 150, w: 900 }], x, 150, t, AL.royalti - .8, 47.4);
   block([{ t: 'sebagai pendapatan pasif', s: 50, w: 800 }], x, 316, t, 46.2, 47.4);
-  block([{ t: 'Royalti', s: 86, w: 900 }], x, 92, t, 47.8, 51.8);
-  block([{ t: '*tak berhenti', s: 86, w: 900 }], x, 186, t, 48.4, 51.8);
-  block([{ t: 'walaupun dah meninggal dunia', s: 50, w: 800 }], x, 290, t, AL.meninggal - .9, 51.8);
+  block([{ t: 'Royalti', s: 86, w: 900 }], x, 92, t, 47.8, 52.0);
+  block([{ t: '*tak berhenti', s: 86, w: 900 }], x, 186, t, 48.5, 52.0);
+  block([{ t: 'walaupun dah meninggal dunia', s: 50, w: 800 }], x, 290, t, AL.meninggal - .9, 52.0);
   block([{ t: '*Waris', s: 110, w: 900 }], x, 92, t, 52.2, 56.4);
   block([{ t: 'boleh teruskan', s: 70, w: 900 }], x, 210, t, 53.2, 56.4);
   block([{ t: 'mewarisi pendapatan tersebut', s: 50, w: 800 }], x, 290, t, 54.4, 56.4);
   // kunci (L)
   block([{ t: 'Menjadi dealer di Public Gold', s: 50, w: 800 }], x, 92, t, 56.8, 58.7);
   block([{ t: '*Kuncinya', s: 110, w: 900 }], x, 92, t, AL.kunci - .6, 63.7);
-  block([{ t: 'sentiasa *sabar', s: 62, w: 900 }], x, 212, t, 60.6, 63.7);
-  block([{ t: 'dan *konsisten', s: 62, w: 900 }], x, 280, t, 61.5, 63.7);
-  block([{ t: 'menyampaikan *ilmu emas yang betul', s: 46, w: 800 }], x, 356, t, 62.4, 63.7);
+  block([{ t: 'sentiasa *sabar', s: 62, w: 900 }], x, 212, t, 60.5, 63.7);
+  block([{ t: 'dan *konsisten', s: 62, w: 900 }], x, 280, t, 61.4, 63.7);
+  block([{ t: 'menyampaikan *ilmu emas yang betul', s: 46, w: 800 }], x, 356, t, 62.3, 63.7);
   // customer kaya (R)
   x = L('R');
   block([{ t: 'supaya customer', s: 50, w: 800 }], x, 92, t, 65.0, 67.9);
-  block([{ t: '*KAYA', s: 170, w: 900 }], x, 150, t, AL.kaya - .6, 67.9);
-  block([{ t: 'dengan simpanan emas', s: 60, w: 900 }], x, 330, t, 67.0, 67.9);
+  block([{ t: '*KAYA', s: 170, w: 900 }], x, 150, t, AL.kaya - .45, 67.95);
+  block([{ t: 'dengan simpanan emas', s: 60, w: 900 }], x, 330, t, 66.8, 67.95);
   // mula (R)
   block([{ t: 'Tuan puan yang nak mulakan', s: 50, w: 800 }], x, 92, t, 68.3, 72.3);
   block([{ t: 'simpanan *emas', s: 86, w: 900 }], x, 150, t, 69.0, 72.3);
@@ -365,7 +365,7 @@ async function overlay(t) {
   const T = (wx, wy, wz, txt, sub, t0, t1, dx = 150, dy = -120) => { const [ax, ay] = proj(wx, wy, wz); tag(txt, sub, ax, ay, ax + sgn * dx, ay + dy, t, t0, t1); };
   T(XS[1], 3.45, 0, 'Pendapatan aktif', null, 9.0, 12.3, 150, 40);
   T(XS[1], 1.3, 0, 'Gaji', 'masuk selagi bekerja', 12.8, 15.4, 170, -30);
-  T(XS[1] - 1.1, 4.0, 0, 'Berhenti kerja', 'gaji pun berhenti', 18.6, 20.3, 170, 80);
+  T(XS[1] - 1.1, 4.0, 0, 'Berhenti kerja', 'gaji pun berhenti', 18.1, 20.3, 170, 80);
   T(XS[2] - 1.0, 1.9, -.2, 'Pendapatan pasif', null, 22.0, 26.6, 140, -90);
   T(XS[2] - 1.0, 1.9, -.2, 'Rumah sewa', 'duit masuk setiap bulan', 27.3, 32.8, 140, -60);
   T(XS[4] + 1.7, 2.3, 0, 'Royalti', null, 44.8, 47.4, 160, -80);
