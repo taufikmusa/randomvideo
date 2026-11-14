@@ -29,5 +29,6 @@ Render: `python3 music.py && node render.js` dalam folder projek.
 ## Skill video (dalam skills/)
 - `video-sticker-edit` = edit video talking-head Taufik + helaian sticker 3x3 -> video menegak 1080x1920 (hook, chapter, B-roll, sticker pop-up, kapsyen). **DEFAULT maroon-emas**; warna lain (honey gold #FEC40B, acid yellow #EFFF00) HANYA bila Taufik sebut.
 - Bila Taufik lampir klip video + helaian sticker (cth "edit ni", "next", "proceed"): baca `skills/video-sticker-edit/SKILL.md` dahulu, ikut aliran dalamnya. Pasangkan klip dengan helaian ikut isi suara; susun klip ikut nombor fail (`S5-1` sebelum `S5-2`).
+- `video-explainer-3d` = video LANDSCAPE 1920x1080 dari folder Google Drive (Reference + Cut-NN green-screen + B-roll): gaya explainer dokumentari, teks kinetik Inter, counter emas, kad B-roll, stage Three.js, Taufik cutout kiri/kanan berselang perlahan. Bila Taufik kongsi pautan Drive: baca `skills/video-explainer-3d/SKILL.md` (muat turun guna `curl https://drive.usercontent.google.com/download?id=<ID>&export=download&confirm=t`). Projek rujukan: `video-cut01-pg/`.
 - Hantar MP4 sebagai link raw (peraturan di atas). "dah download"/"cleanup" = `git rm` MP4 + buang fail sementara + push, tanpa tanya.
 - Fail sementara (`segs.json`, `work/`, `src/`, `out/`, `stills/`) mesti dipadam sebelum commit (stop-hook git marah kalau ada untracked).
