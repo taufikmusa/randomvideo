@@ -200,7 +200,7 @@ const ext = e => [e.y, e.y + (e.k === 'b' ? e.lines.reduce((a, l) => a + l.s * (
 const TXT = C.TEXT.map(e => ({ ...e, side: e.side || sideAt(e.t0 + .1) }));
 // auto-kecilkan baris yang melebihi lebar maksimum (640px)
 await document.fonts.load('900 40px Inter'); await document.fonts.load('800 40px Inter');
-for (const e of TXT) if (e.k === 'b') e.lines = e.lines.map(l => { X.save(); X.font = F(l.w || 800, l.s); X.letterSpacing = (-l.s * .028) + 'px'; const w = X.measureText(l.t.replace(/\*/g, '')).width; X.restore(); return w > 640 ? { ...l, s: Math.floor(l.s * 640 / w) } : l; });
+for (const e of TXT) if (e.k === 'b') e.lines = e.lines.map(l => { X.save(); X.font = F(l.w || 800, l.s); X.letterSpacing = (-l.s * .028) + 'px'; const w = X.measureText(l.t.replace(/\*/g, '')).width; X.restore(); return w > 600 ? { ...l, s: Math.floor(l.s * 600 / w) } : l; });
 for (const i of TXT) { if (i.k !== 'b' && i.k !== 'n') continue; const [a0, a1] = ext(i); for (const j of TXT) { if (j === i || (j.k !== 'b' && j.k !== 'n') || j.side !== i.side || j.t0 <= i.t0 + .3) continue; const [b0, b1] = ext(j); if (b0 < a1 && b1 > a0 && j.t0 - .3 < i.t1) i.t1 = Math.max(i.t0 + .6, j.t0 - .3); } }
 function textLayer(t) {
   for (const e of TXT) {

@@ -11,6 +11,6 @@ const fs = require('fs'), path = require('path'), pw = require('/opt/node22/lib/
   for (const [k, v] of Object.entries(R)) h = h.split(k).join(v);
   fs.writeFileSync(path.join(out, 'thumb.html'), h);
   const b = await pw.chromium.launch(), p = await b.newPage({ viewport: { width: 1920, height: 1080 } });
-  await p.goto('file://' + path.join(out, 'thumb.html')); await p.evaluate(() => document.fonts.ready); await p.waitForTimeout(500);
+  await p.goto('file://' + path.join(out, 'thumb.html')); await p.waitForFunction(() => document.title === 'ready'); await p.waitForTimeout(300);
   await p.screenshot({ path: path.join(out, 'thumbnail.jpg'), type: 'jpeg', quality: 95 }); await b.close(); console.log('thumbnail ->', path.join(out, 'thumbnail.jpg'));
 })();
